@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">AsistenciaeClass</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Salir</string>
+    <string name="hint_username">Usuario</string>
+    <string name="hint_password">Password</string>
+    <string name="title_activity_cursos">Listado de cursos</string>
+
+</resources>
