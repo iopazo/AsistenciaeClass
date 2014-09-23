@@ -7,5 +7,8 @@
     <string name="hint_username">Usuario</string>
     <string name="hint_password">Password</string>
     <string name="title_activity_cursos">Listado de cursos</string>
+    <string name="title_activity_clases">Listado de Clases</string>
+    <string name="title_activity_alumnos">Alumnos</string>
+    <string name="logoEclass">logoEclass</string>
 
 </resources>

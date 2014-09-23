@@ -5,7 +5,7 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name">
+        android:label="@string/app_name" >
         <activity
             android:name=".Login"
             android:label="@string/app_name"
@@ -17,10 +17,28 @@
             </intent-filter>
         </activity>
         <activity
-            android:theme="@style/CustomActionBarTheme"
             android:name=".Cursos"
-            android:label="@string/title_activity_cursos" >
+            android:label="@string/title_activity_cursos"
+            android:theme="@style/CustomActionBarTheme" >
+        </activity>
+        <activity
+            android:name=".Clases"
+            android:label="@string/title_activity_clases"
+            android:parentActivityName=".Cursos"
+            android:theme="@style/CustomActionBarTheme" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.moveapps.asistenciaeclass.Cursos" />
+        </activity>
+        <activity
+            android:name=".Alumnos"
+            android:label="@string/title_activity_alumnos"
+            android:parentActivityName=".Clases"
+            android:theme="@style/CustomActionBarTheme" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.moveapps.asistenciaeclass.Clases" />
         </activity>
     </application>
-
+    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
 </manifest>

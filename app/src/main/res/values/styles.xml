@@ -13,6 +13,7 @@
         <item name="android:textColor">#FFFFFF</item>
     </style>
 
+    <!-- Estilo para barra de navegacion azul -->
     <style name="CustomActionBarTheme" parent="android:Theme.Holo.Light.DarkActionBar">
         <item name="android:actionBarStyle">@style/MyActionBar</item>
     </style>
