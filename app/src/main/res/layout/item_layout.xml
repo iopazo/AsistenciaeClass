@@ -7,13 +7,15 @@
 
     <TextView
         android:id="@+id/label"
-        android:layout_width="560dp"
+        android:layout_width="530dp"
         android:layout_height="wrap_content"
-        android:padding="@dimen/activity_horizontal_margin"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingRight="30dp"
+        android:paddingLeft="10dp"
         android:text="Row 1"
         android:textColor="#ababab"
-        android:textSize="20sp"
-        android:paddingRight="10dp"
+        android:textSize="12sp"
         android:textColorHint="#3178b6">
     </TextView>
     

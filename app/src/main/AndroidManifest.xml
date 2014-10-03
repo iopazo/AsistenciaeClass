@@ -12,23 +12,14 @@
             android:theme="@style/AppTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".Cursos"
-            android:label="@string/title_activity_cursos"
-            android:theme="@style/CustomActionBarTheme" >
-        </activity>
-        <activity
             android:name=".Clases"
             android:label="@string/title_activity_clases"
-            android:parentActivityName=".Cursos"
-            android:theme="@style/CustomActionBarTheme" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.moveapps.asistenciaeclass.Cursos" />
+            android:theme="@style/CustomActionBarTheme"
+            android:launchMode="singleTop" >
         </activity>
         <activity
             android:name=".Alumnos"

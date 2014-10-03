@@ -1,6 +1,8 @@
 package com.moveapps.asistenciaeclass;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -20,21 +23,25 @@ import org.json.JSONObject;
 import java.sql.SQLException;
 
 import api.eClassAPI;
-import db.DBDataSource;
+import db.DBClaseSource;
+import db.DBUsuarioSource;
+import models.Usuario;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-
 
 public class Login extends Activity {
 
     final static String TAG = Login.class.getSimpleName();
     Utils util;
 
-    protected DBDataSource mDataSource;
+    protected DBUsuarioSource usuarioDataSource;
+    protected DBClaseSource claseDataSource;
     protected EditText username;
     protected EditText password;
     protected eClassAPI apiService;
+    private Usuario userDB;
+    protected ProgressDialog pd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +51,16 @@ public class Login extends Activity {
         //Clase con metodos utiles
         util = new Utils();
         //manipulador de base de datos
-        mDataSource = new DBDataSource(Login.this);
-
+        usuarioDataSource = new DBUsuarioSource(Login.this);
+        claseDataSource = new DBClaseSource(Login.this);
+        userDB = new Usuario();
+        //Hacemos la consulta a
+        userDB.getUser(usuarioDataSource);
+        if(userDB.getUsuarioDB().getId() > 0 && userDB.getUsuarioDB().isLogin()) {
+            Intent intent = new Intent(Login.this, Clases.class);
+            startActivity(intent);
+            finish();
+        }
 
         //Seteamos el background color al layout
         RelativeLayout relativeLayout = (RelativeLayout) this.findViewById(R.id.relativeLayout);
@@ -78,7 +93,8 @@ public class Login extends Activity {
     protected void onResume() {
         super.onResume();
         try {
-            mDataSource.open();
+            usuarioDataSource.open();
+            claseDataSource.open();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -87,7 +103,8 @@ public class Login extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        mDataSource.close();
+        usuarioDataSource.close();
+        claseDataSource.close();
     }
 
     //Callback API donde leemos el JSON.
@@ -95,51 +112,81 @@ public class Login extends Activity {
         @Override
         public void success(JsonElement element, Response response) {
             JsonObject jsonObj = element.getAsJsonObject();
+            String msg = jsonObj.get("usuario").getAsJsonObject().get("status").getAsString();
+            //Si la respuesta es correcta.
+            if(msg.equals("success")) {
+                JsonObject data = jsonObj.get("usuario").getAsJsonObject().getAsJsonObject("data");
+                JsonArray clases = data.getAsJsonArray("clases");
 
-
-            //Usuario usuario = new Usuario(31);
-            //usuario.setLogin(true);
-            //mDataSource.insertUsuario(usuario);
-            //Log.d(TAG, String.format("Json Object %d", jsonObj));
+                claseDataSource.insertClaseAlumnos(clases);
+                Intent intent = new Intent(Login.this, Clases.class);
+                Usuario usuario = new Usuario(data.get("id").getAsInt(), password.getText().toString(), true);
+                usuarioDataSource.insertUsuario(usuario);
+                startActivity(intent);
+                pd.cancel();
+                finish();
+            } else {
+                if(msg.equals("error")) {
+                    pd.cancel();
+                    Toast.makeText(Login.this, "Usuario no encontrado", Toast.LENGTH_SHORT).show();
+                }
+            }
         }
 
         @Override
         public void failure(RetrofitError error) {
             Toast.makeText(Login.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+            pd.cancel();
         }
     };
 
-    //llamamos esto para tener los datos que nos retornara el metodo de api para usuarios
+    //Metodo que nos conecta con eClassAPI y le enviamos los parametros por post para conectar
     protected void loadUsuarioData() {
-        //Aca debemos armar los datos
-        JSONObject datosJson = new JSONObject();
-        try {
-            datosJson.put("numero_documento", username.getText().toString().substring(0, 8));
-            datosJson.put("password", Utils.MD5(password.getText().toString()));//"2807430c9f0d818fe4d8a018f4f56ff5");//);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        byte[] jsonToByte = datosJson.toString().getBytes();
-        String datos = Base64.encodeToString(jsonToByte,0);
 
-        apiService = new eClassAPI(datos);
-        apiService.getUsuarioData(mUsuarioSerice);
+        userDB.getUser(usuarioDataSource);
+        Intent intent = new Intent(Login.this, Clases.class);
+        if(userDB.getUsuarioDB().getId() == 0) {
+            //Aca debemos armar los datos para llamar a la API
+            JSONObject datosJson = new JSONObject();
+            try {
+                datosJson.put("numero_documento", username.getText().toString().substring(0, 8));
+                datosJson.put("password", Utils.MD5(password.getText().toString()));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            byte[] jsonToByte = datosJson.toString().getBytes();
+            String datos = Base64.encodeToString(jsonToByte,0);
+
+            apiService = new eClassAPI(datos);
+            apiService.getUsuarioData(mUsuarioSerice);
+
+        } else if(password.getText().toString().equals(userDB.getUsuarioDB().getPassword().toString())){
+            if(usuarioDataSource.updateUsuario(userDB.getUsuarioDB().getId(), true) > 0) {
+                startActivity(intent);
+                pd.cancel();
+                finish();
+            }
+        } else {
+            pd.cancel();
+            Toast.makeText(Login.this, "Usuario no encontrado en DB", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
-    public void ingresar(View view) {
-
+    public boolean ingresar(View view) {
+        pd = ProgressDialog.show(this, "", "Cargando datos, porfavor espere...", true);
         if(!util.validarRut(username.getText().toString())) {
             username.setError("El rut ingresado no es válido");
-        } else {
-            loadUsuarioData();
-            //Traemos la info de la API, la cargamos al objeto usuario y lo guardamos en la base de datos.
-            //Usuario usuario = new Usuario(31);
-            //usuario.setLogin(true);
-            //mDataSource.insertUsuario(usuario);
-            //Intent intent = new Intent(this, Cursos.class);
-            //startActivity(intent);
-            //finish();
+            pd.cancel();
+            return false;
         }
-
+        if(password.getText().toString().isEmpty()) {
+            password.setError("Debe ingresar el password");
+            pd.cancel();
+            return false;
+        }
+        //Si va bien llamamos a los datos de la Api
+        loadUsuarioData();
+        return true;
     }
 }

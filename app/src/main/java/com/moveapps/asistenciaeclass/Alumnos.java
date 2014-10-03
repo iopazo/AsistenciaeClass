@@ -3,45 +3,79 @@ package com.moveapps.asistenciaeclass;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ExpandableListView;
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Map;
+
+import db.DBClaseSource;
+import models.Alumno;
+import models.Interface;
 
 
-public class Alumnos extends ListActivity {
+public class Alumnos extends ListActivity implements Interface {
 
-    SparseArray<Group> groups = new SparseArray<Group>();
     static String ID_CLASE;
+    static final String TAG = Alumnos.class.getSimpleName();
+    protected DBClaseSource mClasesource;
+    static ArrayList<Alumno> alumnos = null;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alumnos);
 
-        //Cargamos las filas con sus subsecciones (JSON Alumnos ACA)
-        createData();
-
-        Intent i = getIntent();
-        if(i.hasExtra("ID_CLASE")) {
-            ID_CLASE = i.getStringExtra("ID_CLASE");
+        //Iniciamos la instancia y abrimos la base de datos
+        mClasesource = new DBClaseSource(Alumnos.this);
+        try {
+            mClasesource.open();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        //Obtenemos los parametros enviados desde la vista Clases
+        Intent intent = getIntent();
+        if(intent.hasExtra("id")) {
+            ID_CLASE = intent.getStringExtra("id");
+        }
+        if(intent.hasExtra("title")) {
+            String title = String.format("Class %s", intent.getStringExtra("title"));
+            TextView breadcrumb = (TextView)findViewById(R.id.bcrumbText);
+            breadcrumb.setText(title);
         }
 
-        ExpandableListView listView = (ExpandableListView) findViewById(android.R.id.list);
-        MyExpandableListAdapter adapter = new MyExpandableListAdapter(this,
-                groups);
-        listView.setAdapter(adapter);
-    }
+        //Traemos los alumnos
+        alumnos = mClasesource.getAlumnoByClass(Integer.parseInt(ID_CLASE));
+        if(alumnos != null) {
+            //Variable enviada para armar los item de la lista
+            ArrayList<Map<String, String>> values = this.crearListado(alumnos);
+            String[] from = {"nombre", "id"};
+            int[] to = {R.id.label};
 
-    public void createData() {
-        for (int j = 0; j < 5; j++) {
-            Group group = new Group("Test " + j);
-            for (int i = 0; i < 5; i++) {
-                group.children.add("Sub Item" + i);
-            }
-            groups.append(j, group);
+            SimpleAdapter adapter = new SimpleAdapter(this, values, R.layout.item_layout, from, to);
+            setListAdapter(adapter);
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            mClasesource.open();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mClasesource.close();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -60,5 +94,16 @@ public class Alumnos extends ListActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public ArrayList<Map<String, String>> crearListado(ArrayList arrayList) {
+        ArrayList<Map<String, String>> listadoCursos = new ArrayList<Map<String, String>>();
+
+        for (int i = 0; i < arrayList.size(); i++) {
+            Alumno alumno = (Alumno)arrayList.get(i);
+            listadoCursos.add(Utils.putData(Integer.toString(alumno.getIdAlumnoCursoClaseSede()), alumno.getNombre()));
+        }
+        return listadoCursos;
     }
 }

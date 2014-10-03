@@ -1,13 +1,7 @@
 package com.moveapps.asistenciaeclass;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.security.MessageDigest;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by iopazog on 13-09-14.
@@ -19,24 +13,6 @@ public class Utils {
     public static final String KEY = "oVajeICNg9OL0LnJaIuu3MrVf31td76aq2tompdtaJKRo7F+inacmOmGtsuk4dLYw7uavNLhzNKwmZY=";
     public static final String SECRET = "2vTOVNrYmXf8ZywdpFD4";
 
-    public ArrayList<Map<String, String>> crearListado(JSONObject data) throws JSONException {
-
-        ArrayList<Map<String, String>> listadoCursos = new ArrayList<Map<String, String>>();
-        JSONArray values = data.getJSONArray("json");
-
-        for (int i = 0; i < values.length(); i++) {
-            JSONObject row = values.getJSONObject(i);
-            listadoCursos.add(putData(row.getString("id"), row.getString("nombre")));
-        }
-        return listadoCursos;
-    }
-
-    public HashMap<String, String> putData(String id, String nombre) {
-        HashMap<String, String> item = new HashMap<String, String>();
-        item.put("id", id);
-        item.put("nombre", nombre);
-        return item;
-    }
 
     public static boolean validarRut(String rut) {
 
@@ -96,6 +72,13 @@ public class Utils {
         } catch (java.security.NoSuchAlgorithmException e) {
         }
         return null;
+    }
+
+    static public HashMap<String, String> putData(String id, String nombre) {
+        HashMap<String, String> item = new HashMap<String, String>();
+        item.put("id", id.toString());
+        item.put("nombre", nombre);
+        return item;
     }
 
 }

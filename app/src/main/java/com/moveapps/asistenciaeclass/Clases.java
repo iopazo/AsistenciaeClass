@@ -3,80 +3,102 @@ package com.moveapps.asistenciaeclass;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import db.DBClaseSource;
+import db.DBUsuarioSource;
+import models.Clase;
+import models.Interface;
+import models.Usuario;
 
-public class Clases extends ListActivity {
+
+public class Clases extends ListActivity implements Interface {
 
     static String ID_CURSO;
-    Utils util;
+    static final String TAG = Clases.class.getSimpleName();
+    protected DBUsuarioSource mUsuarioDatasource;
+    protected DBClaseSource mClaseDatasource;
+    protected Usuario dbUsuario;
+    static ArrayList<Clase> clases = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clases);
+        Log.d(TAG, "In the onCreate() event");
 
-        //Obtengo el dato enviado desde la clase curso.
-        Bundle mensajeCursos = getIntent().getExtras();
-        if(mensajeCursos == null) {
-            return;
-        }
-        ID_CURSO = mensajeCursos.getString("ID_CURSO");
-        String title = mensajeCursos.getString("title");
+        mUsuarioDatasource = new DBUsuarioSource(Clases.this);
+        mClaseDatasource = new DBClaseSource(Clases.this);
 
-        if(title != null) {
-            //getActionBar().setTitle(String.format("Curso %s", title));
-            TextView breadCrumb = (TextView) findViewById(R.id.bcrumbText);
-            breadCrumb.setText(String.format("Curso %s", title));
-        }
-
-        util = new Utils();
-        //Esta variable la debo llenar con el json, se debe cambiar cuando se conecte con la API
-        JSONObject row = new JSONObject();
-        JSONObject row2 = new JSONObject();
-        JSONArray rowArray = new JSONArray();
-        JSONObject data = new JSONObject();
-        //Variable enviada para armar los item de la lista
-        ArrayList<Map<String, String>> values = null;
         try {
-            //Objeto mapeado
-            row.put("id", "2");
-            row.put("nombre", "Seccion 1 - Clase Jueves 23 Sept, 23:00 Carmencita 25");
-
-            row2.put("id", "3");
-            row2.put("nombre", "Seccion 2 - Clase Jueves 23 Sept, 23:00 Carmencita 25");
-
-            //Objeto agregado a arreglo Json
-            rowArray.put(row);
-            rowArray.put(row2);
-
-            //Cargamos el objeto json final con nombre "json" con el objeto array Json
-            data.put("json", rowArray);
-
-            //Pasamos el json object al metodo crearListado y nos retorna un arrayList
-            values = util.crearListado(data);
-        } catch (JSONException e) {
+            mUsuarioDatasource.open();
+            mClaseDatasource.open();
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        String[] from = {"nombre", "id"};
-        int[] to = {R.id.label};
+        clases = mClaseDatasource.list();
+        if(clases != null) {
+            //Variable enviada para armar los item de la lista
+            ArrayList<Map<String, String>> values = this.crearListado(clases);
+            String[] from = {"nombre", "id"};
+            int[] to = {R.id.label};
 
-        SimpleAdapter adapter = new SimpleAdapter(this, values, R.layout.item_layout, from, to);
-        setListAdapter(adapter);
+            SimpleAdapter adapter = new SimpleAdapter(this, values, R.layout.item_layout, from, to);
+            setListAdapter(adapter);
+        }
 
+    }
+
+    public void onStart()
+    {
+        super.onStart();
+        Log.d(TAG, "In the onStart() event");
+    }
+    public void onRestart()
+    {
+        super.onRestart();
+        Log.d(TAG, "In the onRestart() event");
+    }
+    public void onStop()
+    {
+        super.onStop();
+        Log.d(TAG, "In the onStop() event");
+    }
+    public void onDestroy()
+    {
+        super.onDestroy();
+        Log.d(TAG, "In the onDestroy() event");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            mClaseDatasource.open();
+            mUsuarioDatasource.open();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d(TAG, "In the onPause() event");
+        super.onPause();
+        mUsuarioDatasource.close();
+        mClaseDatasource.close();
     }
 
     @Override
@@ -86,7 +108,7 @@ public class Clases extends ListActivity {
         String idClase = item.get("id");
         Intent intent = new Intent(this, Alumnos.class);
         intent.putExtra("title", nombre);
-        intent.putExtra("ID_CLASE", idClase);
+        intent.putExtra("id", idClase);
         startActivityForResult(intent, 1);
     }
 
@@ -95,9 +117,10 @@ public class Clases extends ListActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // TODO Auto-generated method stub
         super.onActivityResult(requestCode, resultCode, data);
-        if(data.getExtras().containsKey("ID_CLASE")){
+        Log.d(TAG, "onActivityResult");
+        //if(data.getExtras().containsKey("ID_CLASE")){
             //Aca es cuando vuelve de la vista de alumnos...
-        }
+        //}
     }
 
     @Override
@@ -113,9 +136,30 @@ public class Clases extends ListActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_salir) {
+            Usuario usuario = new Usuario();
+            usuario.getUser(mUsuarioDatasource);
+            dbUsuario = usuario.getUsuarioDB();
+
+            if(mUsuarioDatasource.updateUsuario(dbUsuario.getId(), false) > 0) {
+                Intent intent = new Intent(Clases.this, Login.class);
+                startActivity(intent);
+                finish();
+                return true;
+            }
+
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public ArrayList<Map<String, String>> crearListado(ArrayList arrayList) {
+        ArrayList<Map<String, String>> listadoCursos = new ArrayList<Map<String, String>>();
+
+        for (int i = 0; i < arrayList.size(); i++) {
+            Clase clase = (Clase)arrayList.get(i);
+            listadoCursos.add(Utils.putData(Integer.toString(clase.getId()), clase.getNombre()));
+        }
+        return listadoCursos;
     }
 }

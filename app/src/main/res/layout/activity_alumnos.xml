@@ -6,19 +6,31 @@
     android:weightSum="1"
     android:orientation="vertical"
     android:id="@+id/lineaLayout">
-
+    
     <TextView
         android:layout_width="match_parent"
         android:layout_height="62dp"
         android:text="Breadcrumb"
         android:id="@+id/bcrumbText"
         android:background="#434343"
-        android:gravity="center_vertical|center_horizontal"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         android:textColor="#FFFFFF" />
 
-    <ExpandableListView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@android:id/list" />
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:id="@android:id/list"
+        android:layout_gravity="center_vertical"
+        android:choiceMode="singleChoice"
+        android:drawSelectorOnTop="true"
+        android:listSelector="@drawable/listitem_selector" />
 
+    <!--
+     <ExpandableListView
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:id="@android:id/list" />
+     -->
 </LinearLayout>

@@ -50,7 +50,7 @@ public class eClassAPI {
         };
 
         RestAdapter restAdapter = new RestAdapter.Builder()
-                .setLogLevel(RestAdapter.LogLevel.FULL)
+                .setLogLevel(RestAdapter.LogLevel.FULL) //Usado para el debug
                 .setEndpoint(Utils.API_URL)
                 .setRequestInterceptor(requestInterceptor)
                 .build();
