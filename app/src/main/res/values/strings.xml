@@ -8,5 +8,7 @@
     <string name="title_activity_clases">My classes</string>
     <string name="title_activity_alumnos">List of students</string>
     <string name="logoEclass">logoEclass</string>
+    <string name="title_activity_firma_alumno">Student Sign</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

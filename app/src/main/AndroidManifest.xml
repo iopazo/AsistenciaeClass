@@ -12,24 +12,38 @@
             android:theme="@style/AppTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".Clases"
             android:label="@string/title_activity_clases"
-            android:theme="@style/CustomActionBarTheme"
-            android:launchMode="singleTop" >
+            android:launchMode="singleTop"
+            android:theme="@style/CustomActionBarTheme" >
         </activity>
         <activity
             android:name=".Alumnos"
             android:label="@string/title_activity_alumnos"
+            android:launchMode="singleTop"
             android:parentActivityName=".Clases"
             android:theme="@style/CustomActionBarTheme" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.moveapps.asistenciaeclass.Clases" />
         </activity>
+        <activity
+            android:name=".FirmaAlumno"
+            android:label="@string/title_activity_firma_alumno"
+            android:parentActivityName=".Alumnos"
+            android:theme="@style/CustomActionBarTheme" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.moveapps.asistenciaeclass.Alumnos" />
+        </activity>
     </application>
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
 </manifest>
