@@ -54,6 +54,7 @@ public class Alumnos extends ListActivity implements Interface {
 
         //Traemos los alumnos
         alumnos = mClasesource.getAlumnoByClass(Integer.parseInt(ID_CLASE));
+
         if(alumnos != null) {
             //Variable enviada para armar los item de la lista
             ArrayList<Map<String, String>> values = this.crearListado(alumnos);

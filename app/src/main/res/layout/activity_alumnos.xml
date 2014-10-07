@@ -26,11 +26,4 @@
         android:choiceMode="singleChoice"
         android:drawSelectorOnTop="true"
         android:listSelector="@drawable/listitem_selector" />
-
-    <!--
-     <ExpandableListView
-         android:layout_width="match_parent"
-         android:layout_height="wrap_content"
-         android:id="@android:id/list" />
-     -->
 </LinearLayout>
