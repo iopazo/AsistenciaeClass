@@ -1,5 +1,8 @@
 package com.moveapps.asistenciaeclass;
 
+import android.content.res.Resources;
+import android.util.DisplayMetrics;
+
 import java.security.MessageDigest;
 import java.util.HashMap;
 
@@ -81,4 +84,9 @@ public class Utils {
         return item;
     }
 
+    static public int convertDpToPixel(float dp, Resources resources) {
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float px = dp * (metrics.densityDpi / 160f);
+        return (int) px;
+    }
 }
