@@ -48,7 +48,6 @@ public class AlumnoAdapter extends ArrayAdapter<Alumno> {
             holder.nombreAlumno = (TextView)row.findViewById(R.id.nombreAlumno);
             holder.botonFirma = (Button)row.findViewById(R.id.botonFirma);
             holder.botonAusente = (Button)row.findViewById(R.id.botonAusente);
-            holder.cancelarFirma = (Button)row.findViewById(R.id.cancelarFirma);
             row.setTag(holder);
         } else {
             holder = (NewsHolder)row.getTag();
@@ -75,15 +74,6 @@ public class AlumnoAdapter extends ArrayAdapter<Alumno> {
             }
         });
 
-        holder.cancelarFirma.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                Toast.makeText(context, "Button 3 Clicked",Toast.LENGTH_SHORT);
-            }
-        });
-
         return row;
     }
 
@@ -91,6 +81,5 @@ public class AlumnoAdapter extends ArrayAdapter<Alumno> {
         TextView nombreAlumno;
         Button botonFirma;
         Button botonAusente;
-        Button cancelarFirma;
     }
 }

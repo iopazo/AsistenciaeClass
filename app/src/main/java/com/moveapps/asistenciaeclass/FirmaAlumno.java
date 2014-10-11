@@ -32,10 +32,7 @@ public class FirmaAlumno extends Activity implements OnClickListener {
             TextView breadcrumb = (TextView)findViewById(R.id.bcrumbText);
             breadcrumb.setText(NOMBRE_ALUMNO);
         }
-
-        Log.d(TAG, "ID ALUMNO " + ID_ALUMNO);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

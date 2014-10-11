@@ -112,7 +112,8 @@ public class DBClaseSource {
 
         Cursor cursor = mDatabase.query(
                 dbHelper.TABLE_ALUMNO,
-                new String[] {dbHelper.COLUMN_ID_ALUMNO_CLASE_SEDE, dbHelper.COLUMN_NOMBRE_ALUMNO},
+                new String[] {dbHelper.COLUMN_ID_ALUMNO_CLASE_SEDE, dbHelper.COLUMN_NOMBRE_ALUMNO, dbHelper.COLUMN_ESTADO, dbHelper.COLUMN_FIRMA
+                },
                 whereClause,
                 new String[]{String.format("%d", idClase)},
                 null,
@@ -124,7 +125,8 @@ public class DBClaseSource {
             while (!cursor.isAfterLast()) {
                 int id = cursor.getInt(cursor.getColumnIndex(dbHelper.COLUMN_ID_ALUMNO_CLASE_SEDE));
                 String nombre = cursor.getString(cursor.getColumnIndex(dbHelper.COLUMN_NOMBRE_ALUMNO));
-                Alumno alumno = new Alumno(id, nombre);
+                int estado = cursor.getInt(cursor.getColumnIndex(dbHelper.COLUMN_ESTADO));
+                Alumno alumno = new Alumno(id, nombre, estado, idClase);
                 alumnos.add(alumno);
                 cursor.moveToNext();
             }

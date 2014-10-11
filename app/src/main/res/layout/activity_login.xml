@@ -62,5 +62,5 @@
         android:layout_alignStart="@+id/password"
         android:layout_alignRight="@+id/password"
         android:layout_alignEnd="@+id/password"
-        android:onClick="ingresar" />
+        android:onClick="ingresar"/>
 </RelativeLayout>

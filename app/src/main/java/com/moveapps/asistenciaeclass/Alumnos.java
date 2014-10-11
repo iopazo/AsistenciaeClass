@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.fortysevendeg.swipelistview.BaseSwipeListViewListener;
@@ -15,7 +13,6 @@ import com.fortysevendeg.swipelistview.SwipeListView;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -92,7 +89,12 @@ public class Alumnos extends ListActivity implements Interface {
             }
             @Override
             public void onClickFrontView(int position) {
-                Log.d("swipe", String.format("onClickFrontView %d", position));
+                /*
+                Al presionar sobre el nombre del alumno vamos a la vvista de formas solo si Firma esta seteada en 0
+                0: Sin accion
+                1: Firma
+                2: Ausente
+                 */
                 Intent intent = new Intent(Alumnos.this, FirmaAlumno.class);
                 intent.putExtra("nombre", alumnos.get(position).getNombre());
                 intent.putExtra("id", alumnos.get(position).getIdAlumnoCursoClaseSede());
@@ -115,14 +117,13 @@ public class Alumnos extends ListActivity implements Interface {
         //swipeListView.setSwipeActionLeft(SwipeListView.SWIPE_ACTION_DISMISS); //there are four swipe actions
         swipeListView.setSwipeActionRight(SwipeListView.SWIPE_ACTION_REVEAL);
         swipeListView.setOffsetLeft(Utils.convertDpToPixel(0f, getResources())); // left side offset
-        swipeListView.setOffsetRight(Utils.convertDpToPixel(40f, getResources())); // right side offset
+        swipeListView.setOffsetRight(Utils.convertDpToPixel(50f, getResources())); // right side offset
         swipeListView.setAnimationTime(400); // Animation time
-        swipeListView.setSwipeOpenOnLongPress(true); // enable or disable SwipeOpenOnLongPress
+        //swipeListView.setSwipeOpenOnLongPress(true); // enable or disable SwipeOpenOnLongPress
 
         swipeListView.setAdapter(adapter);
 
         for(int i = 0; i < alumnos.size(); i++) {
-
             alumnoData.add(new Alumno(alumnos.get(i).getIdAlumnoCursoClaseSede(), alumnos.get(i).getNombre()));
         }
         adapter.notifyDataSetChanged();
@@ -171,18 +172,6 @@ public class Alumnos extends ListActivity implements Interface {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        HashMap<String, String> item = (HashMap<String,String>) getListAdapter().getItem(position);
-        String nombre = item.get("nombre");
-        String idAlumoClaseSede = item.get("id");
-        Intent intent = new Intent(this, FirmaAlumno.class);
-        intent.putExtra("nombre", nombre);
-        intent.putExtra("id", idAlumoClaseSede);
-        intent.putExtra("nombre_clase", NOMBRE_CLASE);
-        startActivityForResult(intent, 1);
     }
 
     @Override

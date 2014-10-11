@@ -13,22 +13,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/botonFirma"
-            style="@style/MyListButtonAction"
-            android:text="Firmar"/>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/botonAusente"
-            style="@style/MyListButtonAction"
+            android:background="@drawable/radio_button_ausente"
+            style="@style/BotonAusente"
             android:text="Ausente"/>
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/cancelarFirma"
-            style="@style/MyListButtonAction"
-            android:text="Cancelar"/>
+            android:id="@+id/botonAusente"
+            style="@style/BotonRestablecer"
+            android:background="@drawable/radio_button_restablecer"
+            android:text="Restablecer"/>
 
     </LinearLayout>
     <RelativeLayout
@@ -39,7 +34,8 @@
 
         <ImageView
             style="@style/MyListImage"
-            android:id="@+id/example_image"/>
+            android:id="@+id/example_image"
+            android:background="@drawable/item_options"/>
 
         <TextView
             android:layout_width="fill_parent"
@@ -47,8 +43,6 @@
             android:layout_toRightOf="@id/example_image"
             style="@style/MyListTitle"
             android:id="@+id/nombreAlumno"/>
-
-
     </RelativeLayout>
 
 </FrameLayout>

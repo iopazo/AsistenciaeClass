@@ -9,11 +9,19 @@ public class Alumno {
     private String nombre;
     private int asistencia;
     private int idClaseSede;
-    private boolean sincronizado;
+    private int estado;
+    private String firma;
 
     public Alumno(int _idAlumnoCursoClaseSede, String _nombre) {
         this.setIdAlumnoCursoClaseSede(_idAlumnoCursoClaseSede);
         this.setNombre(_nombre);
+    }
+
+    public Alumno(int _idAlumnoCursoClaseSede, String _nombre, int _estado, int _idClaseSede) {
+        this.setIdAlumnoCursoClaseSede(_idAlumnoCursoClaseSede);
+        this.setNombre(_nombre);
+        this.setEstado(_estado);
+        this.setIdClaseSede(_idClaseSede);
     }
 
     public int getIdAlumnoCursoClaseSede() {
@@ -40,19 +48,27 @@ public class Alumno {
         this.asistencia = asistencia;
     }
 
-    public boolean isSincronizado() {
-        return sincronizado;
-    }
-
-    public void setSincronizado(boolean sincronizado) {
-        this.sincronizado = sincronizado;
-    }
-
     public int getIdClaseSede() {
         return idClaseSede;
     }
 
     public void setIdClaseSede(int idClaseSede) {
         this.idClaseSede = idClaseSede;
+    }
+
+    public int getEstado() {
+        return estado;
+    }
+
+    public void setEstado(int estado) {
+        this.estado = estado;
+    }
+
+    public String getFirma() {
+        return firma;
+    }
+
+    public void setFirma(String firma) {
+        this.firma = firma;
     }
 }

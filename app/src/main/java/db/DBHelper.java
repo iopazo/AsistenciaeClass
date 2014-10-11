@@ -35,25 +35,31 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_NOMBRE_CLASE = "NOMBRE";
     public static final String COLUMN_FECHA = "FECHA";
     public static final String COLUMN_HORA = "HORA";
+    public static final String COLUMN_ESTADO_CLASE = "ESTADO_CLASE";
 
     private static final String DB_CREATE_CLASE  =
             "CREATE TABLE " + TABLE_CLASE + " (" + COLUMN_ID_CLASE + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "" + COLUMN_ID_CLASE_SEDE + " INTEGER NOT NULL, " +
                     "" + COLUMN_NOMBRE_CLASE + " VARCHAR(250), " +
                     "" + COLUMN_FECHA + " DATE, " +
-                    "" + COLUMN_HORA + " VARCHAR(8))";
+                    "" + COLUMN_HORA + " VARCHAR(8), " +
+                    "" + COLUMN_ESTADO_CLASE + " INTEGER(3))";
 
     //Columnas tabla alumnos_cursos_clases_sedes
     public static final String COLUMN_ID_ALUMNO = "ID";
     public static final String COLUMN_ID_ALUMNO_CLASE_SEDE = "ID_ALUMNO_CLASE_SEDE";
     public static final String COLUMN_NOMBRE_ALUMNO = "NOMBRE_ALUMNO";
     public static final String COLUMN_ID_CLASE_SEDE_FK = "ID_CLASE_SEDE_FK";
+    public static final String COLUMN_ESTADO = "ESTADO";
+    public static final String COLUMN_FIRMA = "FIRMA";
 
     private static final String DB_CREATE_ALUMNO  =
             "CREATE TABLE " + TABLE_ALUMNO + " (" + COLUMN_ID_ALUMNO + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "" + COLUMN_ID_ALUMNO_CLASE_SEDE + " INTEGER NOT NULL, " +
                     "" + COLUMN_NOMBRE_ALUMNO + " VARCHAR(250), " +
-                    "" + COLUMN_ID_CLASE_SEDE_FK + " INTEGER)";
+                    "" + COLUMN_ID_CLASE_SEDE_FK + " INTEGER, " +
+                    "" + COLUMN_FIRMA + " TEXT," +
+                    "" + COLUMN_ESTADO + " INTEGER(3))";
 
     public DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
