@@ -67,7 +67,6 @@ public class Alumnos extends ListActivity implements Interface {
         }
 
         //Traemos los alumnos
-        //alumnos = mClasesource.getAlumnoByClass(Integer.parseInt(ID_CLASE));
         alumnos = mClasesource.getAlumnoByClass(Integer.parseInt(ID_CLASE));
 
         swipeListView.setSwipeListViewListener(new BaseSwipeListViewListener() {
@@ -94,7 +93,12 @@ public class Alumnos extends ListActivity implements Interface {
             @Override
             public void onClickFrontView(int position) {
                 Log.d("swipe", String.format("onClickFrontView %d", position));
-                swipeListView.openAnimate(position); //when you touch front view it will open
+                Intent intent = new Intent(Alumnos.this, FirmaAlumno.class);
+                intent.putExtra("nombre", alumnos.get(position).getNombre());
+                intent.putExtra("id", alumnos.get(position).getIdAlumnoCursoClaseSede());
+                intent.putExtra("nombre_clase", NOMBRE_CLASE);
+                startActivityForResult(intent, 1);
+                //swipeListView.openAnimate(position); //when you touch front view it will open
             }
             @Override
             public void onClickBackView(int position) {
