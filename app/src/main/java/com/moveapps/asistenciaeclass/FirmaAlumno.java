@@ -3,6 +3,7 @@ package com.moveapps.asistenciaeclass;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,7 +13,8 @@ import android.widget.TextView;
 
 public class FirmaAlumno extends Activity implements OnClickListener {
 
-    static String ID_ALUMNO;
+    static String TAG = FirmaAlumno.class.getSimpleName();
+    static int ID_ALUMNO;
     static String NOMBRE_ALUMNO;
     static String NOMBRE_CLASE;
     @Override
@@ -23,13 +25,15 @@ public class FirmaAlumno extends Activity implements OnClickListener {
         //Obtenemos los parametros enviados desde la vista Clases
         Intent intent = getIntent();
         if(intent.hasExtra("id")) {
-            ID_ALUMNO = intent.getStringExtra("id");
+            ID_ALUMNO = intent.getIntExtra("id", 0);
         }
         if(intent.hasExtra("nombre")) {
             NOMBRE_ALUMNO = String.format("%s", intent.getStringExtra("nombre"));
             TextView breadcrumb = (TextView)findViewById(R.id.bcrumbText);
             breadcrumb.setText(NOMBRE_ALUMNO);
         }
+
+        Log.d(TAG, "ID ALUMNO " + ID_ALUMNO);
     }
 
 

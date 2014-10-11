@@ -111,12 +111,12 @@ public class Alumnos extends ListActivity implements Interface {
             }
         });
 
-        swipeListView.setSwipeMode(SwipeListView.SWIPE_MODE_BOTH); // there are five swiping modes
-        swipeListView.setSwipeActionLeft(SwipeListView.SWIPE_ACTION_DISMISS); //there are four swipe actions
+        swipeListView.setSwipeMode(SwipeListView.SWIPE_MODE_RIGHT); // there are five swiping modes
+        //swipeListView.setSwipeActionLeft(SwipeListView.SWIPE_ACTION_DISMISS); //there are four swipe actions
         swipeListView.setSwipeActionRight(SwipeListView.SWIPE_ACTION_REVEAL);
         swipeListView.setOffsetLeft(Utils.convertDpToPixel(0f, getResources())); // left side offset
-        swipeListView.setOffsetRight(Utils.convertDpToPixel(80f, getResources())); // right side offset
-        swipeListView.setAnimationTime(500); // Animation time
+        swipeListView.setOffsetRight(Utils.convertDpToPixel(40f, getResources())); // right side offset
+        swipeListView.setAnimationTime(400); // Animation time
         swipeListView.setSwipeOpenOnLongPress(true); // enable or disable SwipeOpenOnLongPress
 
         swipeListView.setAdapter(adapter);
