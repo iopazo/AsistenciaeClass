@@ -46,7 +46,6 @@
             android:layout_height="35dp"
             android:text="ACEPTAR"
             android:id="@+id/buttonAceptar"
-            android:onClick="aceptarFirma"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp" />

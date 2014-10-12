@@ -14,16 +14,15 @@ import com.fortysevendeg.swipelistview.SwipeListView;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import db.DBClaseSource;
 import models.Alumno;
 import models.AlumnoAdapter;
-import models.Interface;
 
 
-public class Alumnos extends ListActivity implements Interface {
+public class Alumnos extends ListActivity {
 
+    static String PASSWORD;
     static String ID_CLASE;
     static String NOMBRE_CLASE;
     static final String TAG = Alumnos.class.getSimpleName();
@@ -40,9 +39,23 @@ public class Alumnos extends ListActivity implements Interface {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alumnos);
 
+        //Obtenemos los parametros enviados desde la vista Clases
+        Intent intent = getIntent();
+        if(intent.hasExtra("id")) {
+            ID_CLASE = intent.getStringExtra("id");
+        }
+        if(intent.hasExtra("password")) {
+            PASSWORD = intent.getStringExtra("password");
+        }
+        if(intent.hasExtra("title")) {
+            NOMBRE_CLASE = String.format("Class %s", intent.getStringExtra("title"));
+            TextView breadcrumb = (TextView)findViewById(R.id.bcrumbText);
+            breadcrumb.setText(NOMBRE_CLASE);
+        }
+
         swipeListView = (SwipeListView)findViewById(R.id.example_swipe_lv_list);
         alumnoData = new ArrayList<Alumno>();
-        adapter = new AlumnoAdapter(this, R.layout.custom_swipe_row, alumnoData);
+        adapter = new AlumnoAdapter(this, R.layout.custom_swipe_row, alumnoData, PASSWORD);
 
 
         //Iniciamos la instancia y abrimos la base de datos
@@ -52,91 +65,10 @@ public class Alumnos extends ListActivity implements Interface {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        //Obtenemos los parametros enviados desde la vista Clases
-        Intent intent = getIntent();
-        if(intent.hasExtra("id")) {
-            ID_CLASE = intent.getStringExtra("id");
-        }
-        if(intent.hasExtra("title")) {
-            NOMBRE_CLASE = String.format("Class %s", intent.getStringExtra("title"));
-            TextView breadcrumb = (TextView)findViewById(R.id.bcrumbText);
-            breadcrumb.setText(NOMBRE_CLASE);
-        }
 
         //Traemos los alumnos
         alumnos = mClasesource.getAlumnoByClass(Integer.parseInt(ID_CLASE));
-
-        swipeListView.setSwipeListViewListener(new BaseSwipeListViewListener() {
-            @Override
-            public void onOpened(int position, boolean toRight) {
-            }
-            @Override
-            public void onClosed(int position, boolean fromRight) {
-            }
-            @Override
-            public void onListChanged() {
-            }
-            @Override
-            public void onMove(int position, float x) {
-            }
-            @Override
-            public void onStartOpen(int position, int action, boolean right) {
-                Log.d("swipe", String.format("onStartOpen %d - action %d", position, action));
-            }
-            @Override
-            public void onStartClose(int position, boolean right) {
-                Log.d("swipe", String.format("onStartClose %d", position));
-            }
-            @Override
-            public void onClickFrontView(int position) {
-                /*
-                Al presionar sobre el nombre del alumno vamos a la vvista de formas solo si Firma esta seteada en 0
-                0: Sin accion
-                1: Firma
-                2: Ausente
-                 */
-                Intent intent = new Intent(Alumnos.this, FirmaAlumno.class);
-                intent.putExtra("nombre", alumnos.get(position).getNombre());
-                intent.putExtra("id", alumnos.get(position).getIdAlumnoCursoClaseSede());
-                intent.putExtra("nombre_clase", NOMBRE_CLASE);
-                startActivityForResult(intent, 1);
-                //swipeListView.openAnimate(position); //when you touch front view it will open
-            }
-            @Override
-            public void onClickBackView(int position) {
-                Log.d("swipe", String.format("onClickBackView %d", position));
-                swipeListView.closeAnimate(position);//when you touch back view it will close
-            }
-            @Override
-            public void onDismiss(int[] reverseSortedPositions) {
-
-            }
-        });
-
-        swipeListView.setSwipeMode(SwipeListView.SWIPE_MODE_RIGHT); // there are five swiping modes
-        //swipeListView.setSwipeActionLeft(SwipeListView.SWIPE_ACTION_DISMISS); //there are four swipe actions
-        swipeListView.setSwipeActionRight(SwipeListView.SWIPE_ACTION_REVEAL);
-        swipeListView.setOffsetLeft(Utils.convertDpToPixel(0f, getResources())); // left side offset
-        swipeListView.setOffsetRight(Utils.convertDpToPixel(50f, getResources())); // right side offset
-        swipeListView.setAnimationTime(400); // Animation time
-        //swipeListView.setSwipeOpenOnLongPress(true); // enable or disable SwipeOpenOnLongPress
-
-        swipeListView.setAdapter(adapter);
-
-        for(int i = 0; i < alumnos.size(); i++) {
-            alumnoData.add(new Alumno(alumnos.get(i).getIdAlumnoCursoClaseSede(), alumnos.get(i).getNombre()));
-        }
-        adapter.notifyDataSetChanged();
-        /*
-        if(alumnos != null) {
-            //Variable enviada para armar los item de la lista
-            ArrayList<Map<String, String>> values = this.crearListado(alumnos);
-            String[] from = {"nombre", "id"};
-            int[] to = {R.id.label};
-
-            SimpleAdapter adapter = new SimpleAdapter(this, values, R.layout.item_layout, from, to);
-            setListAdapter(adapter);
-        }*/
+        onLoadSwipeListener();
     }
 
     @Override
@@ -144,6 +76,9 @@ public class Alumnos extends ListActivity implements Interface {
         super.onResume();
         try {
             mClasesource.open();
+            //Traemos los alumnos
+            alumnos = mClasesource.getAlumnoByClass(Integer.parseInt(ID_CLASE));
+            onLoadSwipeListener();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -174,14 +109,71 @@ public class Alumnos extends ListActivity implements Interface {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public ArrayList<Map<String, String>> crearListado(ArrayList arrayList) {
-        ArrayList<Map<String, String>> listadoCursos = new ArrayList<Map<String, String>>();
+    private void onLoadSwipeListener() {
+        alumnoData.removeAll(alumnoData);
+        swipeListView.setSwipeListViewListener(new BaseSwipeListViewListener() {
+            @Override
+            public void onOpened(int position, boolean toRight) {
+            }
+            @Override
+            public void onClosed(int position, boolean fromRight) {
+            }
+            @Override
+            public void onListChanged() {
+            }
+            @Override
+            public void onMove(int position, float x) {
+            }
+            @Override
+            public void onStartOpen(int position, int action, boolean right) {
+                Log.d("swipe", String.format("onStartOpen %d - action %d", position, action));
+            }
+            @Override
+            public void onStartClose(int position, boolean right) {
+                Log.d("swipe", String.format("onStartClose %d", position));
+            }
+            @Override
+            public void onClickFrontView(int position) {
+                /*
+                Al presionar sobre el nombre del alumno vamos a la vvista de formas solo si Firma esta seteada en 0
+                0: Sin accion
+                1: Firma
+                2: Ausente
+                 */
+                if(alumnos.get(position).getEstado() == 0) {
+                    Intent intent = new Intent(Alumnos.this, FirmaAlumno.class);
+                    intent.putExtra("nombre", alumnos.get(position).getNombre());
+                    intent.putExtra("id", alumnos.get(position).getIdAlumnoCursoClaseSede());
+                    intent.putExtra("nombre_clase", NOMBRE_CLASE);
+                    intent.putExtra("id_clase", ID_CLASE);
+                    startActivityForResult(intent, 1);
+                }
+                //swipeListView.openAnimate(position); //when you touch front view it will open
+            }
+            @Override
+            public void onClickBackView(int position) {
+                Log.d("swipe", String.format("onClickBackView %d", position));
+                swipeListView.closeAnimate(position);//when you touch back view it will close
+            }
+            @Override
+            public void onDismiss(int[] reverseSortedPositions) {
 
-        for (int i = 0; i < arrayList.size(); i++) {
-            Alumno alumno = (Alumno)arrayList.get(i);
-            listadoCursos.add(Utils.putData(Integer.toString(alumno.getIdAlumnoCursoClaseSede()), alumno.getNombre()));
+            }
+        });
+
+        swipeListView.setSwipeMode(SwipeListView.SWIPE_MODE_RIGHT); // there are five swiping modes
+        //swipeListView.setSwipeActionLeft(SwipeListView.SWIPE_ACTION_DISMISS); //there are four swipe actions
+        swipeListView.setSwipeActionRight(SwipeListView.SWIPE_ACTION_REVEAL);
+        swipeListView.setOffsetLeft(Utils.convertDpToPixel(0f, getResources())); // left side offset
+        swipeListView.setOffsetRight(Utils.convertDpToPixel(50f, getResources())); // right side offset
+        swipeListView.setAnimationTime(400); // Animation time
+        //swipeListView.setSwipeOpenOnLongPress(true); // enable or disable SwipeOpenOnLongPress
+
+        swipeListView.setAdapter(adapter);
+
+        for(int i = 0; i < alumnos.size(); i++) {
+            alumnoData.add(new Alumno(alumnos.get(i).getIdAlumnoCursoClaseSede(), alumnos.get(i).getNombre(), alumnos.get(i).getEstado()));
         }
-        return listadoCursos;
+        adapter.notifyDataSetChanged();
     }
 }

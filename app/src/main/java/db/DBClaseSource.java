@@ -126,7 +126,9 @@ public class DBClaseSource {
                 int id = cursor.getInt(cursor.getColumnIndex(dbHelper.COLUMN_ID_ALUMNO_CLASE_SEDE));
                 String nombre = cursor.getString(cursor.getColumnIndex(dbHelper.COLUMN_NOMBRE_ALUMNO));
                 int estado = cursor.getInt(cursor.getColumnIndex(dbHelper.COLUMN_ESTADO));
+                String firma = cursor.getString(cursor.getColumnIndex(dbHelper.COLUMN_FIRMA));
                 Alumno alumno = new Alumno(id, nombre, estado, idClase);
+                alumno.setFirma(firma);
                 alumnos.add(alumno);
                 cursor.moveToNext();
             }

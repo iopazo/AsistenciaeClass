@@ -59,7 +59,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     "" + COLUMN_NOMBRE_ALUMNO + " VARCHAR(250), " +
                     "" + COLUMN_ID_CLASE_SEDE_FK + " INTEGER, " +
                     "" + COLUMN_FIRMA + " TEXT," +
-                    "" + COLUMN_ESTADO + " INTEGER(3))";
+                    "" + COLUMN_ESTADO + " INTEGER(3) DEFAULT 0)";
 
     public DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);

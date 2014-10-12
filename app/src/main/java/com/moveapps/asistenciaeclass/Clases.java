@@ -18,13 +18,13 @@ import java.util.Map;
 import db.DBClaseSource;
 import db.DBUsuarioSource;
 import models.Clase;
-import models.Interface;
+import models.InterfaceListado;
 import models.Usuario;
 
 
-public class Clases extends ListActivity implements Interface {
+public class Clases extends ListActivity implements InterfaceListado {
 
-    static String ID_CURSO;
+    static String PASSWORD;
     static final String TAG = Clases.class.getSimpleName();
     protected DBUsuarioSource mUsuarioDatasource;
     protected DBClaseSource mClaseDatasource;
@@ -35,7 +35,6 @@ public class Clases extends ListActivity implements Interface {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clases);
-        Log.d(TAG, "In the onCreate() event");
 
         mUsuarioDatasource = new DBUsuarioSource(Clases.this);
         mClaseDatasource = new DBClaseSource(Clases.this);
@@ -45,6 +44,11 @@ public class Clases extends ListActivity implements Interface {
             mClaseDatasource.open();
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        Intent intent = getIntent();
+
+        if(intent.hasExtra("password")) {
+            PASSWORD = intent.getStringExtra("password");
         }
 
         clases = mClaseDatasource.list();
@@ -109,6 +113,7 @@ public class Clases extends ListActivity implements Interface {
         Intent intent = new Intent(this, Alumnos.class);
         intent.putExtra("title", nombre);
         intent.putExtra("id", idClase);
+        intent.putExtra("password", PASSWORD);
         startActivityForResult(intent, 1);
     }
 

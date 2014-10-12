@@ -58,6 +58,7 @@ public class Login extends Activity {
         userDB.getUser(usuarioDataSource);
         if(userDB.getUsuarioDB().getId() > 0 && userDB.getUsuarioDB().isLogin()) {
             Intent intent = new Intent(Login.this, Clases.class);
+            intent.putExtra("password", userDB.getUsuarioDB().getPassword());
             startActivity(intent);
             finish();
         }
@@ -122,6 +123,7 @@ public class Login extends Activity {
                 Intent intent = new Intent(Login.this, Clases.class);
                 Usuario usuario = new Usuario(data.get("id").getAsInt(), password.getText().toString(), true);
                 usuarioDataSource.insertUsuario(usuario);
+                intent.putExtra("password", password.getText().toString());
                 startActivity(intent);
                 pd.cancel();
                 finish();
@@ -162,6 +164,7 @@ public class Login extends Activity {
 
         } else if(password.getText().toString().equals(userDB.getUsuarioDB().getPassword().toString())){
             if(usuarioDataSource.updateUsuario(userDB.getUsuarioDB().getId(), true) > 0) {
+                intent.putExtra("password", userDB.getUsuarioDB().getPassword());
                 startActivity(intent);
                 pd.cancel();
                 finish();

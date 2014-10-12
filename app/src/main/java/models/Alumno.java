@@ -17,6 +17,12 @@ public class Alumno {
         this.setNombre(_nombre);
     }
 
+    public Alumno(int _idAlumnoCursoClaseSede, String _nombre, int _estado) {
+        this.setIdAlumnoCursoClaseSede(_idAlumnoCursoClaseSede);
+        this.setNombre(_nombre);
+        this.setEstado(_estado);
+    }
+
     public Alumno(int _idAlumnoCursoClaseSede, String _nombre, int _estado, int _idClaseSede) {
         this.setIdAlumnoCursoClaseSede(_idAlumnoCursoClaseSede);
         this.setNombre(_nombre);

@@ -12,7 +12,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/botonFirma"
+            android:id="@+id/botonAusente"
             android:background="@drawable/radio_button_ausente"
             style="@style/BotonAusente"
             android:text="Ausente"/>
@@ -20,7 +20,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/botonAusente"
+            android:id="@+id/botonRestablecer"
             style="@style/BotonRestablecer"
             android:background="@drawable/radio_button_restablecer"
             android:text="Restablecer"/>
@@ -35,14 +35,46 @@
         <ImageView
             style="@style/MyListImage"
             android:id="@+id/example_image"
-            android:background="@drawable/item_options"/>
+            android:background="@drawable/item_options"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentEnd="false"
+            android:layout_alignParentTop="false"
+            android:layout_alignParentBottom="false"
+            android:layout_centerVertical="true" />
 
         <TextView
-            android:layout_width="fill_parent"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/example_image"
             style="@style/MyListTitle"
-            android:id="@+id/nombreAlumno"/>
+            android:text="Rodrigo Armijo Aviles"
+            android:id="@+id/nombreAlumno"
+            android:layout_centerVertical="true" />
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="13dp"
+            android:id="@+id/presente"
+            android:background="@drawable/check_verde"
+            android:layout_toStartOf="@+id/ausente"
+            android:layout_marginRight="55dp"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/ausente"
+            android:visibility="invisible"
+            />
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="13dp"
+            android:id="@+id/ausente"
+            android:background="@drawable/check_rojo"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="25dp"
+            android:layout_centerVertical="true"
+            android:visibility="invisible"
+            />
     </RelativeLayout>
 
 </FrameLayout>
