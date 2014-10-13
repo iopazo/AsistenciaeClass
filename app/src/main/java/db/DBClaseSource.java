@@ -88,11 +88,13 @@ public class DBClaseSource {
      */
     public ArrayList<Clase> list() throws NullPointerException {
         ArrayList<Clase> clases = new ArrayList<Clase>();
+        String whereClause = dbHelper.COLUMN_ESTADO_CLASE + " = ?";
+
         Cursor cursor = mDatabase.query(
                 DBHelper.TABLE_CLASE,
                 new String[] {dbHelper.COLUMN_ID_CLASE_SEDE, dbHelper.COLUMN_NOMBRE_CLASE},
-                null,
-                null,
+                whereClause,
+                new String[] {String.format("%d", 0)},
                 null,
                 null,
                 null

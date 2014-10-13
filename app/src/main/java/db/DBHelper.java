@@ -43,7 +43,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     "" + COLUMN_NOMBRE_CLASE + " VARCHAR(250), " +
                     "" + COLUMN_FECHA + " DATE, " +
                     "" + COLUMN_HORA + " VARCHAR(8), " +
-                    "" + COLUMN_ESTADO_CLASE + " INTEGER(3))";
+                    "" + COLUMN_ESTADO_CLASE + " INTEGER(3) DEFAULT 0)";
 
     //Columnas tabla alumnos_cursos_clases_sedes
     public static final String COLUMN_ID_ALUMNO = "ID";
