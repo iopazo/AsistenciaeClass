@@ -73,13 +73,4 @@
         swipe:swipeCloseAllItemsWhenMoveList="true"
         swipe:swipeMode="both"
     />
-
-    <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:id="@android:id/list"
-        android:layout_gravity="center_vertical"
-        android:choiceMode="singleChoice"
-        android:drawSelectorOnTop="true"
-        android:listSelector="@drawable/listitem_selector" />
 </LinearLayout>

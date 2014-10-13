@@ -1,18 +1,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.moveapps.asistenciaeclass.Alumnos" >
-    <item android:id="@+id/action_settings"
-        android:icon="@drawable/engranaje"
+    <item android:id="@+id/save_class"
+        android:icon="@drawable/ic_action_save"
         android:title="@string/action_settings"
         android:orderInCategory="100"
         android:showAsAction="ifRoom"
         >
-        <menu>
-            <item android:id="@+id/action_salir"
-                android:title="@string/action_settings"
-                android:orderInCategory="100"
-                android:showAsAction="never">
-            </item>
-        </menu>
     </item>
 </menu>

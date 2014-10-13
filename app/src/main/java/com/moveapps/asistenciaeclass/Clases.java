@@ -1,28 +1,27 @@
 package com.moveapps.asistenciaeclass;
 
-import android.app.ListActivity;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
+
+import com.fortysevendeg.swipelistview.BaseSwipeListViewListener;
+import com.fortysevendeg.swipelistview.SwipeListView;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import db.DBClaseSource;
 import db.DBUsuarioSource;
 import models.Clase;
-import models.InterfaceListado;
+import models.ClaseAdapter;
 import models.Usuario;
 
 
-public class Clases extends ListActivity implements InterfaceListado {
+public class Clases extends Activity {
 
     static String PASSWORD;
     static final String TAG = Clases.class.getSimpleName();
@@ -31,10 +30,21 @@ public class Clases extends ListActivity implements InterfaceListado {
     protected Usuario dbUsuario;
     static ArrayList<Clase> clases = null;
 
+    SwipeListView swipeListView;
+    ClaseAdapter adapter;
+    List<Clase> claseData;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clases);
+
+        Intent intent = getIntent();
+
+        if (intent.hasExtra("password")) {
+            PASSWORD = intent.getStringExtra("password");
+        }
 
         mUsuarioDatasource = new DBUsuarioSource(Clases.this);
         mClaseDatasource = new DBClaseSource(Clases.this);
@@ -45,42 +55,32 @@ public class Clases extends ListActivity implements InterfaceListado {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        Intent intent = getIntent();
 
-        if(intent.hasExtra("password")) {
-            PASSWORD = intent.getStringExtra("password");
-        }
+        swipeListView = (SwipeListView) findViewById(R.id.clases_swipe_list);
+        claseData = new ArrayList<Clase>();
+        adapter = new ClaseAdapter(this, R.layout.custom_clases_swipe_row, claseData, mClaseDatasource);
 
+        //Traemos los alumnos
         clases = mClaseDatasource.list();
-        if(clases != null) {
-            //Variable enviada para armar los item de la lista
-            ArrayList<Map<String, String>> values = this.crearListado(clases);
-            String[] from = {"nombre", "id"};
-            int[] to = {R.id.label};
-
-            SimpleAdapter adapter = new SimpleAdapter(this, values, R.layout.item_layout, from, to);
-            setListAdapter(adapter);
-        }
-
+        onLoadSwipeListener();
     }
 
-    public void onStart()
-    {
+    public void onStart() {
         super.onStart();
         Log.d(TAG, "In the onStart() event");
     }
-    public void onRestart()
-    {
+
+    public void onRestart() {
         super.onRestart();
         Log.d(TAG, "In the onRestart() event");
     }
-    public void onStop()
-    {
+
+    public void onStop() {
         super.onStop();
         Log.d(TAG, "In the onStop() event");
     }
-    public void onDestroy()
-    {
+
+    public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "In the onDestroy() event");
     }
@@ -91,6 +91,7 @@ public class Clases extends ListActivity implements InterfaceListado {
         try {
             mClaseDatasource.open();
             mUsuarioDatasource.open();
+            onLoadSwipeListener();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -103,29 +104,6 @@ public class Clases extends ListActivity implements InterfaceListado {
         super.onPause();
         mUsuarioDatasource.close();
         mClaseDatasource.close();
-    }
-
-    @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        HashMap<String, String> item = (HashMap<String,String>) getListAdapter().getItem(position);
-        String nombre = item.get("nombre");
-        String idClase = item.get("id");
-        Intent intent = new Intent(this, Alumnos.class);
-        intent.putExtra("title", nombre);
-        intent.putExtra("id", idClase);
-        intent.putExtra("password", PASSWORD);
-        startActivityForResult(intent, 1);
-    }
-
-    // En este metodo recojemos los datos devueltos desde la Actividad Clases
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // TODO Auto-generated method stub
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "onActivityResult");
-        //if(data.getExtras().containsKey("ID_CLASE")){
-            //Aca es cuando vuelve de la vista de alumnos...
-        //}
     }
 
     @Override
@@ -146,7 +124,7 @@ public class Clases extends ListActivity implements InterfaceListado {
             usuario.getUser(mUsuarioDatasource);
             dbUsuario = usuario.getUsuarioDB();
 
-            if(mUsuarioDatasource.updateUsuario(dbUsuario.getId(), false) > 0) {
+            if (mUsuarioDatasource.updateUsuario(dbUsuario.getId(), false) > 0) {
                 Intent intent = new Intent(Clases.this, Login.class);
                 startActivity(intent);
                 finish();
@@ -157,14 +135,85 @@ public class Clases extends ListActivity implements InterfaceListado {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public ArrayList<Map<String, String>> crearListado(ArrayList arrayList) {
-        ArrayList<Map<String, String>> listadoCursos = new ArrayList<Map<String, String>>();
+    private void onLoadSwipeListener() {
+        claseData.removeAll(claseData);
+        swipeListView.setSwipeListViewListener(new BaseSwipeListViewListener() {
+            int lastKnownPosition = -1;
+            @Override
+            public void onOpened(int position, boolean toRight) {
+            }
 
-        for (int i = 0; i < arrayList.size(); i++) {
-            Clase clase = (Clase)arrayList.get(i);
-            listadoCursos.add(Utils.putData(Integer.toString(clase.getId()), clase.getNombre()));
+            @Override
+            public void onClosed(int position, boolean fromRight) {
+                Log.d("swipe", String.format("onClosedddd %d", position));
+            }
+
+            @Override
+            public void onListChanged() {
+            }
+
+            @Override
+            public void onMove(int position, float x) {
+            }
+
+            @Override
+            public void onStartOpen(int position, int action, boolean right) {
+                Log.d("swipe", String.format("onStartOpen %d - action %d", position, action));
+            }
+
+            @Override
+            public void onStartClose(int position, boolean right) {
+                Log.d("swipe", String.format("onStartClose %d", position));
+            }
+
+            @Override
+            public void onClickFrontView(int position) {
+                /*
+                Al presionar sobre el nombre del alumno vamos a la vvista de formas solo si Firma esta seteada en 0
+                0: Sin accion
+                1: Firma
+                2: Ausente
+                 */
+                if (clases.get(position).getEstado() == 0) {
+                    Intent intent = new Intent(Clases.this, Alumnos.class);
+                    intent.putExtra("title", clases.get(position).getNombre());
+                    intent.putExtra("id", clases.get(position).getId());
+                    intent.putExtra("password", PASSWORD);
+                    startActivityForResult(intent, 1);
+                }
+                //swipeListView.openAnimate(position); //when you touch front view it will open
+            }
+
+            @Override
+            public void onClickBackView(int position) {
+                Log.d("swipe", String.format("onClickBackView %d", position));
+                swipeListView.closeAnimate(position);//when you touch back view it will close
+            }
+
+            @Override
+            public void onDismiss(int[] reverseSortedPositions) {
+                for (int position : reverseSortedPositions) {
+                    claseData.remove(position);
+                }
+                adapter.notifyDataSetChanged();
+                Log.d("swipe", String.format("onClosed2 %d", reverseSortedPositions[0]));
+            }
+        });
+
+        swipeListView.setSwipeMode(SwipeListView.SWIPE_MODE_BOTH); // there are five swiping modes
+        swipeListView.setSwipeActionLeft(SwipeListView.SWIPE_ACTION_DISMISS); //there are four swipe actions
+        swipeListView.setSwipeActionRight(SwipeListView.SWIPE_ACTION_REVEAL);
+        swipeListView.setOffsetLeft(Utils.convertDpToPixel(0f, getResources())); // left side offset
+        swipeListView.setOffsetRight(Utils.convertDpToPixel(50f, getResources())); // right side offset
+        swipeListView.setAnimationTime(400); // Animation time
+        //swipeListView.setSwipeOpenOnLongPress(true); // enable or disable SwipeOpenOnLongPress
+
+        swipeListView.setAdapter(adapter);
+
+        for (int i = 0; i < clases.size(); i++) {
+            claseData.add(new Clase(clases.get(i).getId(), clases.get(i).getNombre(), clases.get(i).getEstado()));
         }
-        return listadoCursos;
+        adapter.notifyDataSetChanged();
+
     }
 }

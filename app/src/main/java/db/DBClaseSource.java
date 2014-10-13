@@ -84,17 +84,18 @@ public class DBClaseSource {
     0: Activa
     1: Cerrada
     2: Sincronizada
+    3: Eliminada
     Solo mostramos las clases que esten activas.
      */
     public ArrayList<Clase> list() throws NullPointerException {
         ArrayList<Clase> clases = new ArrayList<Clase>();
-        String whereClause = dbHelper.COLUMN_ESTADO_CLASE + " = ?";
+        String whereClause = dbHelper.COLUMN_ESTADO_CLASE + " != ?";
 
         Cursor cursor = mDatabase.query(
                 DBHelper.TABLE_CLASE,
-                new String[] {dbHelper.COLUMN_ID_CLASE_SEDE, dbHelper.COLUMN_NOMBRE_CLASE},
+                new String[] {dbHelper.COLUMN_ID_CLASE_SEDE, dbHelper.COLUMN_NOMBRE_CLASE, dbHelper.COLUMN_ESTADO_CLASE},
                 whereClause,
-                new String[] {String.format("%d", 0)},
+                new String[] {String.format("%d", 3)},
                 null,
                 null,
                 null
@@ -105,7 +106,8 @@ public class DBClaseSource {
                 //Aca sacamos el valor
                 int id = cursor.getInt(cursor.getColumnIndex(dbHelper.COLUMN_ID_CLASE_SEDE));
                 String nombre = cursor.getString(cursor.getColumnIndex(dbHelper.COLUMN_NOMBRE_CLASE));
-                Clase clase = new Clase(id, nombre);
+                int estado = cursor.getInt(cursor.getColumnIndex(dbHelper.COLUMN_ESTADO_CLASE));
+                Clase clase = new Clase(id, nombre, estado);
                 clases.add(clase);
                 cursor.moveToNext();
             }

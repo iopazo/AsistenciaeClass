@@ -68,7 +68,7 @@
         <item name="android:textSize">17sp</item>
         <item name="android:textColor">#3179B6</item>
         <item name="android:textStyle">normal</item>
-        <item name="android:maxLines">2</item>
+        <item name="android:maxLines">4</item>
         <item name="android:ellipsize">end</item>
         <item name="android:layout_margin">15dp</item>
     </style>

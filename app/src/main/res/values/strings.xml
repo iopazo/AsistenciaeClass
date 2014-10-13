@@ -10,5 +10,6 @@
     <string name="logoEclass">logoEclass</string>
     <string name="title_activity_firma_alumno">Student Sign</string>
     <string name="hello_world">Hello world!</string>
+    <string name="action_cerrar">Close Class</string>
 
 </resources>

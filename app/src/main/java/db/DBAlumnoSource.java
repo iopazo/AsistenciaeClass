@@ -125,4 +125,24 @@ public class DBAlumnoSource {
         }
 
     }
+
+    /*
+    Se actualiza la clase a cerrada
+     */
+    public void cambiarEstadoClase(int idClaseSede, int estado) {
+        mDatabase.beginTransaction();
+        try {
+            String whereClause = dbHelper.COLUMN_ID_CLASE_SEDE + " = ?";
+            ContentValues values = new ContentValues();
+            values.put(dbHelper.COLUMN_ESTADO_CLASE, estado);
+            mDatabase.update(
+                    dbHelper.TABLE_CLASE,
+                    values,
+                    whereClause,
+                    new String[] {String.format("%d", idClaseSede)});
+            mDatabase.setTransactionSuccessful();
+        } finally {
+            mDatabase.endTransaction();
+        }
+    }
 }

@@ -49,39 +49,39 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
 
             holder = new ClaseHolder();
 
-            holder.nombreAlumno = (TextView)row.findViewById(R.id.nombreAlumno);
-            holder.botonAusente = (Button)row.findViewById(R.id.botonAusente);
-            holder.botonRestablecer = (Button)row.findViewById(R.id.botonRestablecer);
-            holder.presente = (ImageView)row.findViewById(R.id.presente);
-            holder.ausente = (ImageView)row.findViewById(R.id.ausente);
+            holder.nombreClase = (TextView)row.findViewById(R.id.nombreAlumno);
+            holder.botonSincronizar = (Button)row.findViewById(R.id.btnSincronizarClase);
+            holder.cerrado = (ImageView)row.findViewById(R.id.cerrada);
+            holder.sincronizado = (ImageView)row.findViewById(R.id.sincronizada);
             row.setTag(holder);
         } else {
             holder = (ClaseHolder)row.getTag();
         }
 
         final Clase claseData = data.get(position);
-        holder.nombreAlumno.setText(claseData.getNombre());
+        holder.nombreClase.setText(claseData.getNombre());
 
         /*
         Estado
         0: Nada
-        1: Presente
-        2: Ausente
+        1: Cerrado
+        2: Sincronizado
+        3: Eliminada
         */
         switch (claseData.getEstado()) {
             case 1:
-                holder.presente.setVisibility(View.VISIBLE);
+                holder.cerrado.setVisibility(View.VISIBLE);
                 break;
             case 2:
-                holder.ausente.setVisibility(View.VISIBLE);
+                holder.sincronizado.setVisibility(View.VISIBLE);
                 break;
             default:
-                holder.presente.setVisibility(View.INVISIBLE);
-                holder.ausente.setVisibility(View.INVISIBLE);
+                holder.cerrado.setVisibility(View.INVISIBLE);
+                holder.sincronizado.setVisibility(View.INVISIBLE);
                 break;
         }
 
-        holder.botonAusente.setOnClickListener(new View.OnClickListener() {
+        holder.botonSincronizar.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -89,23 +89,14 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
             }
         });
 
-        holder.botonRestablecer.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-
-
-            }
-        });
 
         return row;
     }
 
     static class ClaseHolder {
-        TextView nombreAlumno;
-        Button botonAusente;
-        Button botonRestablecer;
-        ImageView presente;
-        ImageView ausente;
+        TextView nombreClase;
+        Button botonSincronizar;
+        ImageView sincronizado;
+        ImageView cerrado;
     }
 }

@@ -17,6 +17,12 @@ public class Clase {
         setNombre(_nombre);
     }
 
+    public Clase(int _id, String _nombre, int _estado) {
+        setId(_id);
+        setNombre(_nombre);
+        setEstado(_estado);
+    }
+
     public String getNombre() {
         return nombre;
     }

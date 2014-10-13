@@ -1,6 +1,8 @@
 package com.moveapps.asistenciaeclass;
 
-import android.app.ListActivity;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,10 +22,10 @@ import models.Alumno;
 import models.AlumnoAdapter;
 
 
-public class Alumnos extends ListActivity {
+public class Alumnos extends Activity {
 
     static String PASSWORD;
-    static String ID_CLASE;
+    static int ID_CLASE;
     static String NOMBRE_CLASE;
     static final String TAG = Alumnos.class.getSimpleName();
     protected DBAlumnoSource mAlumnosource;
@@ -42,7 +44,7 @@ public class Alumnos extends ListActivity {
         //Obtenemos los parametros enviados desde la vista Clases
         Intent intent = getIntent();
         if(intent.hasExtra("id")) {
-            ID_CLASE = intent.getStringExtra("id");
+            ID_CLASE = intent.getIntExtra("id", 0);
         }
         if(intent.hasExtra("password")) {
             PASSWORD = intent.getStringExtra("password");
@@ -66,7 +68,7 @@ public class Alumnos extends ListActivity {
         adapter = new AlumnoAdapter(this, R.layout.custom_alumno_swipe_row, alumnoData, PASSWORD, mAlumnosource);
 
         //Traemos los alumnos
-        alumnos = mAlumnosource.getAlumnoByClass(Integer.parseInt(ID_CLASE));
+        alumnos = mAlumnosource.getAlumnoByClass(ID_CLASE);
         onLoadSwipeListener();
     }
 
@@ -76,7 +78,7 @@ public class Alumnos extends ListActivity {
         try {
             mAlumnosource.open();
             //Traemos los alumnos
-            alumnos = mAlumnosource.getAlumnoByClass(Integer.parseInt(ID_CLASE));
+            alumnos = mAlumnosource.getAlumnoByClass(ID_CLASE);
             onLoadSwipeListener();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -102,8 +104,24 @@ public class Alumnos extends ListActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.save_class) {
+
+            AlertDialog.Builder saveDialog = new AlertDialog.Builder(this);
+            saveDialog.setTitle("Close Class?");
+            saveDialog.setMessage("This action can't be undone");
+            AlertDialog.Builder builder = saveDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    mAlumnosource.cambiarEstadoClase(ID_CLASE, 1);
+                    finish();
+                }
+            });
+
+            saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog, int which){
+                    dialog.cancel();
+                }
+            });
+            saveDialog.show();
         }
         return super.onOptionsItemSelected(item);
     }
