@@ -7,7 +7,7 @@ public class Clase {
 
     private int id;
     private String nombre;
-    private boolean sincronizado;
+    private int estado;
 
     public Clase() {
 
@@ -33,11 +33,11 @@ public class Clase {
         this.id = id;
     }
 
-    public boolean isSincronizado() {
-        return sincronizado;
+    public int getEstado() {
+        return estado;
     }
 
-    public void setSincronizado(boolean sincronizado) {
-        this.sincronizado = sincronizado;
+    public void setEstado(int estado) {
+        this.estado = estado;
     }
 }

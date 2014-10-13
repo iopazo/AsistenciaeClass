@@ -15,7 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import db.DBClaseSource;
+import db.DBAlumnoSource;
 import models.Alumno;
 import models.AlumnoAdapter;
 
@@ -26,7 +26,7 @@ public class Alumnos extends ListActivity {
     static String ID_CLASE;
     static String NOMBRE_CLASE;
     static final String TAG = Alumnos.class.getSimpleName();
-    protected DBClaseSource mClasesource;
+    protected DBAlumnoSource mAlumnosource;
     static ArrayList<Alumno> alumnos = null;
 
     SwipeListView swipeListView;
@@ -53,21 +53,20 @@ public class Alumnos extends ListActivity {
             breadcrumb.setText(NOMBRE_CLASE);
         }
 
-        swipeListView = (SwipeListView)findViewById(R.id.example_swipe_lv_list);
-        alumnoData = new ArrayList<Alumno>();
-        adapter = new AlumnoAdapter(this, R.layout.custom_swipe_row, alumnoData, PASSWORD);
-
-
         //Iniciamos la instancia y abrimos la base de datos
-        mClasesource = new DBClaseSource(Alumnos.this);
+        mAlumnosource = new DBAlumnoSource(Alumnos.this);
         try {
-            mClasesource.open();
+            mAlumnosource.open();
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
+        swipeListView = (SwipeListView)findViewById(R.id.example_swipe_lv_list);
+        alumnoData = new ArrayList<Alumno>();
+        adapter = new AlumnoAdapter(this, R.layout.custom_alumno_swipe_row, alumnoData, PASSWORD, mAlumnosource);
+
         //Traemos los alumnos
-        alumnos = mClasesource.getAlumnoByClass(Integer.parseInt(ID_CLASE));
+        alumnos = mAlumnosource.getAlumnoByClass(Integer.parseInt(ID_CLASE));
         onLoadSwipeListener();
     }
 
@@ -75,9 +74,9 @@ public class Alumnos extends ListActivity {
     protected void onResume() {
         super.onResume();
         try {
-            mClasesource.open();
+            mAlumnosource.open();
             //Traemos los alumnos
-            alumnos = mClasesource.getAlumnoByClass(Integer.parseInt(ID_CLASE));
+            alumnos = mAlumnosource.getAlumnoByClass(Integer.parseInt(ID_CLASE));
             onLoadSwipeListener();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -87,7 +86,7 @@ public class Alumnos extends ListActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        mClasesource.close();
+        mAlumnosource.close();
     }
 
     @Override
@@ -140,7 +139,7 @@ public class Alumnos extends ListActivity {
                 1: Firma
                 2: Ausente
                  */
-                if(alumnos.get(position).getEstado() == 0) {
+                if(alumnos.get(position).getEstado() != 1) {
                     Intent intent = new Intent(Alumnos.this, FirmaAlumno.class);
                     intent.putExtra("nombre", alumnos.get(position).getNombre());
                     intent.putExtra("id", alumnos.get(position).getIdAlumnoCursoClaseSede());

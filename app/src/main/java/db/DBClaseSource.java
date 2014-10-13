@@ -12,7 +12,6 @@ import com.google.gson.JsonObject;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import models.Alumno;
 import models.Clase;
 
 /**
@@ -80,12 +79,18 @@ public class DBClaseSource {
             }
         }
     }
-
+    /*
+    Estados de clase:
+    0: Activa
+    1: Cerrada
+    2: Sincronizada
+    Solo mostramos las clases que esten activas.
+     */
     public ArrayList<Clase> list() throws NullPointerException {
         ArrayList<Clase> clases = new ArrayList<Clase>();
         Cursor cursor = mDatabase.query(
                 DBHelper.TABLE_CLASE,
-                new String[] {DBHelper.COLUMN_ID_CLASE_SEDE, DBHelper.COLUMN_NOMBRE_CLASE},
+                new String[] {dbHelper.COLUMN_ID_CLASE_SEDE, dbHelper.COLUMN_NOMBRE_CLASE},
                 null,
                 null,
                 null,
@@ -104,36 +109,5 @@ public class DBClaseSource {
             }
         }
         return clases;
-    }
-
-    public ArrayList<Alumno> getAlumnoByClass(int idClase) {
-        ArrayList<Alumno> alumnos = new ArrayList<Alumno>();
-        String whereClause = dbHelper.COLUMN_ID_CLASE_SEDE_FK + " = ?";
-
-        Cursor cursor = mDatabase.query(
-                dbHelper.TABLE_ALUMNO,
-                new String[] {dbHelper.COLUMN_ID_ALUMNO_CLASE_SEDE, dbHelper.COLUMN_NOMBRE_ALUMNO, dbHelper.COLUMN_ESTADO, dbHelper.COLUMN_FIRMA
-                },
-                whereClause,
-                new String[]{String.format("%d", idClase)},
-                null,
-                null,
-                null
-        );
-
-        if(cursor.moveToFirst()) {
-            while (!cursor.isAfterLast()) {
-                int id = cursor.getInt(cursor.getColumnIndex(dbHelper.COLUMN_ID_ALUMNO_CLASE_SEDE));
-                String nombre = cursor.getString(cursor.getColumnIndex(dbHelper.COLUMN_NOMBRE_ALUMNO));
-                int estado = cursor.getInt(cursor.getColumnIndex(dbHelper.COLUMN_ESTADO));
-                String firma = cursor.getString(cursor.getColumnIndex(dbHelper.COLUMN_FIRMA));
-                Alumno alumno = new Alumno(id, nombre, estado, idClase);
-                alumno.setFirma(firma);
-                alumnos.add(alumno);
-                cursor.moveToNext();
-            }
-        }
-
-        return alumnos;
     }
 }

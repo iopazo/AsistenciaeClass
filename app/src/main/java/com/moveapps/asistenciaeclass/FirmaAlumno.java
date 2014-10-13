@@ -38,6 +38,7 @@ public class FirmaAlumno extends Activity implements OnClickListener {
     private DrawingView drawView;
     //buttons
     private Button newBtn, saveBtn;
+    private TextView cancelarLbl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +78,8 @@ public class FirmaAlumno extends Activity implements OnClickListener {
         //save button
         saveBtn = (Button)findViewById(R.id.buttonAceptar);
         saveBtn.setOnClickListener(this);
-
+        cancelarLbl = (TextView)findViewById(R.id.cancelar);
+        cancelarLbl.setOnClickListener(this);
     }
 
     @Override
@@ -118,25 +120,10 @@ public class FirmaAlumno extends Activity implements OnClickListener {
     @Override
     public void onClick(View view) {
         Alumnos alumnos = new Alumnos();
-        /*if(view.getId()==R.id.new_btn){
-            //new button
-            AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
-            newDialog.setTitle("New drawing");
-            newDialog.setMessage("Start new drawing (you will lose the current drawing)?");
-            newDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
-                public void onClick(DialogInterface dialog, int which){
-                    drawView.startNew();
-                    dialog.dismiss();
-                }
-            });
-            newDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
-                public void onClick(DialogInterface dialog, int which){
-                    dialog.cancel();
-                }
-            });
-            newDialog.show();
+        if(view.getId()==R.id.cancelar){
+            finish();
         }
-        else */if(view.getId()==R.id.buttonAceptar){
+        else if(view.getId()==R.id.buttonAceptar){
             //save drawing
             AlertDialog.Builder saveDialog = new AlertDialog.Builder(this);
             saveDialog.setTitle("Guardar Firma");
