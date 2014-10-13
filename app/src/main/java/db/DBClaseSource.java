@@ -9,9 +9,14 @@ import android.util.Log;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import models.Alumno;
 import models.Clase;
 
 /**
@@ -22,6 +27,7 @@ public class DBClaseSource {
     private SQLiteDatabase mDatabase;
     private DBHelper dbHelper;
     private Context mContext;
+    private DBAlumnoSource dbAlumnoSource;
 
     public DBClaseSource(Context context) {
         mContext = context;
@@ -113,5 +119,68 @@ public class DBClaseSource {
             }
         }
         return clases;
+    }
+
+    /*
+    Se actualiza la clase a cerrada
+     */
+    public void cambiarEstadoClase(int idClaseSede, int estado) {
+        mDatabase.beginTransaction();
+        try {
+            String whereClause = dbHelper.COLUMN_ID_CLASE_SEDE + " = ?";
+            ContentValues values = new ContentValues();
+            values.put(dbHelper.COLUMN_ESTADO_CLASE, estado);
+            mDatabase.update(
+                    dbHelper.TABLE_CLASE,
+                    values,
+                    whereClause,
+                    new String[] {String.format("%d", idClaseSede)});
+            mDatabase.setTransactionSuccessful();
+        } finally {
+            mDatabase.endTransaction();
+        }
+    }
+
+    /*
+    Armamos un json con los datos de los alumnos de una clase
+     */
+    public JSONObject getAlumnosByClass(int idClase) {
+
+        JSONObject jsonObject = new JSONObject();
+
+        JSONArray jsonArray = new JSONArray();
+        ArrayList<Alumno> alumnos;
+
+        try {
+            dbAlumnoSource = new DBAlumnoSource(mContext);
+            dbAlumnoSource.open();
+            alumnos = dbAlumnoSource.getAlumnoByClass(idClase);
+            if(alumnos.size() > 0) {
+                for (int i = 0; i < alumnos.size(); i++) {
+                    JSONObject alumnoJObject = new JSONObject();
+                    try {
+                        alumnoJObject.put("id", alumnos.get(i).getIdAlumnoCursoClaseSede());
+                        alumnoJObject.put("estado", alumnos.get(i).getEstado());
+                        alumnoJObject.put("firma", (alumnos.get(i).getFirma() != null ? alumnos.get(i).getFirma() : ""));
+                        jsonArray.put(alumnoJObject);
+
+                        //Log.d("DBCLASESOURCE", "ID: " + alumnos.get(i).getIdAlumnoCursoClaseSede());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+            try {
+                jsonObject.put("alumnos", jsonArray);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return jsonObject;
     }
 }

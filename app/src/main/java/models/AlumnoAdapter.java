@@ -79,8 +79,10 @@ public class AlumnoAdapter extends ArrayAdapter<Alumno> {
         switch (alumnoData.getEstado()) {
             case 1:
                 holder.presente.setVisibility(View.VISIBLE);
+                holder.ausente.setVisibility(View.INVISIBLE);
                 break;
             case 2:
+                holder.presente.setVisibility(View.INVISIBLE);
                 holder.ausente.setVisibility(View.VISIBLE);
                 break;
             default:

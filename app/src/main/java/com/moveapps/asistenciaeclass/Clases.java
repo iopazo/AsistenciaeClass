@@ -1,9 +1,10 @@
 package com.moveapps.asistenciaeclass;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -67,22 +68,31 @@ public class Clases extends Activity {
 
     public void onStart() {
         super.onStart();
-        Log.d(TAG, "In the onStart() event");
+        //Log.d(TAG, "In the onStart() event");
     }
 
     public void onRestart() {
         super.onRestart();
-        Log.d(TAG, "In the onRestart() event");
+        try {
+            mClaseDatasource.open();
+            clases = mClaseDatasource.list();
+            onLoadSwipeListener();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        //Log.d(TAG, "In the onRestart() event");
     }
 
     public void onStop() {
         super.onStop();
-        Log.d(TAG, "In the onStop() event");
+        mClaseDatasource.close();
+        mUsuarioDatasource.close();
+        //Log.d(TAG, "In the onStop() event");
     }
 
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "In the onDestroy() event");
+        //Log.d(TAG, "In the onDestroy() event");
     }
 
     @Override
@@ -91,6 +101,7 @@ public class Clases extends Activity {
         try {
             mClaseDatasource.open();
             mUsuarioDatasource.open();
+            clases = mClaseDatasource.list();
             onLoadSwipeListener();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -100,7 +111,7 @@ public class Clases extends Activity {
 
     @Override
     protected void onPause() {
-        Log.d(TAG, "In the onPause() event");
+        //Log.d(TAG, "In the onPause() event");
         super.onPause();
         mUsuarioDatasource.close();
         mClaseDatasource.close();
@@ -136,7 +147,9 @@ public class Clases extends Activity {
     }
 
     private void onLoadSwipeListener() {
+
         claseData.removeAll(claseData);
+
         swipeListView.setSwipeListViewListener(new BaseSwipeListViewListener() {
             int lastKnownPosition = -1;
             @Override
@@ -145,7 +158,7 @@ public class Clases extends Activity {
 
             @Override
             public void onClosed(int position, boolean fromRight) {
-                Log.d("swipe", String.format("onClosedddd %d", position));
+                //Log.d("swipe", String.format("onClosedddd %d", position));
             }
 
             @Override
@@ -158,12 +171,12 @@ public class Clases extends Activity {
 
             @Override
             public void onStartOpen(int position, int action, boolean right) {
-                Log.d("swipe", String.format("onStartOpen %d - action %d", position, action));
+                //Log.d("swipe", String.format("onStartOpen %d - action %d", position, action));
             }
 
             @Override
             public void onStartClose(int position, boolean right) {
-                Log.d("swipe", String.format("onStartClose %d", position));
+                //Log.d("swipe", String.format("onStartClose %d", position));
             }
 
             @Override
@@ -186,17 +199,38 @@ public class Clases extends Activity {
 
             @Override
             public void onClickBackView(int position) {
-                Log.d("swipe", String.format("onClickBackView %d", position));
+                //Log.d("swipe", String.format("onClickBackView %d", position));
                 swipeListView.closeAnimate(position);//when you touch back view it will close
             }
 
             @Override
+            /*
+            Al deslizara de derecha a izquierda borramos la clase, dejandola en estado 3.
+             */
             public void onDismiss(int[] reverseSortedPositions) {
-                for (int position : reverseSortedPositions) {
-                    claseData.remove(position);
+
+                AlertDialog.Builder saveDialog = new AlertDialog.Builder(swipeListView.getContext());
+                saveDialog.setTitle("Dismiss Class");
+                saveDialog.setMessage("This action can't be undone, are you sure?");
+
+                for (final int position : reverseSortedPositions) {
+
+                    AlertDialog.Builder builder = saveDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            mClaseDatasource.cambiarEstadoClase(claseData.get(position).getId(), 3);
+                            claseData.remove(position);
+                            adapter.notifyDataSetChanged();
+                            mClaseDatasource.close();
+                        }
+                    });
+
+                    saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+                        public void onClick(DialogInterface dialog, int which){
+                            dialog.cancel();
+                        }
+                    });
+                    saveDialog.show();
                 }
-                adapter.notifyDataSetChanged();
-                Log.d("swipe", String.format("onClosed2 %d", reverseSortedPositions[0]));
             }
         });
 

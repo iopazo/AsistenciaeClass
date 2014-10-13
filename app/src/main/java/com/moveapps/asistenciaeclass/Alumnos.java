@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -143,11 +142,11 @@ public class Alumnos extends Activity {
             }
             @Override
             public void onStartOpen(int position, int action, boolean right) {
-                Log.d("swipe", String.format("onStartOpen %d - action %d", position, action));
+                //Log.d("swipe", String.format("onStartOpen %d - action %d", position, action));
             }
             @Override
             public void onStartClose(int position, boolean right) {
-                Log.d("swipe", String.format("onStartClose %d", position));
+                //Log.d("swipe", String.format("onStartClose %d", position));
             }
             @Override
             public void onClickFrontView(int position) {
@@ -169,7 +168,7 @@ public class Alumnos extends Activity {
             }
             @Override
             public void onClickBackView(int position) {
-                Log.d("swipe", String.format("onClickBackView %d", position));
+                //Log.d("swipe", String.format("onClickBackView %d", position));
                 swipeListView.closeAnimate(position);//when you touch back view it will close
             }
             @Override

@@ -8,8 +8,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -28,7 +26,7 @@ public class FirmaAlumno extends Activity implements OnClickListener {
     static String TAG = FirmaAlumno.class.getSimpleName();
     static int ID_ALUMNO;
     static String NOMBRE_ALUMNO;
-    static String ID_CLASE;
+    static int ID_CLASE;
 
     protected DBAlumnoSource mAlumnoSource;
     /*
@@ -59,7 +57,7 @@ public class FirmaAlumno extends Activity implements OnClickListener {
             ID_ALUMNO = intent.getIntExtra("id", 0);
         }
         if(intent.hasExtra("id_clase")) {
-            ID_CLASE = intent.getStringExtra("id_clase");
+            ID_CLASE = intent.getIntExtra("id_clase", 0);
         }
         if(intent.hasExtra("nombre")) {
             NOMBRE_ALUMNO = String.format("%s", intent.getStringExtra("nombre"));
@@ -96,25 +94,6 @@ public class FirmaAlumno extends Activity implements OnClickListener {
     protected void onPause() {
         super.onPause();
         mAlumnoSource.close();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.firma_alumno, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
