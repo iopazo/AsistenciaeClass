@@ -219,10 +219,11 @@ public class Clases extends Activity {
                             mClaseDatasource.cambiarEstadoClase(claseData.get(position).getId(), 3);
                             claseData.remove(position);
                             adapter.notifyDataSetChanged();
-                            mClaseDatasource.close();
+
                         }
                     });
                 }
+                //mClaseDatasource.close();
                 saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
                     public void onClick(DialogInterface dialog, int which){
                         dialog.cancel();

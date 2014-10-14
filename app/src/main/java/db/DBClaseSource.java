@@ -131,7 +131,6 @@ public class DBClaseSource {
         if(!mDatabase.inTransaction()) {
             mDatabase.beginTransaction();
         }
-
         try {
             String whereClause = dbHelper.COLUMN_ID_CLASE_SEDE + " = ?";
             ContentValues values = new ContentValues();
