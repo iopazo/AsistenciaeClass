@@ -44,7 +44,9 @@ public class DBClaseSource {
 
     public void insertClaseAlumnos(JsonArray clases) {
 
-        mDatabase.beginTransaction();
+        if(!mDatabase.inTransaction()) {
+            mDatabase.beginTransaction();
+        }
 
         try {
             for (int i = 0; i < clases.size(); i++) {
@@ -125,7 +127,11 @@ public class DBClaseSource {
     Se actualiza la clase a cerrada
      */
     public void cambiarEstadoClase(int idClaseSede, int estado) {
-        mDatabase.beginTransaction();
+
+        if(!mDatabase.inTransaction()) {
+            mDatabase.beginTransaction();
+        }
+
         try {
             String whereClause = dbHelper.COLUMN_ID_CLASE_SEDE + " = ?";
             ContentValues values = new ContentValues();
@@ -155,6 +161,7 @@ public class DBClaseSource {
             dbAlumnoSource = new DBAlumnoSource(mContext);
             dbAlumnoSource.open();
             alumnos = dbAlumnoSource.getAlumnoByClass(idClase);
+            dbAlumnoSource.close();
             if(alumnos.size() > 0) {
                 for (int i = 0; i < alumnos.size(); i++) {
                     JSONObject alumnoJObject = new JSONObject();
@@ -164,7 +171,7 @@ public class DBClaseSource {
                         alumnoJObject.put("firma", (alumnos.get(i).getFirma() != null ? alumnos.get(i).getFirma() : ""));
                         jsonArray.put(alumnoJObject);
 
-                        //Log.d("DBCLASESOURCE", "ID: " + alumnos.get(i).getIdAlumnoCursoClaseSede());
+                        Log.d("DBCLASESOURCE", "ID: " + alumnos.get(i).getIdAlumnoCursoClaseSede());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

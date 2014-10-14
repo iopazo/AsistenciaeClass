@@ -214,7 +214,6 @@ public class Clases extends Activity {
                 saveDialog.setMessage("This action can't be undone, are you sure?");
 
                 for (final int position : reverseSortedPositions) {
-
                     AlertDialog.Builder builder = saveDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             mClaseDatasource.cambiarEstadoClase(claseData.get(position).getId(), 3);
@@ -223,14 +222,13 @@ public class Clases extends Activity {
                             mClaseDatasource.close();
                         }
                     });
-
-                    saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
-                        public void onClick(DialogInterface dialog, int which){
-                            dialog.cancel();
-                        }
-                    });
-                    saveDialog.show();
                 }
+                saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int which){
+                        dialog.cancel();
+                    }
+                });
+                saveDialog.show();
             }
         });
 

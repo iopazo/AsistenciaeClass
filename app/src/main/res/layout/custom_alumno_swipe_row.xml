@@ -28,6 +28,7 @@
     </LinearLayout>
     <RelativeLayout
         android:orientation="vertical"
+        android:layout_height="fill_parent"
         android:id="@+id/front"
         android:tag="front"
         style="@style/MyListFrontContent">
@@ -44,7 +45,7 @@
             android:layout_centerVertical="true" />
 
         <TextView
-            android:layout_width="150dp"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/example_image"
             style="@style/MyListTitle"

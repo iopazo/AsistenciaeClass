@@ -35,7 +35,9 @@ public class DBUsuarioSource {
 
     //insert
     public void insertUsuario(Usuario usuario) {
-        mDatabase.beginTransaction();
+        if(!mDatabase.inTransaction()) {
+            mDatabase.beginTransaction();
+        }
         try {
             ContentValues values = new ContentValues();
             values.put(dbHelper.COLUMN_USUARIO, usuario.getId());

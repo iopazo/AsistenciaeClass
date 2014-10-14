@@ -65,7 +65,9 @@ public class DBAlumnoSource {
 
     public void updateAlumno(int idAlumnoCursoClaseSede, String firma, int estado) {
 
-        mDatabase.beginTransaction();
+        if(!mDatabase.inTransaction()) {
+            mDatabase.beginTransaction();
+        }
         try {
             String whereClause = dbHelper.COLUMN_ID_ALUMNO_CLASE_SEDE + " = ?";
             ContentValues values = new ContentValues();
@@ -87,7 +89,9 @@ public class DBAlumnoSource {
      */
     public void ausente(int idAlumnoCursoClaseSede) {
 
-        mDatabase.beginTransaction();
+        if(!mDatabase.inTransaction()) {
+            mDatabase.beginTransaction();
+        }
         try {
             String whereClause = dbHelper.COLUMN_ID_ALUMNO_CLASE_SEDE + " = ?";
             ContentValues values = new ContentValues();
@@ -109,7 +113,9 @@ public class DBAlumnoSource {
      */
     public void restablecer(int idAlumnoCursoClaseSede) {
 
-        mDatabase.beginTransaction();
+        if(!mDatabase.inTransaction()) {
+            mDatabase.beginTransaction();
+        }
         try {
             String whereClause = dbHelper.COLUMN_ID_ALUMNO_CLASE_SEDE + " = ?";
             ContentValues values = new ContentValues();
@@ -130,7 +136,9 @@ public class DBAlumnoSource {
     Se actualiza la clase a cerrada
      */
     public void cambiarEstadoClase(int idClaseSede, int estado) {
-        mDatabase.beginTransaction();
+        if(!mDatabase.inTransaction()) {
+            mDatabase.beginTransaction();
+        }
         try {
             String whereClause = dbHelper.COLUMN_ID_CLASE_SEDE + " = ?";
             ContentValues values = new ContentValues();
