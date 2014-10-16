@@ -15,6 +15,7 @@ import org.json.JSONObject;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import models.Alumno;
 import models.Clase;
@@ -42,7 +43,12 @@ public class DBClaseSource {
         mDatabase.close();
     }
 
-    public void insertClaseAlumnos(JsonArray clases) {
+    /*
+    variable sync: 0 guarda todas las clases
+    sync: 1 solo guarda las clases nuevas y
+     */
+
+    public void insertClaseAlumnos(JsonArray clases, int sync) {
 
         if(!mDatabase.inTransaction()) {
             mDatabase.beginTransaction();
@@ -52,15 +58,33 @@ public class DBClaseSource {
             for (int i = 0; i < clases.size(); i++) {
                 try {
                     JsonObject clase = clases.get(i).getAsJsonObject();
-                    ContentValues values = new ContentValues();
-                    values.put(dbHelper.COLUMN_ID_CLASE_SEDE, clase.get("id_clase_sede").getAsInt());
-                    values.put(dbHelper.COLUMN_NOMBRE_CLASE, clase.get("nombre_completo").getAsString());
-                    values.put(dbHelper.COLUMN_FECHA, clase.get("fecha").getAsString());
-                    values.put(dbHelper.COLUMN_HORA, clase.get("hora").getAsString());
+                    switch (sync) {
+                        case 0:
 
-                    if(mDatabase.insert(dbHelper.TABLE_CLASE, null, values) > 0) {
-                        this.insertAlumnoCurso(clase.getAsJsonArray("alumnos"), clase.get("id_clase_sede").getAsInt());
+                            ContentValues values = new ContentValues();
+                            values.put(dbHelper.COLUMN_ID_CLASE_SEDE, clase.get("id_clase_sede").getAsInt());
+                            values.put(dbHelper.COLUMN_NOMBRE_CLASE, clase.get("nombre_completo").getAsString());
+                            values.put(dbHelper.COLUMN_FECHA, clase.get("fecha").getAsString());
+                            values.put(dbHelper.COLUMN_HORA, clase.get("hora").getAsString());
+
+                            if(mDatabase.insert(dbHelper.TABLE_CLASE, null, values) > 0) {
+                                this.insertAlumnoCurso(clase.getAsJsonArray("alumnos"), clase.get("id_clase_sede").getAsInt());
+                            }
+                            break;
+                        case 1:
+                            ArrayList<Clase> clasesDb = list(4);
+                            int[] ids = new int[0];
+                            for (int j = 0; j < clasesDb.size(); j++) {
+                                ids[j] = clasesDb.get(j).getId();
+                            }
+                            if(Arrays.asList(ids).contains(clase.get("id_clase_sede").getAsInt())) {
+
+                            }
+                            break;
+
                     }
+
+
                 } catch (NullPointerException ex) {
                     Log.d("ClaseSource", ex.getLocalizedMessage());
                 }
@@ -93,9 +117,10 @@ public class DBClaseSource {
     1: Cerrada
     2: Sincronizada
     3: Eliminada
+    4: Todas
     Solo mostramos las clases que esten activas.
      */
-    public ArrayList<Clase> list() throws NullPointerException {
+    public ArrayList<Clase> list(int estadoParam) throws NullPointerException {
         ArrayList<Clase> clases = new ArrayList<Clase>();
         String whereClause = dbHelper.COLUMN_ESTADO_CLASE + " != ?";
 
@@ -103,7 +128,7 @@ public class DBClaseSource {
                 DBHelper.TABLE_CLASE,
                 new String[] {dbHelper.COLUMN_ID_CLASE_SEDE, dbHelper.COLUMN_NOMBRE_CLASE, dbHelper.COLUMN_ESTADO_CLASE},
                 whereClause,
-                new String[] {String.format("%d", 3)},
+                new String[] {String.format("%d", estadoParam)},
                 null,
                 null,
                 null

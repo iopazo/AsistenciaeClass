@@ -16,6 +16,7 @@ public class Usuario {
     private boolean login;
     private String password;
     private Usuario _usuarioDB;
+    private int username;
 
     public Usuario() {
 
@@ -29,6 +30,13 @@ public class Usuario {
         setId(_id);
         setPassword(_password);
         setLogin(_login);
+    }
+
+    public Usuario(int _id, String _password, boolean _login, int _username) {
+        setId(_id);
+        setPassword(_password);
+        setLogin(_login);
+        setUsername(_username);
     }
 
 
@@ -85,5 +93,13 @@ public class Usuario {
 
     public void set_usuarioDB(Usuario _usuarioDB) {
         this._usuarioDB = _usuarioDB;
+    }
+
+    public int getUsername() {
+        return username;
+    }
+
+    public void setUsername(int username) {
+        this.username = username;
     }
 }

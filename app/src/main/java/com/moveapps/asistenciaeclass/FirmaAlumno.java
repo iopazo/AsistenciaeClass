@@ -124,9 +124,10 @@ public class FirmaAlumno extends Activity implements OnClickListener {
                     if (imgSaved != null) {
                         Bitmap bm = Bitmap.createBitmap(drawView.getDrawingCache());
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
+                        bm.compress(Bitmap.CompressFormat.JPEG, 20, baos); //bm is the bitmap object
                         byte[] byteArrayImage = baos.toByteArray();
                         String firmaEncoded = Base64.encodeToString(byteArrayImage, 0);
+
                         /*Si la firma viene bien encodeada la apsamos para guardarla*/
                         if (firmaEncoded != null) {
                             mAlumnoSource.updateAlumno(ID_ALUMNO, firmaEncoded, 1);

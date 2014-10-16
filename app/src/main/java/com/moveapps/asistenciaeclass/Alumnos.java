@@ -5,9 +5,12 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fortysevendeg.swipelistview.BaseSwipeListViewListener;
 import com.fortysevendeg.swipelistview.SwipeListView;
@@ -149,14 +152,46 @@ public class Alumnos extends Activity {
                 //Log.d("swipe", String.format("onStartClose %d", position));
             }
             @Override
-            public void onClickFrontView(int position) {
+            public void onClickFrontView(final int position) {
                 /*
                 Al presionar sobre el nombre del alumno vamos a la vvista de formas solo si Firma esta seteada en 0
                 0: Sin accion
                 1: Firma
                 2: Ausente
                  */
-                if(alumnos.get(position).getEstado() != 1) {
+                if(alumnos.get(position).getEstado() == 2) {
+
+                    AlertDialog.Builder cambiarEstadoAlert = new AlertDialog.Builder(Alumnos.this);
+                    cambiarEstadoAlert.setTitle("Teacher confirms");
+                    cambiarEstadoAlert.setMessage("Sure you want remove the signature?");
+                    final EditText passwordConfirm = new EditText(Alumnos.this);
+                    passwordConfirm.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    cambiarEstadoAlert.setView(passwordConfirm);
+
+                    AlertDialog.Builder builder = cambiarEstadoAlert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            String value = passwordConfirm.getText().toString();
+                            if(value.equals(PASSWORD)) {
+                                Intent intent = new Intent(Alumnos.this, FirmaAlumno.class);
+                                intent.putExtra("nombre", alumnos.get(position).getNombre());
+                                intent.putExtra("id", alumnos.get(position).getIdAlumnoCursoClaseSede());
+                                intent.putExtra("nombre_clase", NOMBRE_CLASE);
+                                intent.putExtra("id_clase", ID_CLASE);
+                                startActivityForResult(intent, 1);
+                            } else {
+                                Toast.makeText(Alumnos.this, "The password is incorrect, try again.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+
+                    cambiarEstadoAlert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    cambiarEstadoAlert.show();
+                }
+                if(alumnos.get(position).getEstado() == 0) {
                     Intent intent = new Intent(Alumnos.this, FirmaAlumno.class);
                     intent.putExtra("nombre", alumnos.get(position).getNombre());
                     intent.putExtra("id", alumnos.get(position).getIdAlumnoCursoClaseSede());

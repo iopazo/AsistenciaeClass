@@ -43,6 +43,7 @@ public class DBUsuarioSource {
             values.put(dbHelper.COLUMN_USUARIO, usuario.getId());
             values.put(dbHelper.COLUMN_LOGIN, usuario.isLogin());
             values.put(dbHelper.COLUMN_PASSWORD, usuario.getPassword());
+            values.put(dbHelper.COLUMN_USERNAME, usuario.getUsername());
             mDatabase.insert(dbHelper.TABLE_USUARIO, null, values);
             mDatabase.setTransactionSuccessful();
         } finally {

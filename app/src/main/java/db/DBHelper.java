@@ -21,11 +21,13 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_ID = "ID";
     public static final String COLUMN_LOGIN = "LOGIN";
     public static final String COLUMN_USUARIO = "ID_USUARIO";
+    public static final String COLUMN_USERNAME = "USERNAME";
     public static final String COLUMN_PASSWORD = "PASSWORD";
 
     private static final String DB_CREATE_USUARIO =
             "CREATE TABLE " + TABLE_USUARIO + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "" + COLUMN_LOGIN + " TINYINT DEFAULT 0, " +
+                    "" + COLUMN_USERNAME + " INTEGER(10) DEFAULT 0, " +
                     "" + COLUMN_USUARIO + " INTEGER(9), " +
                     "" + COLUMN_PASSWORD + " VARCHAR(100))";
 

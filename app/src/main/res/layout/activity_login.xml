@@ -32,7 +32,7 @@
         android:layout_alignStart="@+id/logoImage"
         android:layout_alignRight="@+id/logoImage"
         android:layout_alignEnd="@+id/logoImage"
-        android:inputType="number"
+        android:inputType="text"
         android:maxLength="10"/>
 
     <EditText

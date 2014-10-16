@@ -59,6 +59,7 @@ public class Login extends Activity {
         if(userDB.getUsuarioDB().getId() > 0 && userDB.getUsuarioDB().isLogin()) {
             Intent intent = new Intent(Login.this, Clases.class);
             intent.putExtra("password", userDB.getUsuarioDB().getPassword());
+            intent.putExtra("username", userDB.getUsuarioDB().getUsername());
             startActivity(intent);
             finish();
         }
@@ -114,23 +115,27 @@ public class Login extends Activity {
         public void success(JsonElement element, Response response) {
             JsonObject jsonObj = element.getAsJsonObject();
             String msg = jsonObj.get("usuario").getAsJsonObject().get("status").getAsString();
+
             //Si la respuesta es correcta.
             if(msg.equals("success")) {
                 JsonObject data = jsonObj.get("usuario").getAsJsonObject().getAsJsonObject("data");
                 JsonArray clases = data.getAsJsonArray("clases");
 
-                claseDataSource.insertClaseAlumnos(clases);
+                claseDataSource.insertClaseAlumnos(clases, 0);
                 Intent intent = new Intent(Login.this, Clases.class);
-                Usuario usuario = new Usuario(data.get("id").getAsInt(), password.getText().toString(), true);
+                Usuario usuario = new Usuario(data.get("id").getAsInt(), password.getText().toString(), true, data.get("username").getAsInt());
+                //Guardamos los datos del usuario.
                 usuarioDataSource.insertUsuario(usuario);
                 intent.putExtra("password", password.getText().toString());
+                intent.putExtra("username", usuario.getUsername());
                 startActivity(intent);
                 pd.cancel();
                 finish();
             } else {
+                String msgStatus = jsonObj.get("usuario").getAsJsonObject().get("msg").getAsString();
                 if(msg.equals("error")) {
                     pd.cancel();
-                    Toast.makeText(Login.this, "Usuario no encontrado", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Login.this, msgStatus, Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -151,7 +156,7 @@ public class Login extends Activity {
             //Aca debemos armar los datos para llamar a la API
             JSONObject datosJson = new JSONObject();
             try {
-                datosJson.put("numero_documento", username.getText().toString().substring(0, 8));
+                datosJson.put("numero_documento", (username.getText().toString().length() == 10) ? username.getText().toString().substring(0, 8) : username.getText().toString().substring(0, 7));
                 datosJson.put("password", Utils.MD5(password.getText().toString()));
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -165,6 +170,7 @@ public class Login extends Activity {
         } else if(password.getText().toString().equals(userDB.getUsuarioDB().getPassword().toString())){
             if(usuarioDataSource.updateUsuario(userDB.getUsuarioDB().getId(), true) > 0) {
                 intent.putExtra("password", userDB.getUsuarioDB().getPassword());
+                intent.putExtra("username", userDB.getUsuarioDB().getUsername());
                 startActivity(intent);
                 pd.cancel();
                 finish();

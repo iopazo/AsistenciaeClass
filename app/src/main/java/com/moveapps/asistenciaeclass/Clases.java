@@ -5,31 +5,45 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.fortysevendeg.swipelistview.BaseSwipeListViewListener;
 import com.fortysevendeg.swipelistview.SwipeListView;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import api.eClassAPI;
 import db.DBClaseSource;
 import db.DBUsuarioSource;
 import models.Clase;
 import models.ClaseAdapter;
 import models.Usuario;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class Clases extends Activity {
 
     static String PASSWORD;
+    static String USERNAME;
     static final String TAG = Clases.class.getSimpleName();
     protected DBUsuarioSource mUsuarioDatasource;
     protected DBClaseSource mClaseDatasource;
     protected Usuario dbUsuario;
     static ArrayList<Clase> clases = null;
+    protected eClassAPI apiService;
 
     SwipeListView swipeListView;
     ClaseAdapter adapter;
@@ -62,7 +76,7 @@ public class Clases extends Activity {
         adapter = new ClaseAdapter(this, R.layout.custom_clases_swipe_row, claseData, mClaseDatasource);
 
         //Traemos los alumnos
-        clases = mClaseDatasource.list();
+        clases = mClaseDatasource.list(3);
         onLoadSwipeListener();
     }
 
@@ -75,7 +89,7 @@ public class Clases extends Activity {
         super.onRestart();
         try {
             mClaseDatasource.open();
-            clases = mClaseDatasource.list();
+            clases = mClaseDatasource.list(3);
             onLoadSwipeListener();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -101,7 +115,7 @@ public class Clases extends Activity {
         try {
             mClaseDatasource.open();
             mUsuarioDatasource.open();
-            clases = mClaseDatasource.list();
+            clases = mClaseDatasource.list(3);
             onLoadSwipeListener();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -143,8 +157,50 @@ public class Clases extends Activity {
             }
 
         }
+        //Accion boton sincronizar
+        if (id == R.id.sincronizar) {
+            JSONObject datosJson = new JSONObject();
+            try {
+                datosJson.put("numero_documento", USERNAME);
+                datosJson.put("password", Utils.MD5(PASSWORD));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            byte[] jsonToByte = datosJson.toString().getBytes();
+            String datos = Base64.encodeToString(jsonToByte, 0);
+
+
+            apiService = new eClassAPI(datos);
+            apiService.getUsuarioData(mUsuarioSerice);
+        }
         return super.onOptionsItemSelected(item);
     }
+
+    protected Callback<JsonElement> mUsuarioSerice = new Callback<JsonElement>() {
+        @Override
+        public void success(JsonElement element, Response response) {
+            JsonObject jsonObj = element.getAsJsonObject();
+            String msg = jsonObj.get("usuario").getAsJsonObject().get("status").getAsString();
+
+            //Si la respuesta es correcta.
+            if(msg.equals("success")) {
+                JsonObject data = jsonObj.get("usuario").getAsJsonObject().getAsJsonObject("data");
+                JsonArray clases = data.getAsJsonArray("clases");
+
+                mClaseDatasource.insertClaseAlumnos(clases, 1);
+            } else {
+                if(msg.equals("error")) {
+                    Toast.makeText(Clases.this, "No se pudo sincronizar, intente nuevamente.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            Toast.makeText(Clases.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    };
+
 
     private void onLoadSwipeListener() {
 
@@ -223,7 +279,6 @@ public class Clases extends Activity {
                         }
                     });
                 }
-                //mClaseDatasource.close();
                 saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
                     public void onClick(DialogInterface dialog, int which){
                         dialog.cancel();

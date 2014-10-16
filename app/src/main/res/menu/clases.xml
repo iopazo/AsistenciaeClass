@@ -2,6 +2,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.moveapps.asistenciaeclass.Clases" >
 
+    <item android:id="@+id/sincronizar"
+        android:icon="@drawable/ic_action_refresh"
+        android:title="@string/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+    />
     <item android:id="@+id/action_settings"
         android:icon="@drawable/engranaje"
         android:title="@string/action_settings"
@@ -17,4 +23,5 @@
             </item>
         </menu>
     </item>
+
 </menu>
