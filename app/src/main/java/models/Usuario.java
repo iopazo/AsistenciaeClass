@@ -76,7 +76,8 @@ public class Usuario {
                     int id = cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_USUARIO));
                     boolean isLogin = cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_LOGIN)) > 0;
                     String password = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_PASSWORD));
-                    set_usuarioDB(new Usuario(id, password, isLogin));
+                    int username = cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_USERNAME));
+                    set_usuarioDB(new Usuario(id, password, isLogin, username));
                     cursor.moveToNext();
                 }
             }

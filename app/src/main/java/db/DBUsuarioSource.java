@@ -55,7 +55,7 @@ public class DBUsuarioSource {
     public Cursor selectUsuario() {
         Cursor cursor = mDatabase.query(
                 DBHelper.TABLE_USUARIO,//Tabla
-                new String[] {DBHelper.COLUMN_USUARIO, DBHelper.COLUMN_LOGIN, DBHelper.COLUMN_PASSWORD},
+                new String[] {DBHelper.COLUMN_USUARIO, DBHelper.COLUMN_LOGIN, DBHelper.COLUMN_PASSWORD, DBHelper.COLUMN_USERNAME},
                 null, //where clause
                 null, //where params
                 null, //goup by

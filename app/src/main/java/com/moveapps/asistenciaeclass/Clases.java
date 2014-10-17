@@ -37,7 +37,7 @@ import retrofit.client.Response;
 public class Clases extends Activity {
 
     static String PASSWORD;
-    static String USERNAME;
+    static int USERNAME;
     static final String TAG = Clases.class.getSimpleName();
     protected DBUsuarioSource mUsuarioDatasource;
     protected DBClaseSource mClaseDatasource;
@@ -57,6 +57,9 @@ public class Clases extends Activity {
 
         Intent intent = getIntent();
 
+        if(intent.hasExtra("username")) {
+            USERNAME = intent.getIntExtra("username", 0);
+        }
         if (intent.hasExtra("password")) {
             PASSWORD = intent.getStringExtra("password");
         }
@@ -169,7 +172,6 @@ public class Clases extends Activity {
             byte[] jsonToByte = datosJson.toString().getBytes();
             String datos = Base64.encodeToString(jsonToByte, 0);
 
-
             apiService = new eClassAPI(datos);
             apiService.getUsuarioData(mUsuarioSerice);
         }
@@ -181,17 +183,13 @@ public class Clases extends Activity {
         public void success(JsonElement element, Response response) {
             JsonObject jsonObj = element.getAsJsonObject();
             String msg = jsonObj.get("usuario").getAsJsonObject().get("status").getAsString();
-
             //Si la respuesta es correcta.
             if(msg.equals("success")) {
                 JsonObject data = jsonObj.get("usuario").getAsJsonObject().getAsJsonObject("data");
                 JsonArray clases = data.getAsJsonArray("clases");
-
                 mClaseDatasource.insertClaseAlumnos(clases, 1);
-            } else {
-                if(msg.equals("error")) {
-                    Toast.makeText(Clases.this, "No se pudo sincronizar, intente nuevamente.", Toast.LENGTH_SHORT).show();
-                }
+            } else if(msg.equals("error")) {
+                Toast.makeText(Clases.this, "No se pudo sincronizar, intente nuevamente.", Toast.LENGTH_SHORT).show();
             }
         }
 

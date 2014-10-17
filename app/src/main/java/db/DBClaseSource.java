@@ -1,10 +1,12 @@
 package db;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -53,13 +55,33 @@ public class DBClaseSource {
         if(!mDatabase.inTransaction()) {
             mDatabase.beginTransaction();
         }
-
+        ArrayList<Clase> clasesDb = null;
+        Integer[] ids = null;
+        int contadorSincronizados = 0;
         try {
+            if(sync == 1) {
+                clasesDb = this.list(4);
+                ids = new Integer[clasesDb.size()];
+                for (int j = 0; j < clasesDb.size(); j++) {
+                    ids[j] = clasesDb.get(j).getId();
+                }
+            }
             for (int i = 0; i < clases.size(); i++) {
                 try {
                     JsonObject clase = clases.get(i).getAsJsonObject();
-                    switch (sync) {
-                        case 0:
+                    if(sync == 0) {
+                        ContentValues values = new ContentValues();
+                        values.put(dbHelper.COLUMN_ID_CLASE_SEDE, clase.get("id_clase_sede").getAsInt());
+                        values.put(dbHelper.COLUMN_NOMBRE_CLASE, clase.get("nombre_completo").getAsString());
+                        values.put(dbHelper.COLUMN_FECHA, clase.get("fecha").getAsString());
+                        values.put(dbHelper.COLUMN_HORA, clase.get("hora").getAsString());
+
+                        if (mDatabase.insert(dbHelper.TABLE_CLASE, null, values) > 0) {
+                            this.insertAlumnoCurso(clase.getAsJsonArray("alumnos"), clase.get("id_clase_sede").getAsInt());
+                        }
+                    } else if(sync == 1) {
+                        if (Arrays.asList(ids).contains(clase.get("id_clase_sede").getAsInt())) {
+                            contadorSincronizados++;
 
                             ContentValues values = new ContentValues();
                             values.put(dbHelper.COLUMN_ID_CLASE_SEDE, clase.get("id_clase_sede").getAsInt());
@@ -67,24 +89,11 @@ public class DBClaseSource {
                             values.put(dbHelper.COLUMN_FECHA, clase.get("fecha").getAsString());
                             values.put(dbHelper.COLUMN_HORA, clase.get("hora").getAsString());
 
-                            if(mDatabase.insert(dbHelper.TABLE_CLASE, null, values) > 0) {
+                            if (mDatabase.insert(dbHelper.TABLE_CLASE, null, values) > 0) {
                                 this.insertAlumnoCurso(clase.getAsJsonArray("alumnos"), clase.get("id_clase_sede").getAsInt());
                             }
-                            break;
-                        case 1:
-                            ArrayList<Clase> clasesDb = list(4);
-                            int[] ids = new int[0];
-                            for (int j = 0; j < clasesDb.size(); j++) {
-                                ids[j] = clasesDb.get(j).getId();
-                            }
-                            if(Arrays.asList(ids).contains(clase.get("id_clase_sede").getAsInt())) {
-
-                            }
-                            break;
-
+                        }
                     }
-
-
                 } catch (NullPointerException ex) {
                     Log.d("ClaseSource", ex.getLocalizedMessage());
                 }
@@ -92,6 +101,15 @@ public class DBClaseSource {
             mDatabase.setTransactionSuccessful();
         } finally {
             mDatabase.endTransaction();
+            if(sync == 1) {
+                Activity claseActivity = (Activity) mContext;
+                if(contadorSincronizados > 0) {
+                    Toast.makeText(mContext, "Se sincronizaron " + contadorSincronizados + " clases", Toast.LENGTH_LONG).show();
+                    claseActivity.recreate();
+                } else {
+                    Toast.makeText(mContext, "No se han sincronizado nuevas clases", Toast.LENGTH_LONG).show();
+                }
+            }
         }
 
     }
