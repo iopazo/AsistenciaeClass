@@ -80,7 +80,7 @@ public class DBClaseSource {
                             this.insertAlumnoCurso(clase.getAsJsonArray("alumnos"), clase.get("id_clase_sede").getAsInt());
                         }
                     } else if(sync == 1) {
-                        if (Arrays.asList(ids).contains(clase.get("id_clase_sede").getAsInt())) {
+                        if (!Arrays.asList(ids).contains(clase.get("id_clase_sede").getAsInt())) {
                             contadorSincronizados++;
 
                             ContentValues values = new ContentValues();

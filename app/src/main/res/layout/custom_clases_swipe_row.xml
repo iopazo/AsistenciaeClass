@@ -24,6 +24,7 @@
         android:orientation="vertical"
         android:id="@+id/front"
         android:tag="front"
+        android:layout_height="fill_parent"
         style="@style/MyListFrontContent">
 
         <ImageView
@@ -35,10 +36,11 @@
         <TextView
             android:layout_width="150dp"
             android:textSize="10sp"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
+            android:gravity="center_vertical|left"
             android:layout_toRightOf="@id/example_image"
             style="@style/MyListTitle"
-            android:text="Rodrigo Armijo Aviles"
+            android:text="Rodrigo Armijo Aviles Rodrigo Armijo Aviles Rodrigo Armijo Aviles Rodrigo Armijo Aviles Rodrigo Armijo Aviles"
             android:id="@+id/nombreAlumno"
             android:layout_centerVertical="true" />
 
