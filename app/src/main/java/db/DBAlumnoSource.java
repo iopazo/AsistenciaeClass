@@ -35,6 +35,7 @@ public class DBAlumnoSource {
     public ArrayList<Alumno> getAlumnoByClass(int idClase) {
         ArrayList<Alumno> alumnos = new ArrayList<Alumno>();
         String whereClause = dbHelper.COLUMN_ID_CLASE_SEDE_FK + " = ?";
+        String orderby = dbHelper.COLUMN_NOMBRE_ALUMNO + " ASC";
 
         Cursor cursor = mDatabase.query(
                 dbHelper.TABLE_ALUMNO,
@@ -44,7 +45,7 @@ public class DBAlumnoSource {
                 new String[]{String.format("%d", idClase)},
                 null,
                 null,
-                null
+                orderby
         );
 
         if(cursor.moveToFirst()) {

@@ -31,7 +31,7 @@ public class AlumnoAdapter extends ArrayAdapter<Alumno> {
     int layoutResId;
     static String passwordProfesor;
     protected DBAlumnoSource mAlumnoSource;
-    AlumnoHolder holder;
+    View row;
 
 
     public AlumnoAdapter(Context context, int resource, List<Alumno> objects, String masterPassword, DBAlumnoSource mAlumnoSource) {
@@ -45,10 +45,10 @@ public class AlumnoAdapter extends ArrayAdapter<Alumno> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
         AlumnoHolder holder = null;
-        View row = convertView;
+        row = convertView;
 
         holder = null;
         if(row == null) {

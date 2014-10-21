@@ -141,6 +141,7 @@ public class DBClaseSource {
     public ArrayList<Clase> list(int estadoParam) throws NullPointerException {
         ArrayList<Clase> clases = new ArrayList<Clase>();
         String whereClause = dbHelper.COLUMN_ESTADO_CLASE + " != ?";
+        String orderBy = dbHelper.COLUMN_ESTADO_CLASE + " DESC, " + dbHelper.COLUMN_FECHA + " ASC, " + dbHelper.COLUMN_HORA + " ASC";
 
         Cursor cursor = mDatabase.query(
                 DBHelper.TABLE_CLASE,
@@ -149,7 +150,7 @@ public class DBClaseSource {
                 new String[] {String.format("%d", estadoParam)},
                 null,
                 null,
-                null
+                orderBy
         );
 
         if(cursor.moveToFirst()) {
