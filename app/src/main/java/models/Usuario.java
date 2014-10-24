@@ -81,7 +81,6 @@ public class Usuario {
                     cursor.moveToNext();
                 }
             }
-            mDataSource.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }

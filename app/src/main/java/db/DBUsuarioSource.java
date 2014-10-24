@@ -35,7 +35,7 @@ public class DBUsuarioSource {
 
     //insert
     public void insertUsuario(Usuario usuario) {
-        if(!mDatabase.inTransaction()) {
+        if(mDatabase.isOpen() &&  !mDatabase.inTransaction()) {
             mDatabase.beginTransaction();
         }
         try {

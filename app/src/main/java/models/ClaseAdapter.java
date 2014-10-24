@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -105,6 +106,7 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
                     pd = ProgressDialog.show(context, "", "Sync class, please wait...", true);
                     jsonObject = new JSONObject();
                     jsonObject = mClaseSource.getAlumnosByClass(claseData.getId());
+                    Log.d("ClaseAdapter", jsonObject.toString());
                     byte[] jsonToByte = jsonObject.toString().getBytes();
                     String datos = Base64.encodeToString(jsonToByte, 0);
 

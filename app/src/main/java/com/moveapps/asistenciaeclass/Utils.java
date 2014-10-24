@@ -3,8 +3,11 @@ package com.moveapps.asistenciaeclass;
 import android.content.res.Resources;
 import android.util.DisplayMetrics;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.util.HashMap;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Created by iopazog on 13-09-14.
