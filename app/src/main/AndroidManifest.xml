@@ -41,6 +41,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.moveapps.asistenciaeclass.Alumnos" />
         </activity>
+        <meta-data android:name="com.crashlytics.ApiKey" android:value="7f21ad1a386755e477341f0887fcfe68fd27f813"/>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

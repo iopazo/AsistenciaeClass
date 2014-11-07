@@ -73,7 +73,6 @@ public class Clases extends Activity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         swipeListView = (SwipeListView) findViewById(R.id.clases_swipe_list);
         claseData = new ArrayList<Clase>();
         adapter = new ClaseAdapter(this, R.layout.custom_clases_swipe_row, claseData, mClaseDatasource);
@@ -247,6 +246,7 @@ public class Clases extends Activity {
                     intent.putExtra("id", clases.get(position).getId());
                     intent.putExtra("password", PASSWORD);
                     startActivityForResult(intent, 1);
+                    swipeListView.closeOpenedItems();
                 }
                 //swipeListView.openAnimate(position); //when you touch front view it will open
             }
@@ -273,7 +273,6 @@ public class Clases extends Activity {
                             mClaseDatasource.cambiarEstadoClase(claseData.get(position).getId(), 3);
                             claseData.remove(position);
                             adapter.notifyDataSetChanged();
-
                         }
                     });
                 }
@@ -290,7 +289,7 @@ public class Clases extends Activity {
         swipeListView.setSwipeActionLeft(SwipeListView.SWIPE_ACTION_DISMISS); //there are four swipe actions
         swipeListView.setSwipeActionRight(SwipeListView.SWIPE_ACTION_REVEAL);
         swipeListView.setOffsetLeft(Utils.convertDpToPixel(0f, getResources())); // left side offset
-        swipeListView.setOffsetRight(Utils.convertDpToPixel(50f, getResources())); // right side offset
+        swipeListView.setOffsetRight(Utils.convertDpToPixel(250f, getResources())); // right side offset
         swipeListView.setAnimationTime(400); // Animation time
         //swipeListView.setSwipeOpenOnLongPress(true); // enable or disable SwipeOpenOnLongPress
 

@@ -210,7 +210,7 @@ public class DBClaseSource {
                     JSONObject alumnoJObject = new JSONObject();
                     try {
                         alumnoJObject.put("id", alumnos.get(i).getIdAlumnoCursoClaseSede());
-                        alumnoJObject.put("estado", alumnos.get(i).getEstado());
+                        alumnoJObject.put("estado", String.format("%d", alumnos.get(i).getEstado()));
                         alumnoJObject.put("firma", (alumnos.get(i).getFirma() != null ? alumnos.get(i).getFirma() : ""));
                         jsonArray.put(alumnoJObject);
 

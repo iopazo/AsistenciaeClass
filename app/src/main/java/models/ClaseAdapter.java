@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +40,6 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
     protected eClassAPI apiService;
     protected int id_clase;
     protected ProgressDialog pd;
-
 
     public ClaseAdapter(Context context, int resource, List<Clase> objects, DBClaseSource mClaseSource) {
         super(context, resource, objects);
@@ -97,6 +95,7 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
                 break;
         }
 
+        final ClaseHolder finalHolder = holder;
         holder.botonSincronizar.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -106,14 +105,17 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
                     pd = ProgressDialog.show(context, "", "Sync class, please wait...", true);
                     jsonObject = new JSONObject();
                     jsonObject = mClaseSource.getAlumnosByClass(claseData.getId());
-                    Log.d("ClaseAdapter", jsonObject.toString());
                     byte[] jsonToByte = jsonObject.toString().getBytes();
                     String datos = Base64.encodeToString(jsonToByte, 0);
 
                     apiService = new eClassAPI(datos);
+                    //Aca se llama a la Api y subimos la asistencia
+                    //Log.d("ClaseAdapter", jsonObject.toString());
                     apiService.subirAsistencia(mUsuarioService);
-
                     id_clase = claseData.getId();
+                    finalHolder.cerrado.setVisibility(View.INVISIBLE);
+                    finalHolder.sincronizado.setVisibility(View.VISIBLE);
+                    v.refreshDrawableState();
                 } else {
                     Toast.makeText(context, "Only closed classes can be synchronized!", Toast.LENGTH_SHORT).show();
                 }
@@ -136,7 +138,6 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
                 mClaseSource.cambiarEstadoClase(id_clase, 2);
                 pd.cancel();
                 Toast.makeText(context, "Class successfully uploaded.", Toast.LENGTH_LONG).show();
-                ((Activity) context).recreate();
             } else {
                 Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
                 pd.cancel();
@@ -146,7 +147,7 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
         @Override
         public void failure(RetrofitError error) {
             Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG).show();
-            //Log.d("ClaseAdapter", error.getMessage());
+            pd.cancel();
         }
     };
 
