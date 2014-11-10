@@ -1,8 +1,6 @@
 package com.moveapps.asistenciaeclass;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Base64;
@@ -204,9 +202,10 @@ public class Clases extends Activity {
         claseData.removeAll(claseData);
 
         swipeListView.setSwipeListViewListener(new BaseSwipeListViewListener() {
-            int lastKnownPosition = -1;
             @Override
             public void onOpened(int position, boolean toRight) {
+
+
             }
 
             @Override
@@ -225,6 +224,13 @@ public class Clases extends Activity {
             @Override
             public void onStartOpen(int position, int action, boolean right) {
                 //Log.d("swipe", String.format("onStartOpen %d - action %d", position, action));
+                if(right) {
+                    swipeListView.setOffsetLeft(Utils.convertDpToPixel(0f, getResources())); // left side offset
+                    swipeListView.setOffsetRight(Utils.convertDpToPixel(265f, getResources())); // right side offset
+                } else {
+                    swipeListView.setOffsetLeft(Utils.convertDpToPixel(290f, getResources())); // left side offset
+                    swipeListView.setOffsetRight(Utils.convertDpToPixel(0f, getResources())); // right side offset
+                }
             }
 
             @Override
@@ -248,12 +254,10 @@ public class Clases extends Activity {
                     startActivityForResult(intent, 1);
                     swipeListView.closeOpenedItems();
                 }
-                //swipeListView.openAnimate(position); //when you touch front view it will open
             }
 
             @Override
             public void onClickBackView(int position) {
-                //Log.d("swipe", String.format("onClickBackView %d", position));
                 swipeListView.closeAnimate(position);//when you touch back view it will close
             }
 
@@ -262,36 +266,16 @@ public class Clases extends Activity {
             Al deslizara de derecha a izquierda borramos la clase, dejandola en estado 3.
              */
             public void onDismiss(int[] reverseSortedPositions) {
-
-                AlertDialog.Builder saveDialog = new AlertDialog.Builder(swipeListView.getContext());
-                saveDialog.setTitle("Dismiss Class");
-                saveDialog.setMessage("This action can't be undone, are you sure?");
-
-                for (final int position : reverseSortedPositions) {
-                    AlertDialog.Builder builder = saveDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            mClaseDatasource.cambiarEstadoClase(claseData.get(position).getId(), 3);
-                            claseData.remove(position);
-                            adapter.notifyDataSetChanged();
-                        }
-                    });
-                }
-                saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
-                    public void onClick(DialogInterface dialog, int which){
-                        dialog.cancel();
-                    }
-                });
-                saveDialog.show();
             }
+
         });
 
         swipeListView.setSwipeMode(SwipeListView.SWIPE_MODE_BOTH); // there are five swiping modes
-        swipeListView.setSwipeActionLeft(SwipeListView.SWIPE_ACTION_DISMISS); //there are four swipe actions
+        swipeListView.setSwipeActionLeft(SwipeListView.SWIPE_ACTION_REVEAL); //there are four swipe actions
         swipeListView.setSwipeActionRight(SwipeListView.SWIPE_ACTION_REVEAL);
-        swipeListView.setOffsetLeft(Utils.convertDpToPixel(0f, getResources())); // left side offset
-        swipeListView.setOffsetRight(Utils.convertDpToPixel(250f, getResources())); // right side offset
-        swipeListView.setAnimationTime(400); // Animation time
-        //swipeListView.setSwipeOpenOnLongPress(true); // enable or disable SwipeOpenOnLongPress
+
+        swipeListView.setAnimationTime(200); // Animation time
+        swipeListView.setSwipeOpenOnLongPress(false);
 
         swipeListView.setAdapter(adapter);
 

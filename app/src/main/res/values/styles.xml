@@ -40,10 +40,14 @@
     <style name="BotonAusente" parent="AppTheme">
         <item name="android:background">#ce3737</item>
         <item name="android:textColor">#FFFFFF</item>
-        <item name="android:layout_margin">5dp</item>
+        <item name="android:layout_margin">0dp</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:padding">8dp</item>
+    </style>
+
+    <style name="BotonSincronizar" parent="BotonAusente">
+        <item name="android:background">#FF08CE00</item>
     </style>
 
     <style name="BotonRestablecer" parent="AppTheme">

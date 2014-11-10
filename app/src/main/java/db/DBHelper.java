@@ -15,7 +15,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
     private static final String DB_NAME = "eclass.db";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
 
     //Taba usuario
     public static final String COLUMN_ID = "ID";
@@ -23,13 +23,15 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_USUARIO = "ID_USUARIO";
     public static final String COLUMN_USERNAME = "USERNAME";
     public static final String COLUMN_PASSWORD = "PASSWORD";
+    public static final String COLUMN_NOMBRE_USUARIO ="NOMBRE_USUARIO";
 
     private static final String DB_CREATE_USUARIO =
             "CREATE TABLE " + TABLE_USUARIO + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "" + COLUMN_LOGIN + " TINYINT DEFAULT 0, " +
                     "" + COLUMN_USERNAME + " INTEGER(10) DEFAULT 0, " +
                     "" + COLUMN_USUARIO + " INTEGER(9), " +
-                    "" + COLUMN_PASSWORD + " VARCHAR(100))";
+                    "" + COLUMN_PASSWORD + " VARCHAR(100), " +
+                    "" + COLUMN_NOMBRE_USUARIO + " VARCHAR(100))";
 
     //Columnas tabla clases_sedes
     public static final String COLUMN_ID_CLASE = "ID";
@@ -38,6 +40,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_FECHA = "FECHA";
     public static final String COLUMN_HORA = "HORA";
     public static final String COLUMN_ESTADO_CLASE = "ESTADO_CLASE";
+    public static final String COLUMN_FECHA_SINCRONIZACION = "FECHA_SINCRONIZACION";
 
     private static final String DB_CREATE_CLASE  =
             "CREATE TABLE " + TABLE_CLASE + " (" + COLUMN_ID_CLASE + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -45,7 +48,8 @@ public class DBHelper extends SQLiteOpenHelper {
                     "" + COLUMN_NOMBRE_CLASE + " VARCHAR(250), " +
                     "" + COLUMN_FECHA + " DATE, " +
                     "" + COLUMN_HORA + " VARCHAR(8), " +
-                    "" + COLUMN_ESTADO_CLASE + " INTEGER(3) DEFAULT 0)";
+                    "" + COLUMN_ESTADO_CLASE + " INTEGER(3) DEFAULT 0," +
+                    "" + COLUMN_FECHA_SINCRONIZACION + " DATETIME)";
 
     //Columnas tabla alumnos_cursos_clases_sedes
     public static final String COLUMN_ID_ALUMNO = "ID";
@@ -76,5 +80,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        //Actualizacion para mostrar el nombre del Profesor.
+        db.execSQL("ALTER TABLE " + TABLE_USUARIO + " ADD COLUMN " + COLUMN_NOMBRE_USUARIO + " VARCHAR(100);");
+        //Actualizacion para guardar en el momento que se sincronizo la clase.
+        db.execSQL("ALTER TABLE " + TABLE_CLASE + " ADD COLUMN " + COLUMN_FECHA_SINCRONIZACION + " DATETIME;");
     }
 }

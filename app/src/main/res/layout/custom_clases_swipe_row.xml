@@ -3,7 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/back"
         android:tag="back"
         style="@style/MyListBackContent"
@@ -13,18 +13,28 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/btnSincronizarClase"
-            android:background="@drawable/radio_button_ausente"
-            style="@style/BotonAusente"
+            style="@style/BotonSincronizar"
             android:layout_centerVertical="true"
             android:text="Sincronizar"/>
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/btnEliminar"
+            android:background="@drawable/radio_button_ausente"
+            style="@style/BotonAusente"
+            android:text="Eliminar"
+            android:layout_alignTop="@+id/btnSincronizarClase"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
 
-    </LinearLayout>
+
+    </RelativeLayout>
     <RelativeLayout
         android:orientation="vertical"
         android:id="@+id/front"
         android:tag="front"
-        android:layout_height="fill_parent"
+        android:layout_height="match_parent"
         style="@style/MyListFrontContent">
 
         <ImageView
@@ -33,16 +43,61 @@
             android:background="@drawable/item_options"
             android:layout_centerVertical="true" />
 
-        <TextView
-            android:layout_width="150dp"
-            android:textSize="10sp"
-            android:layout_height="70dp"
-            android:gravity="center_vertical|left"
-            android:layout_toRightOf="@id/example_image"
-            style="@style/MyListTitle"
-            android:text="Rodrigo Armijo Aviles Rodrigo Armijo Aviles Rodrigo Armijo Aviles Rodrigo Armijo Aviles Rodrigo Armijo Aviles"
-            android:id="@+id/nombreAlumno"
-            android:layout_centerVertical="true" />
+        <RelativeLayout
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/example_image"
+            android:layout_marginLeft="1dp"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/example_image"
+            android:gravity="center_vertical|left">
+
+            <TextView
+                android:layout_width="150dp"
+                android:textSize="14sp"
+                android:layout_height="wrap_content"
+                style="@style/MyListTitle"
+                android:text="Campus Arauco"
+                android:id="@+id/nombreCampus"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:layout_width="150dp"
+                android:textSize="10sp"
+                android:layout_height="wrap_content"
+                android:text="Programa Ingles"
+                android:id="@+id/nombrePrograma"
+                android:layout_below="@+id/nombreCampus"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                style="@style/MyListTitle" />
+
+            <TextView
+                android:layout_width="150dp"
+                android:textSize="10sp"
+                android:layout_height="wrap_content"
+                style="@style/MyListTitle"
+                android:text="Ingles Nivel 8"
+                android:id="@+id/nombreCurso"
+                android:layout_below="@+id/nombrePrograma"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:layout_width="150dp"
+                android:textSize="10sp"
+                android:layout_height="wrap_content"
+                style="@style/MyListTitle"
+                android:text="El 25 de Noviembre a las 08:00"
+                android:id="@+id/nombreClase"
+                android:layout_below="@+id/nombreCurso"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+        </RelativeLayout>
+
 
         <ImageView
             android:layout_width="18dp"

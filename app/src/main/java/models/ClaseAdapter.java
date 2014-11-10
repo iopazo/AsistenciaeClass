@@ -1,9 +1,12 @@
 package models;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fortysevendeg.swipelistview.SwipeListView;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.moveapps.asistenciaeclass.R;
@@ -40,6 +44,8 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
     protected eClassAPI apiService;
     protected int id_clase;
     protected ProgressDialog pd;
+    SwipeListView swipeListView;
+    ClaseAdapter adapter;
 
     public ClaseAdapter(Context context, int resource, List<Clase> objects, DBClaseSource mClaseSource) {
         super(context, resource, objects);
@@ -51,10 +57,12 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, final View convertView, ViewGroup parent) {
 
         ClaseHolder holder = null;
         View row = convertView;
+        adapter = this;
+        swipeListView = (SwipeListView) parent;
 
         holder = null;
         if(row == null) {
@@ -63,8 +71,14 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
 
             holder = new ClaseHolder();
 
-            holder.nombreClase = (TextView)row.findViewById(R.id.nombreAlumno);
+            holder.nombreClase = (TextView)row.findViewById(R.id.nombreClase);
+            holder.nombreCampus = (TextView)row.findViewById(R.id.nombreCampus);
+            holder.nombrePrograma = (TextView)row.findViewById(R.id.nombrePrograma);
+            holder.nombreCurso = (TextView)row.findViewById(R.id.nombreCurso);
+
+
             holder.botonSincronizar = (Button)row.findViewById(R.id.btnSincronizarClase);
+            holder.botonEliminar = (Button)row.findViewById(R.id.btnEliminar);
             holder.cerrado = (ImageView)row.findViewById(R.id.cerrada);
             holder.sincronizado = (ImageView)row.findViewById(R.id.sincronizada);
             row.setTag(holder);
@@ -73,8 +87,25 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
         }
 
         final Clase claseData = data.get(position);
-        holder.nombreClase.setText(claseData.getNombre());
 
+        String[] separado = claseData.getNombre().split(" - ");
+
+        for (int i = 0; i < separado.length; i++) {
+            switch (i) {
+                case 0:
+                    holder.nombreCampus.setText(separado[0].toString());
+                    break;
+                case 1:
+                    holder.nombrePrograma.setText(separado[1].toString());
+                    break;
+                case 2:
+                    holder.nombreCurso.setText(separado[2].toString());
+                    break;
+                case 3:
+                    holder.nombreClase.setText(separado[3].toString());
+                    break;
+            }
+        }
         /*
         Estado
         0: Nada
@@ -96,6 +127,7 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
         }
 
         final ClaseHolder finalHolder = holder;
+        final View finalRow = row;
         holder.botonSincronizar.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -110,18 +142,45 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
 
                     apiService = new eClassAPI(datos);
                     //Aca se llama a la Api y subimos la asistencia
-                    //Log.d("ClaseAdapter", jsonObject.toString());
                     apiService.subirAsistencia(mUsuarioService);
+                    Log.d("ClaseAdapter", jsonObject.toString());
+
                     id_clase = claseData.getId();
                     finalHolder.cerrado.setVisibility(View.INVISIBLE);
                     finalHolder.sincronizado.setVisibility(View.VISIBLE);
-                    v.refreshDrawableState();
+                    finalRow.setDrawingCacheEnabled(true);
+                    finalRow.refreshDrawableState();
                 } else {
                     Toast.makeText(context, "Only closed classes can be synchronized!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
+        holder.botonEliminar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                AlertDialog.Builder saveDialog = new AlertDialog.Builder(swipeListView.getContext());
+                saveDialog.setTitle("Dismiss Class");
+                saveDialog.setMessage("This action can't be undone, are you sure?");
+
+                    AlertDialog.Builder builder = saveDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            mClaseSource.cambiarEstadoClase(claseData.getId(), 3);
+                            swipeListView.closeAnimate(position);
+                            adapter.remove(claseData);
+                            adapter.notifyDataSetChanged();
+                            Toast.makeText(context, "Class successfully removed.", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int which){
+                        dialog.cancel();
+                    }
+                });
+                saveDialog.show();
+            }
+        });
 
         return row;
     }
@@ -153,7 +212,11 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
 
     static class ClaseHolder {
         TextView nombreClase;
+        TextView nombreCampus;
+        TextView nombrePrograma;
+        TextView nombreCurso;
         Button botonSincronizar;
+        Button botonEliminar;
         ImageView sincronizado;
         ImageView cerrado;
     }
