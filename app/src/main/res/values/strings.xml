@@ -11,5 +11,11 @@
     <string name="title_activity_firma_alumno">Student Sign</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_cerrar">Close Class</string>
-
+    <string-array name="documentos_identificacion">
+        <item>Rut</item>
+        <item>DNI</item>
+        <item>CC</item>
+        <item>Pasaporte</item>
+    </string-array>
+    <string name="type_document">Select a type of document</string>
 </resources>

@@ -44,6 +44,7 @@ public class DBUsuarioSource {
             values.put(dbHelper.COLUMN_LOGIN, usuario.isLogin());
             values.put(dbHelper.COLUMN_PASSWORD, usuario.getPassword());
             values.put(dbHelper.COLUMN_USERNAME, usuario.getUsername());
+            values.put(dbHelper.COLUMN_NOMBRE_USUARIO, usuario.getNombreProfesor());
             mDatabase.insert(dbHelper.TABLE_USUARIO, null, values);
             mDatabase.setTransactionSuccessful();
         } finally {
@@ -55,7 +56,7 @@ public class DBUsuarioSource {
     public Cursor selectUsuario() {
         Cursor cursor = mDatabase.query(
                 DBHelper.TABLE_USUARIO,//Tabla
-                new String[] {DBHelper.COLUMN_USUARIO, DBHelper.COLUMN_LOGIN, DBHelper.COLUMN_PASSWORD, DBHelper.COLUMN_USERNAME},
+                new String[] {DBHelper.COLUMN_USUARIO, DBHelper.COLUMN_LOGIN, DBHelper.COLUMN_PASSWORD, DBHelper.COLUMN_USERNAME, DBHelper.COLUMN_NOMBRE_USUARIO},
                 null, //where clause
                 null, //where params
                 null, //goup by

@@ -14,53 +14,57 @@
         android:layout_height="wrap_content"
         android:id="@+id/logoImage"
         android:src="@drawable/logo_eclass"
-        android:layout_marginBottom="56dp"
-        android:layout_above="@+id/username"
+        android:contentDescription="@string/logoEclass"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:contentDescription="@string/logoEclass" />
+        android:layout_marginTop="110dp"
+        android:layout_marginBottom="20dp" />
+
+    <Spinner
+        android:layout_width="250dp"
+        android:layout_height="40dp"
+        android:id="@+id/spinner"
+        android:dropDownSelector="@android:drawable/spinner_background"
+        android:entries="@array/documentos_identificacion"
+        android:prompt="@string/type_document"
+        android:layout_below="@+id/logoImage"
+        android:layout_centerInParent="true" />
 
     <EditText
         style="@style/EditTextWithBorder"
         android:background="@drawable/textlines"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:id="@+id/username"
         android:hint="@string/hint_username"
-        android:layout_marginBottom="32dp"
-        android:layout_above="@+id/password"
-        android:layout_alignLeft="@+id/logoImage"
-        android:layout_alignStart="@+id/logoImage"
-        android:layout_alignRight="@+id/logoImage"
-        android:layout_alignEnd="@+id/logoImage"
         android:inputType="text"
-        android:maxLength="10"/>
+        android:maxLength="10"
+        android:layout_below="@+id/spinner"
+        android:layout_alignLeft="@+id/password"
+        android:layout_alignStart="@+id/password" />
 
     <EditText
         style="@style/EditTextWithBorder"
         android:background="@drawable/textlines"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
         android:hint="@string/hint_password"
         android:id="@+id/password"
         android:ems="10"
-        android:layout_centerVertical="true"
-        android:layout_alignLeft="@+id/username"
-        android:layout_alignStart="@+id/username"
-        android:layout_alignRight="@+id/username"
-        android:layout_alignEnd="@+id/username" />
+        android:layout_below="@+id/username"
+        android:layout_centerHorizontal="true" />
 
     <Button
         style="@style/BotonLogin"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:text="INGRESAR"
         android:id="@+id/buttonIngresar"
-        android:layout_marginTop="31dp"
+        android:onClick="ingresar"
+        android:layout_marginTop="44dp"
         android:layout_below="@+id/password"
-        android:layout_alignLeft="@+id/password"
-        android:layout_alignStart="@+id/password"
-        android:layout_alignRight="@+id/password"
-        android:layout_alignEnd="@+id/password"
-        android:onClick="ingresar"/>
+        android:layout_centerHorizontal="true" />
+
+
 </RelativeLayout>

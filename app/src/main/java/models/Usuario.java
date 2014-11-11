@@ -17,6 +17,7 @@ public class Usuario {
     private String password;
     private Usuario _usuarioDB;
     private int username;
+    private String nombreProfesor;
 
     public Usuario() {
 
@@ -37,6 +38,14 @@ public class Usuario {
         setPassword(_password);
         setLogin(_login);
         setUsername(_username);
+    }
+
+    public Usuario(int _id, String _password, boolean _login, int _username, String _nombreProfesor) {
+        setId(_id);
+        setPassword(_password);
+        setLogin(_login);
+        setUsername(_username);
+        setNombreProfesor(_nombreProfesor);
     }
 
 
@@ -77,7 +86,8 @@ public class Usuario {
                     boolean isLogin = cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_LOGIN)) > 0;
                     String password = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_PASSWORD));
                     int username = cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_USERNAME));
-                    set_usuarioDB(new Usuario(id, password, isLogin, username));
+                    String nombreProfesor = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_NOMBRE_USUARIO));
+                    set_usuarioDB(new Usuario(id, password, isLogin, username, nombreProfesor));
                     cursor.moveToNext();
                 }
             }
@@ -102,5 +112,13 @@ public class Usuario {
 
     public void setUsername(int username) {
         this.username = username;
+    }
+
+    public String getNombreProfesor() {
+        return nombreProfesor;
+    }
+
+    public void setNombreProfesor(String nombreProfesor) {
+        this.nombreProfesor = nombreProfesor;
     }
 }
