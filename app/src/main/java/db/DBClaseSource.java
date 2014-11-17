@@ -50,7 +50,7 @@ public class DBClaseSource {
     sync: 1 solo guarda las clases nuevas y
      */
 
-    public void insertClaseAlumnos(JsonArray clases, int sync) {
+    public void insertClaseAlumnos(JsonArray clases, int sync, int id_usuario) {
 
         if(!mDatabase.inTransaction()) {
             mDatabase.beginTransaction();
@@ -60,7 +60,7 @@ public class DBClaseSource {
         int contadorSincronizados = 0;
         try {
             if(sync == 1) {
-                clasesDb = this.list(4);
+                clasesDb = this.list(4, id_usuario);
                 ids = new Integer[clasesDb.size()];
                 for (int j = 0; j < clasesDb.size(); j++) {
                     ids[j] = clasesDb.get(j).getId();
@@ -75,6 +75,7 @@ public class DBClaseSource {
                         values.put(dbHelper.COLUMN_NOMBRE_CLASE, clase.get("nombre_completo").getAsString());
                         values.put(dbHelper.COLUMN_FECHA, clase.get("fecha").getAsString());
                         values.put(dbHelper.COLUMN_HORA, clase.get("hora").getAsString());
+                        values.put(dbHelper.COLUMN_FK_USUARIO, id_usuario);
 
                         if (mDatabase.insert(dbHelper.TABLE_CLASE, null, values) > 0) {
                             this.insertAlumnoCurso(clase.getAsJsonArray("alumnos"), clase.get("id_clase_sede").getAsInt());
@@ -88,6 +89,7 @@ public class DBClaseSource {
                             values.put(dbHelper.COLUMN_NOMBRE_CLASE, clase.get("nombre_completo").getAsString());
                             values.put(dbHelper.COLUMN_FECHA, clase.get("fecha").getAsString());
                             values.put(dbHelper.COLUMN_HORA, clase.get("hora").getAsString());
+                            values.put(dbHelper.COLUMN_FK_USUARIO, id_usuario);
 
                             if (mDatabase.insert(dbHelper.TABLE_CLASE, null, values) > 0) {
                                 this.insertAlumnoCurso(clase.getAsJsonArray("alumnos"), clase.get("id_clase_sede").getAsInt());
@@ -138,16 +140,16 @@ public class DBClaseSource {
     4: Todas
     Solo mostramos las clases que esten activas.
      */
-    public ArrayList<Clase> list(int estadoParam) throws NullPointerException {
+    public ArrayList<Clase> list(int notIncludeState, int idUsuario) throws NullPointerException {
         ArrayList<Clase> clases = new ArrayList<Clase>();
-        String whereClause = dbHelper.COLUMN_ESTADO_CLASE + " != ?";
+        String whereClause = dbHelper.COLUMN_ESTADO_CLASE + " != ? AND " + dbHelper.COLUMN_FK_USUARIO + " = ?";
         String orderBy = dbHelper.COLUMN_ESTADO_CLASE + " DESC, " + dbHelper.COLUMN_FECHA + " ASC, " + dbHelper.COLUMN_HORA + " ASC";
 
         Cursor cursor = mDatabase.query(
                 DBHelper.TABLE_CLASE,
                 new String[] {dbHelper.COLUMN_ID_CLASE_SEDE, dbHelper.COLUMN_NOMBRE_CLASE, dbHelper.COLUMN_ESTADO_CLASE},
                 whereClause,
-                new String[] {String.format("%d", estadoParam)},
+                new String[] {String.format("%d", notIncludeState), String.format("%d", idUsuario)},
                 null,
                 null,
                 orderBy

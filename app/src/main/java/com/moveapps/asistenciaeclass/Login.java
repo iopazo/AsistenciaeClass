@@ -15,7 +15,6 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -28,7 +27,6 @@ import java.sql.SQLException;
 import api.eClassAPI;
 import db.DBClaseSource;
 import db.DBUsuarioSource;
-import io.fabric.sdk.android.Fabric;
 import models.Usuario;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -51,7 +49,7 @@ public class Login extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
+        //Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_login);
 
         //Clase con metodos utiles
@@ -127,7 +125,7 @@ public class Login extends Activity {
                 JsonObject data = jsonObj.get("usuario").getAsJsonObject().getAsJsonObject("data");
                 JsonArray clases = data.getAsJsonArray("clases");
 
-                claseDataSource.insertClaseAlumnos(clases, 0);
+                claseDataSource.insertClaseAlumnos(clases, 0, data.get("id").getAsInt());
                 Intent intent = new Intent(Login.this, Clases.class);
                 Usuario usuario = new Usuario(data.get("id").getAsInt(), password.getText().toString(), true, data.get("username").getAsInt(), data.get("nombre").getAsString());
                 //Guardamos los datos del usuario.

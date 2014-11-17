@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.fortysevendeg.swipelistview.BaseSwipeListViewListener;
@@ -42,6 +44,7 @@ public class Clases extends Activity {
     protected Usuario dbUsuario;
     static ArrayList<Clase> clases = null;
     protected eClassAPI apiService;
+    final int classState = 3;
 
     SwipeListView swipeListView;
     ClaseAdapter adapter;
@@ -68,6 +71,10 @@ public class Clases extends Activity {
         try {
             mUsuarioDatasource.open();
             mClaseDatasource.open();
+
+            Usuario usuario = new Usuario();
+            usuario.getUser(mUsuarioDatasource);
+            dbUsuario = usuario.getUsuarioDB();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -76,7 +83,7 @@ public class Clases extends Activity {
         adapter = new ClaseAdapter(this, R.layout.custom_clases_swipe_row, claseData, mClaseDatasource);
 
         //Traemos los alumnos
-        clases = mClaseDatasource.list(3);
+        clases = mClaseDatasource.list(classState, dbUsuario.getId());
         onLoadSwipeListener();
     }
 
@@ -89,7 +96,7 @@ public class Clases extends Activity {
         super.onRestart();
         try {
             mClaseDatasource.open();
-            clases = mClaseDatasource.list(3);
+            clases = mClaseDatasource.list(classState, dbUsuario.getId());
             onLoadSwipeListener();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -115,7 +122,7 @@ public class Clases extends Activity {
         try {
             mClaseDatasource.open();
             mUsuarioDatasource.open();
-            clases = mClaseDatasource.list(3);
+            clases = mClaseDatasource.list(classState, dbUsuario.getId());
             onLoadSwipeListener();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -145,9 +152,6 @@ public class Clases extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_salir) {
-            Usuario usuario = new Usuario();
-            usuario.getUser(mUsuarioDatasource);
-            dbUsuario = usuario.getUsuarioDB();
 
             if (mUsuarioDatasource.updateUsuario(dbUsuario.getId(), false) > 0) {
                 Intent intent = new Intent(Clases.this, Login.class);
@@ -184,7 +188,7 @@ public class Clases extends Activity {
             if(msg.equals("success")) {
                 JsonObject data = jsonObj.get("usuario").getAsJsonObject().getAsJsonObject("data");
                 JsonArray clases = data.getAsJsonArray("clases");
-                mClaseDatasource.insertClaseAlumnos(clases, 1);
+                mClaseDatasource.insertClaseAlumnos(clases, 1, data.get("id").getAsInt());
             } else if(msg.equals("error")) {
                 Toast.makeText(Clases.this, "No se pudo sincronizar, intente nuevamente.", Toast.LENGTH_SHORT).show();
             }
@@ -202,15 +206,14 @@ public class Clases extends Activity {
         claseData.removeAll(claseData);
 
         swipeListView.setSwipeListViewListener(new BaseSwipeListViewListener() {
+            DisplayMetrics metrics = getResources().getDisplayMetrics();
+
             @Override
             public void onOpened(int position, boolean toRight) {
-
-
             }
 
             @Override
             public void onClosed(int position, boolean fromRight) {
-                //Log.d("swipe", String.format("onClosedddd %d", position));
             }
 
             @Override
@@ -223,13 +226,14 @@ public class Clases extends Activity {
 
             @Override
             public void onStartOpen(int position, int action, boolean right) {
-                //Log.d("swipe", String.format("onStartOpen %d - action %d", position, action));
                 if(right) {
-                    swipeListView.setOffsetLeft(Utils.convertDpToPixel(0f, getResources())); // left side offset
-                    swipeListView.setOffsetRight(Utils.convertDpToPixel(265f, getResources())); // right side offset
+                    final Button btnSincronizar = (Button)findViewById(R.id.btnSincronizarClase);
+                    float rightOffset = metrics.widthPixels - btnSincronizar.getWidth();
+                    swipeListView.setOffsetRight(rightOffset); // right side offset
                 } else {
-                    swipeListView.setOffsetLeft(Utils.convertDpToPixel(290f, getResources())); // left side offset
-                    swipeListView.setOffsetRight(Utils.convertDpToPixel(0f, getResources())); // right side offset
+                    final Button btnEliminar = (Button)findViewById(R.id.btnEliminar);
+                    float leftOffset = metrics.widthPixels - btnEliminar.getWidth();
+                    swipeListView.setOffsetLeft(leftOffset); // left side offset
                 }
             }
 

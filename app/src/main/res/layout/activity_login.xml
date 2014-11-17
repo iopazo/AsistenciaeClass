@@ -18,10 +18,10 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="110dp"
-        android:layout_marginBottom="20dp" />
+        android:layout_marginBottom="100dp" />
 
     <Spinner
-        android:layout_width="250dp"
+        android:layout_width="450dp"
         android:layout_height="40dp"
         android:id="@+id/spinner"
         android:dropDownSelector="@android:drawable/spinner_background"
@@ -33,7 +33,7 @@
     <EditText
         style="@style/EditTextWithBorder"
         android:background="@drawable/textlines"
-        android:layout_width="250dp"
+        android:layout_width="450dp"
         android:layout_height="wrap_content"
         android:id="@+id/username"
         android:hint="@string/hint_username"
@@ -41,12 +41,13 @@
         android:maxLength="10"
         android:layout_below="@+id/spinner"
         android:layout_alignLeft="@+id/password"
-        android:layout_alignStart="@+id/password" />
+        android:layout_alignStart="@+id/password"
+        android:layout_marginBottom="10dp"/>
 
     <EditText
         style="@style/EditTextWithBorder"
         android:background="@drawable/textlines"
-        android:layout_width="250dp"
+        android:layout_width="450dp"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
         android:hint="@string/hint_password"
@@ -57,7 +58,7 @@
 
     <Button
         style="@style/BotonLogin"
-        android:layout_width="250dp"
+        android:layout_width="450dp"
         android:layout_height="wrap_content"
         android:text="INGRESAR"
         android:id="@+id/buttonIngresar"

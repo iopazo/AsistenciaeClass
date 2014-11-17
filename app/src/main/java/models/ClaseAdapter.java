@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.util.Base64;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,6 +60,9 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
     @Override
     public View getView(final int position, final View convertView, ViewGroup parent) {
 
+        DisplayMetrics metrics = getContext().getResources().getDisplayMetrics();
+        int dpiValidate = metrics.densityDpi;
+
         ClaseHolder holder = null;
         View row = convertView;
         adapter = this;
@@ -76,12 +80,20 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
             holder.nombrePrograma = (TextView)row.findViewById(R.id.nombrePrograma);
             holder.nombreCurso = (TextView)row.findViewById(R.id.nombreCurso);
 
+            //Validamos si el tablet tiene una densidad de 120
+            if(dpiValidate == 120) {
+                holder.nombreCampus.setTextSize(25f);
+                holder.nombrePrograma.setTextSize(18f);
+                holder.nombreCurso.setTextSize(18f);
+                holder.nombreClase.setTextSize(15f);
+            }
 
             holder.botonSincronizar = (Button)row.findViewById(R.id.btnSincronizarClase);
             holder.botonEliminar = (Button)row.findViewById(R.id.btnEliminar);
             holder.cerrado = (ImageView)row.findViewById(R.id.cerrada);
             holder.sincronizado = (ImageView)row.findViewById(R.id.sincronizada);
             row.setTag(holder);
+
         } else {
             holder = (ClaseHolder)row.getTag();
         }

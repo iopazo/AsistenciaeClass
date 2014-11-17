@@ -6,8 +6,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,7 +34,6 @@ public class Alumnos extends Activity {
     static final String TAG = Alumnos.class.getSimpleName();
     protected DBAlumnoSource mAlumnosource;
     static ArrayList<Alumno> alumnos = null;
-
     SwipeListView swipeListView;
     AlumnoAdapter adapter;
     List<Alumno> alumnoData;
@@ -42,6 +43,7 @@ public class Alumnos extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alumnos);
+
 
         //Obtenemos los parametros enviados desde la vista Clases
         Intent intent = getIntent();
@@ -130,7 +132,10 @@ public class Alumnos extends Activity {
 
     private void onLoadSwipeListener() {
         alumnoData.removeAll(alumnoData);
+
         swipeListView.setSwipeListViewListener(new BaseSwipeListViewListener() {
+            DisplayMetrics metrics = getResources().getDisplayMetrics();
+
             @Override
             public void onOpened(int position, boolean toRight) {
             }
@@ -145,7 +150,10 @@ public class Alumnos extends Activity {
             }
             @Override
             public void onStartOpen(int position, int action, boolean right) {
-                //Log.d("swipe", String.format("onStartOpen %d - action %d", position, action));
+                final Button btnAusente = (Button)findViewById(R.id.botonAusente);
+                final Button btnRestablecer = (Button)findViewById(R.id.botonRestablecer);
+                float leftOffset = metrics.widthPixels - btnAusente.getWidth() - btnRestablecer.getWidth();
+                swipeListView.setOffsetRight(leftOffset); // left side offset
             }
             @Override
             public void onStartClose(int position, boolean right) {
@@ -199,11 +207,9 @@ public class Alumnos extends Activity {
                     intent.putExtra("id_clase", ID_CLASE);
                     startActivityForResult(intent, 1);
                 }
-                //swipeListView.openAnimate(position); //when you touch front view it will open
             }
             @Override
             public void onClickBackView(int position) {
-                //Log.d("swipe", String.format("onClickBackView %d", position));
                 swipeListView.closeAnimate(position);//when you touch back view it will close
             }
             @Override
@@ -213,12 +219,8 @@ public class Alumnos extends Activity {
         });
 
         swipeListView.setSwipeMode(SwipeListView.SWIPE_MODE_RIGHT); // there are five swiping modes
-        //swipeListView.setSwipeActionLeft(SwipeListView.SWIPE_ACTION_DISMISS); //there are four swipe actions
         swipeListView.setSwipeActionRight(SwipeListView.SWIPE_ACTION_REVEAL);
-        swipeListView.setOffsetLeft(Utils.convertDpToPixel(0f, getResources())); // left side offset
-        swipeListView.setOffsetRight(Utils.convertDpToPixel(50f, getResources())); // right side offset
-        swipeListView.setAnimationTime(400); // Animation time
-        //swipeListView.setSwipeOpenOnLongPress(true); // enable or disable SwipeOpenOnLongPress
+        swipeListView.setAnimationTime(200); // Animation time
 
         swipeListView.setAdapter(adapter);
 
