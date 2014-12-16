@@ -1,13 +1,13 @@
 package com.moveapps.asistenciaeclass;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
+import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.security.MessageDigest;
 import java.util.HashMap;
-import java.util.zip.GZIPOutputStream;
 
 /**
  * Created by iopazog on 13-09-14.
@@ -91,5 +91,11 @@ public class Utils {
         DisplayMetrics metrics = resources.getDisplayMetrics();
         float px = dp * (metrics.densityDpi / 160f);
         return (int) px;
+    }
+
+    static public void showToast(Context c, String text) {
+        Toast toast = Toast.makeText(c, text, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, Gravity.CENTER_HORIZONTAL, Gravity.CENTER_VERTICAL);
+        toast.show();
     }
 }

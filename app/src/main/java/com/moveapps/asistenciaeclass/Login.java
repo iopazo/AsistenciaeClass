@@ -9,11 +9,13 @@ import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -35,13 +37,13 @@ import retrofit.client.Response;
 public class Login extends Activity {
 
     final static String TAG = Login.class.getSimpleName();
-    Utils util;
-
     protected DBUsuarioSource usuarioDataSource;
     protected DBClaseSource claseDataSource;
     protected EditText username;
     protected EditText password;
     protected Spinner documentoIdentificacion;
+    protected TextView nombreProfesor;
+    protected TextView otraCuenta;
     protected eClassAPI apiService;
     private Usuario userDB;
     protected ProgressDialog pd;
@@ -52,20 +54,43 @@ public class Login extends Activity {
         //Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_login);
 
-        //Clase con metodos utiles
-        util = new Utils();
-        //manipulador de base de datos
+        //Abrimos la conexion a Usuarios y Clases
         usuarioDataSource = new DBUsuarioSource(Login.this);
         claseDataSource = new DBClaseSource(Login.this);
+
+        //Instanciamos Usuario como global
         userDB = new Usuario();
-        //Hacemos la consulta a
-        userDB.getUser(usuarioDataSource);
+        //Traemos el usuario que tenga la marca de ultimo ingreso
+        userDB.getUser(usuarioDataSource, 0);
+
+        //Iniciamos select y campo username para aplicar reglas.
+        documentoIdentificacion = (Spinner) this.findViewById(R.id.spinner);
+        username = (EditText) this.findViewById(R.id.username);
+        nombreProfesor = (TextView) this.findViewById(R.id.nombreProfesor);
+        otraCuenta = (TextView) this.findViewById(R.id.otraCuenta);
+
+        //Si encontramos un usuario, validamos que este tenga la marca de login, de lo contrario mostramos su nombre y que ingrese su password.
         if(userDB.getUsuarioDB().getId() > 0 && userDB.getUsuarioDB().isLogin()) {
             Intent intent = new Intent(Login.this, Clases.class);
             intent.putExtra("password", userDB.getUsuarioDB().getPassword());
             intent.putExtra("username", userDB.getUsuarioDB().getUsername());
+            userDB = null;
             startActivity(intent);
             finish();
+        }
+        else if(userDB.getUsuarioDB().getId() > 0 && !userDB.getUsuarioDB().isLogin()) {
+            documentoIdentificacion.setVisibility(View.INVISIBLE);
+            username.setVisibility(View.INVISIBLE);
+            nombreProfesor.setText(String.format("%s, %s", "Bienvenido", userDB.getUsuarioDB().getNombreProfesor()));
+            nombreProfesor.setVisibility(View.VISIBLE);
+            otraCuenta.setVisibility(View.VISIBLE);
+            username.setText(String.format("%d", userDB.getUsuarioDB().getUsername()));
+            //Dejamos por defecto DNI
+            documentoIdentificacion.setSelection(1);
+        }
+        //Cae aca cuando no existe ninguna opcion
+        else {
+            userDB.set_usuarioDB(null);
         }
 
         //Seteamos el background color al layout
@@ -74,17 +99,35 @@ public class Login extends Activity {
 
         //Seteamos las fuentes en bold
         Typeface latoBold = Typeface.createFromAsset(getAssets(), "fonts/Lato-Bol.ttf");
-        username = (EditText) this.findViewById(R.id.username);
         password = (EditText) this.findViewById(R.id.password);
         username.setTypeface(latoBold);
         password.setTypeface(latoBold);
-        documentoIdentificacion = (Spinner) this.findViewById(R.id.spinner);
 
+        //Le asignamos el evento on Focus a username
         username.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if(!hasFocus && documentoIdentificacion.getSelectedItemPosition() == 0)
-                    username.setText(util.formatear(username.getText().toString()));
+                    username.setText(Utils.formatear(username.getText().toString()));
+            }
+        });
+
+        //Dejamos todos los usuarios en login 0 y ultimo usuario en 0
+        otraCuenta.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Animation animation = AnimationUtils.makeInAnimation(Login.this, true);
+                animation.setDuration(500);
+                username.setVisibility(View.VISIBLE);
+                username.startAnimation(animation);
+                username.setText("");
+                documentoIdentificacion.setVisibility(View.VISIBLE);
+                documentoIdentificacion.startAnimation(animation);
+                documentoIdentificacion.setSelection(0);
+                otraCuenta.setVisibility(View.INVISIBLE);
+                nombreProfesor.setVisibility(View.INVISIBLE);
+                usuarioDataSource.updateUsuario(userDB.getUsuarioDB().getId(), false, false);
+                userDB.set_usuarioDB(null);
             }
         });
 
@@ -133,20 +176,21 @@ public class Login extends Activity {
                 intent.putExtra("password", password.getText().toString());
                 intent.putExtra("username", usuario.getUsername());
                 startActivity(intent);
+                userDB = null;
                 pd.cancel();
                 finish();
             } else {
                 String msgStatus = jsonObj.get("usuario").getAsJsonObject().get("msg").getAsString();
                 if(msg.equals("error")) {
                     pd.cancel();
-                    Toast.makeText(Login.this, msgStatus, Toast.LENGTH_SHORT).show();
+                    Utils.showToast(Login.this, msgStatus);
                 }
             }
         }
 
         @Override
         public void failure(RetrofitError error) {
-            Toast.makeText(Login.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+            Utils.showToast(Login.this, error.getMessage());
             pd.cancel();
         }
     };
@@ -154,7 +198,7 @@ public class Login extends Activity {
     //Metodo que nos conecta con eClassAPI y le enviamos los parametros por post para conectar
     protected void loadUsuarioData() {
 
-        userDB.getUser(usuarioDataSource);
+        //userDB.getUser(usuarioDataSource);
         Intent intent = new Intent(Login.this, Clases.class);
         if(userDB.getUsuarioDB().getId() == 0) {
             //Aca debemos armar los datos para llamar a la API
@@ -162,11 +206,7 @@ public class Login extends Activity {
             try {
                 String numero_documento;
                 int seleccion = documentoIdentificacion.getSelectedItemPosition();
-                if(seleccion == 0) {
-                   numero_documento = (username.getText().toString().length() == 10) ? username.getText().toString().substring(0, 8) : username.getText().toString().substring(0, 7);
-                } else {
-                   numero_documento = username.getText().toString();
-                }
+                numero_documento = getNumeroDocumento(seleccion);
                 datosJson.put("numero_documento", numero_documento);
                 datosJson.put("password", Utils.MD5(password.getText().toString()));
             } catch (JSONException e) {
@@ -180,18 +220,29 @@ public class Login extends Activity {
             apiService.getUsuarioData(mUsuarioSerice);
 
         } else if(password.getText().toString().equals(userDB.getUsuarioDB().getPassword().toString())){
-            if(usuarioDataSource.updateUsuario(userDB.getUsuarioDB().getId(), true) > 0) {
+            if(usuarioDataSource.updateUsuario(userDB.getUsuarioDB().getId(), true, true) > 0) {
                 intent.putExtra("password", userDB.getUsuarioDB().getPassword());
                 intent.putExtra("username", userDB.getUsuarioDB().getUsername());
                 startActivity(intent);
+                userDB = null;
                 pd.cancel();
                 finish();
             }
         } else {
             pd.cancel();
-            Toast.makeText(Login.this, "Usuario no encontrado en DB", Toast.LENGTH_SHORT).show();
+            Utils.showToast(Login.this, "Password incorrecta, intente nuevamente");
         }
 
+    }
+
+    private String getNumeroDocumento(int seleccion) {
+        String numero_documento;
+        if(seleccion == 0) {
+           numero_documento = (username.getText().toString().length() == 10) ? username.getText().toString().substring(0, 8) : username.getText().toString().substring(0, 7);
+        } else {
+           numero_documento = username.getText().toString();
+        }
+        return numero_documento;
     }
 
     public boolean ingresar(View view) {
@@ -200,7 +251,7 @@ public class Login extends Activity {
 
         switch (seleccion) {
             case 0:
-                if(!util.validarRut(username.getText().toString())) {
+                if(!Utils.validarRut(username.getText().toString())) {
                     username.setError("El rut ingresado no es válido");
                     pd.cancel();
                     return false;
@@ -215,11 +266,14 @@ public class Login extends Activity {
             break;
         }
 
-
         if(password.getText().toString().isEmpty()) {
             password.setError("Debe ingresar el password");
             pd.cancel();
             return false;
+        }
+
+        if(userDB.getUsuarioDB() == null) {
+            userDB.getUser(usuarioDataSource, Integer.parseInt(getNumeroDocumento(seleccion)));
         }
         //Si va bien llamamos a los datos de la Api
         loadUsuarioData();

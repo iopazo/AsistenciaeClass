@@ -8,12 +8,10 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.sql.SQLException;
@@ -143,20 +141,14 @@ public class FirmaAlumno extends Activity implements OnClickListener {
                                     finish();
                                 }
                             } else {
-                                Toast unsavedToast = Toast.makeText(getApplicationContext(),
-                                        "You must sign before save changes.", Toast.LENGTH_SHORT);
-                                unsavedToast.show();
+                                Utils.showToast(getApplicationContext(), "You must sign before save changes.");
                             }
                         }  else {
-                            Toast unsavedToast = Toast.makeText(getApplicationContext(),
-                                    "La imagen no pudo ser guardada, intente nuevamente.", Toast.LENGTH_SHORT);
-                            unsavedToast.show();
+                            Utils.showToast(getApplicationContext(), "La imagen no pudo ser guardada, intente nuevamente.");
                         }
 
                     } catch (UnsupportedOperationException ex) {
-                        Toast unsavedToast = Toast.makeText(getApplicationContext(),
-                                "Internal error CODE: SIG-13.", Toast.LENGTH_SHORT);
-                        unsavedToast.show();
+                        Utils.showToast(getApplicationContext(), "Internal error CODE: SIG-13.");
                     }
                     drawView.destroyDrawingCache();
                 }

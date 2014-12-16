@@ -13,9 +13,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.moveapps.asistenciaeclass.R;
+import com.moveapps.asistenciaeclass.Utils;
 
 import java.util.List;
 
@@ -104,7 +104,7 @@ public class AlumnoAdapter extends ArrayAdapter<Alumno> {
                 switch (alumnoData.getEstado()) {
                     case 0:
                         mAlumnoSource.ausente(alumnoData.getIdAlumnoCursoClaseSede());
-                        Toast.makeText(context, "Change success!.", Toast.LENGTH_SHORT).show();
+                        Utils.showToast(context, "Change success!.");
                         ((Activity) context).recreate();
                         break;
                     case 1:
@@ -120,10 +120,10 @@ public class AlumnoAdapter extends ArrayAdapter<Alumno> {
                                 String value = passwordConfirm.getText().toString();
                                 if(value.equals(passwordProfesor)) {
                                     mAlumnoSource.ausente(alumnoData.getIdAlumnoCursoClaseSede());
-                                    Toast.makeText(context, "Change success!.", Toast.LENGTH_SHORT).show();
+                                    Utils.showToast(context, "Change success!.");
                                     ((Activity) context).recreate();
                                 } else {
-                                    Toast.makeText(context, "The password is incorrect, try again.", Toast.LENGTH_SHORT).show();
+                                    Utils.showToast(context, "The password is incorrect, try again.");
                                 }
                             }
                         });
@@ -136,7 +136,7 @@ public class AlumnoAdapter extends ArrayAdapter<Alumno> {
                         cambiarEstadoAlert.show();
                         break;
                     case 2:
-                        Toast.makeText(context, "This student is already absent.", Toast.LENGTH_SHORT).show();
+                        Utils.showToast(context, "This student is already absent.");
                         break;
                 }
             }
@@ -161,10 +161,10 @@ public class AlumnoAdapter extends ArrayAdapter<Alumno> {
                             String value = passwordConfirm.getText().toString();
                             if(value.equals(passwordProfesor)) {
                                 mAlumnoSource.restablecer(alumnoData.getIdAlumnoCursoClaseSede());
-                                Toast.makeText(context, "Change success!.", Toast.LENGTH_SHORT).show();
+                                Utils.showToast(context, "Change success!.");
                                 ((Activity) context).recreate();
                             } else {
-                                Toast.makeText(context, "The password is incorrect, try again.", Toast.LENGTH_SHORT).show();
+                                Utils.showToast(context, "The password is incorrect, try again.");
                             }
                         }
                     });
@@ -176,7 +176,7 @@ public class AlumnoAdapter extends ArrayAdapter<Alumno> {
                     });
                     restablerAlert.show();
                 } else if(alumnoData.getEstado() == 2){
-                    Toast.makeText(context, "This student is already unmark.", Toast.LENGTH_SHORT).show();
+                    Utils.showToast(context, "This student is already unmark.");
                 }
             }
         });

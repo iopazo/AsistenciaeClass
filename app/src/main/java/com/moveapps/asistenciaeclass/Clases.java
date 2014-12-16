@@ -8,7 +8,6 @@ import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.fortysevendeg.swipelistview.BaseSwipeListViewListener;
 import com.fortysevendeg.swipelistview.SwipeListView;
@@ -73,7 +72,7 @@ public class Clases extends Activity {
             mClaseDatasource.open();
 
             Usuario usuario = new Usuario();
-            usuario.getUser(mUsuarioDatasource);
+            usuario.getUser(mUsuarioDatasource, 0);
             dbUsuario = usuario.getUsuarioDB();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -153,7 +152,7 @@ public class Clases extends Activity {
         int id = item.getItemId();
         if (id == R.id.action_salir) {
 
-            if (mUsuarioDatasource.updateUsuario(dbUsuario.getId(), false) > 0) {
+            if (mUsuarioDatasource.updateUsuario(dbUsuario.getId(), false, true) > 0) {
                 Intent intent = new Intent(Clases.this, Login.class);
                 startActivity(intent);
                 finish();
@@ -190,13 +189,13 @@ public class Clases extends Activity {
                 JsonArray clases = data.getAsJsonArray("clases");
                 mClaseDatasource.insertClaseAlumnos(clases, 1, data.get("id").getAsInt());
             } else if(msg.equals("error")) {
-                Toast.makeText(Clases.this, "No se pudo sincronizar, intente nuevamente.", Toast.LENGTH_SHORT).show();
+                Utils.showToast(Clases.this, "No se pudo sincronizar, intente nuevamente.");
             }
         }
 
         @Override
         public void failure(RetrofitError error) {
-            Toast.makeText(Clases.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+            Utils.showToast(Clases.this, error.getMessage());
         }
     };
 

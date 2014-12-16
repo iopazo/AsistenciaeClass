@@ -18,6 +18,7 @@ public class Usuario {
     private Usuario _usuarioDB;
     private int username;
     private String nombreProfesor;
+    private int ultimoLogueado;
 
     public Usuario() {
 
@@ -73,12 +74,12 @@ public class Usuario {
         this.password = password;
     }
 
-    public Usuario getUser(DBUsuarioSource mDataSource) {
+    public Usuario getUser(DBUsuarioSource mDataSource, int userFromActivity) {
 
         set_usuarioDB(new Usuario());
         try {
             mDataSource.open();
-            Cursor cursor = mDataSource.selectUsuario();
+            Cursor cursor = mDataSource.selectUsuario(userFromActivity);
             if(cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()){
                     //Aca sacamos el valor
@@ -120,5 +121,13 @@ public class Usuario {
 
     public void setNombreProfesor(String nombreProfesor) {
         this.nombreProfesor = nombreProfesor;
+    }
+
+    public int getUltimoLogueado() {
+        return ultimoLogueado;
+    }
+
+    public void setUltimoLogueado(int ultimoLogueado) {
+        this.ultimoLogueado = ultimoLogueado;
     }
 }

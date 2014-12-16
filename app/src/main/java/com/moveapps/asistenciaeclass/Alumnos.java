@@ -12,7 +12,6 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.fortysevendeg.swipelistview.BaseSwipeListViewListener;
 import com.fortysevendeg.swipelistview.SwipeListView;
@@ -187,7 +186,7 @@ public class Alumnos extends Activity {
                                 intent.putExtra("id_clase", ID_CLASE);
                                 startActivityForResult(intent, 1);
                             } else {
-                                Toast.makeText(Alumnos.this, "The password is incorrect, try again.", Toast.LENGTH_SHORT).show();
+                                Utils.showToast(Alumnos.this, "The password is incorrect, try again.");
                             }
                         }
                     });

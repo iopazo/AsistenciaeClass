@@ -15,12 +15,12 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.fortysevendeg.swipelistview.SwipeListView;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.moveapps.asistenciaeclass.R;
+import com.moveapps.asistenciaeclass.Utils;
 
 import org.json.JSONObject;
 
@@ -163,7 +163,7 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
                     finalRow.setDrawingCacheEnabled(true);
                     finalRow.refreshDrawableState();
                 } else {
-                    Toast.makeText(context, "Only closed classes can be synchronized!", Toast.LENGTH_SHORT).show();
+                    Utils.showToast(context, "Only closed classes can be synchronized!");
                 }
             }
         });
@@ -182,7 +182,7 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
                             swipeListView.closeAnimate(position);
                             adapter.remove(claseData);
                             adapter.notifyDataSetChanged();
-                            Toast.makeText(context, "Class successfully removed.", Toast.LENGTH_LONG).show();
+                            Utils.showToast(context, "Class successfully removed.");
                         }
                     });
                 saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
@@ -208,16 +208,16 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
                 //Marcamos la clase como sincronizada
                 mClaseSource.cambiarEstadoClase(id_clase, 2);
                 pd.cancel();
-                Toast.makeText(context, "Class successfully uploaded.", Toast.LENGTH_LONG).show();
+                Utils.showToast(context, "Class successfully uploaded.");
             } else {
-                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+                Utils.showToast(context, msg);
                 pd.cancel();
             }
         }
 
         @Override
         public void failure(RetrofitError error) {
-            Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG).show();
+            Utils.showToast(context,  error.getMessage());
             pd.cancel();
         }
     };
