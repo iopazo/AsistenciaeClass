@@ -11,22 +11,26 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.moveapps.asistenciaeclass.R;
 import com.moveapps.asistenciaeclass.Utils;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import db.DBAlumnoSource;
 
 /**
  * Created by Ignacio on 08/10/2014.
  */
-public class AlumnoAdapter extends ArrayAdapter<Alumno> {
+public class AlumnoAdapter extends ArrayAdapter<Alumno> implements Filterable {
 
-    List<Alumno> data;
+    private AlumnoFilter alumnoFilter;
+    private ArrayList<Alumno> data;
+    private ArrayList<Alumno> dataFilter;
     Context context;
     int layoutResId;
     static String passwordProfesor;
@@ -34,14 +38,22 @@ public class AlumnoAdapter extends ArrayAdapter<Alumno> {
     View row;
 
 
-    public AlumnoAdapter(Context context, int resource, List<Alumno> objects, String masterPassword, DBAlumnoSource mAlumnoSource) {
+    public AlumnoAdapter(Context context, int resource, ArrayList<Alumno> objects, String masterPassword, DBAlumnoSource mAlumnoSource) {
         super(context, resource, objects);
 
         this.data = objects;
+        this.dataFilter = objects;
         this.context = context;
         this.layoutResId = resource;
         this.passwordProfesor = masterPassword;
         this.mAlumnoSource = mAlumnoSource;
+
+        getFilter();
+    }
+
+    @Override
+    public int getCount() {
+        return dataFilter.size();
     }
 
     @Override
@@ -67,7 +79,7 @@ public class AlumnoAdapter extends ArrayAdapter<Alumno> {
             holder = (AlumnoHolder)row.getTag();
         }
 
-        final Alumno alumnoData = data.get(position);
+        final Alumno alumnoData = (Alumno) getItem(position);
         holder.nombreAlumno.setText(alumnoData.getNombre());
 
         /*
@@ -104,31 +116,31 @@ public class AlumnoAdapter extends ArrayAdapter<Alumno> {
                 switch (alumnoData.getEstado()) {
                     case 0:
                         mAlumnoSource.ausente(alumnoData.getIdAlumnoCursoClaseSede());
-                        Utils.showToast(context, "Change success!.");
+                        Utils.showToast(context, context.getResources().getString(R.string.change_sucess));
                         ((Activity) context).recreate();
                         break;
                     case 1:
                         AlertDialog.Builder cambiarEstadoAlert = new AlertDialog.Builder(context);
-                        cambiarEstadoAlert.setTitle("Teacher confirms");
-                        cambiarEstadoAlert.setMessage("Sure you want remove the signature?");
+                        cambiarEstadoAlert.setTitle(context.getResources().getString(R.string.teacher_confirm));
+                        cambiarEstadoAlert.setMessage(context.getResources().getString(R.string.remove_signature));
                         final EditText passwordConfirm = new EditText(context);
                         passwordConfirm.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
                         cambiarEstadoAlert.setView(passwordConfirm);
 
-                        AlertDialog.Builder builder = cambiarEstadoAlert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        AlertDialog.Builder builder = cambiarEstadoAlert.setPositiveButton(context.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 String value = passwordConfirm.getText().toString();
                                 if(value.equals(passwordProfesor)) {
                                     mAlumnoSource.ausente(alumnoData.getIdAlumnoCursoClaseSede());
-                                    Utils.showToast(context, "Change success!.");
+                                    Utils.showToast(context, context.getResources().getString(R.string.change_sucess));
                                     ((Activity) context).recreate();
                                 } else {
-                                    Utils.showToast(context, "The password is incorrect, try again.");
+                                    Utils.showToast(context, context.getResources().getString(R.string.password_incorrect));
                                 }
                             }
                         });
 
-                        cambiarEstadoAlert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        cambiarEstadoAlert.setNegativeButton(context.getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
                             }
@@ -136,7 +148,7 @@ public class AlumnoAdapter extends ArrayAdapter<Alumno> {
                         cambiarEstadoAlert.show();
                         break;
                     case 2:
-                        Utils.showToast(context, "This student is already absent.");
+                        Utils.showToast(context, context.getResources().getString(R.string.already_absent));
                         break;
                 }
             }
@@ -150,38 +162,93 @@ public class AlumnoAdapter extends ArrayAdapter<Alumno> {
                 // Si el alumno esta presente, entonces solo ahi hacemos la validacion.
                 if(alumnoData.getEstado() != 0) {
                     AlertDialog.Builder restablerAlert = new AlertDialog.Builder(context);
-                    restablerAlert.setTitle("Teacher confirms");
-                    restablerAlert.setMessage("Sure you want reset the changes of this student?");
+                    restablerAlert.setTitle(context.getResources().getString(R.string.teacher_confirm));
+                    restablerAlert.setMessage(context.getResources().getString(R.string.reset_changes));
                     final EditText passwordConfirm = new EditText(context);
                     passwordConfirm.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
                     restablerAlert.setView(passwordConfirm);
 
-                    AlertDialog.Builder builder = restablerAlert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    AlertDialog.Builder builder = restablerAlert.setPositiveButton(context.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             String value = passwordConfirm.getText().toString();
                             if(value.equals(passwordProfesor)) {
                                 mAlumnoSource.restablecer(alumnoData.getIdAlumnoCursoClaseSede());
-                                Utils.showToast(context, "Change success!.");
+                                Utils.showToast(context, context.getResources().getString(R.string.change_sucess));
                                 ((Activity) context).recreate();
                             } else {
-                                Utils.showToast(context, "The password is incorrect, try again.");
+                                Utils.showToast(context, context.getResources().getString(R.string.password_incorrect));
                             }
                         }
                     });
 
-                    restablerAlert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    restablerAlert.setNegativeButton(context.getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
                         }
                     });
                     restablerAlert.show();
                 } else if(alumnoData.getEstado() == 2){
-                    Utils.showToast(context, "This student is already unmark.");
+                    Utils.showToast(context, context.getResources().getString(R.string.studen_unmark));
                 }
             }
         });
 
         return row;
+    }
+
+    @Override
+    public Alumno getItem(int position) {
+        return dataFilter.get(position);
+    }
+
+    @Override
+    public Filter getFilter() {
+        if(alumnoFilter == null) {
+            alumnoFilter = new AlumnoFilter();
+        }
+        return alumnoFilter;
+    }
+
+    /**
+     * Custom filter for friend list
+     * Filter content in friend list according to the search text
+     */
+    private class AlumnoFilter extends Filter {
+
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            FilterResults filterResults = new FilterResults();
+            if (constraint!=null && constraint.length()>0) {
+                ArrayList<Alumno> tempList = new ArrayList<Alumno>();
+
+                // search content in friend list
+                for (Alumno alumno : data) {
+                    if (alumno.getNombre().toLowerCase().contains(constraint.toString().toLowerCase())) {
+                        tempList.add(alumno);
+                    }
+                }
+
+                filterResults.count = tempList.size();
+                filterResults.values = tempList;
+            } else {
+                filterResults.count = data.size();
+                filterResults.values = data;
+            }
+
+            return filterResults;
+        }
+
+        /**
+         * Notify about filtered list to ui
+         * @param constraint text
+         * @param results filtered result
+         */
+        @SuppressWarnings("unchecked")
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            dataFilter = (ArrayList<Alumno>) results.values;
+            notifyDataSetChanged();
+        }
     }
 
     static class AlumnoHolder {

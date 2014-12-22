@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.util.Base64;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -146,7 +145,7 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
             public void onClick(View v) {
 
                 if(claseData.getEstado() == 1) {
-                    pd = ProgressDialog.show(context, "", "Sync class, please wait...", true);
+                    pd = ProgressDialog.show(context, "", context.getResources().getString(R.string.sync_class), true);
                     jsonObject = new JSONObject();
                     jsonObject = mClaseSource.getAlumnosByClass(claseData.getId());
                     byte[] jsonToByte = jsonObject.toString().getBytes();
@@ -155,7 +154,6 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
                     apiService = new eClassAPI(datos);
                     //Aca se llama a la Api y subimos la asistencia
                     apiService.subirAsistencia(mUsuarioService);
-                    Log.d("ClaseAdapter", jsonObject.toString());
 
                     id_clase = claseData.getId();
                     finalHolder.cerrado.setVisibility(View.INVISIBLE);
@@ -163,7 +161,7 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
                     finalRow.setDrawingCacheEnabled(true);
                     finalRow.refreshDrawableState();
                 } else {
-                    Utils.showToast(context, "Only closed classes can be synchronized!");
+                    Utils.showToast(context, context.getResources().getString(R.string.only_class_sync));
                 }
             }
         });
@@ -173,19 +171,19 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
             public void onClick(View v) {
 
                 AlertDialog.Builder saveDialog = new AlertDialog.Builder(swipeListView.getContext());
-                saveDialog.setTitle("Dismiss Class");
-                saveDialog.setMessage("This action can't be undone, are you sure?");
+                saveDialog.setTitle(context.getResources().getString(R.string.dismiss));
+                saveDialog.setMessage(context.getResources().getString(R.string.action_undone));
 
-                    AlertDialog.Builder builder = saveDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    AlertDialog.Builder builder = saveDialog.setPositiveButton(context.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             mClaseSource.cambiarEstadoClase(claseData.getId(), 3);
                             swipeListView.closeAnimate(position);
                             adapter.remove(claseData);
                             adapter.notifyDataSetChanged();
-                            Utils.showToast(context, "Class successfully removed.");
+                            Utils.showToast(context, context.getResources().getString(R.string.class_removed));
                         }
                     });
-                saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+                saveDialog.setNegativeButton(context.getResources().getString(R.string.cancel), new DialogInterface.OnClickListener(){
                     public void onClick(DialogInterface dialog, int which){
                         dialog.cancel();
                     }
@@ -208,7 +206,7 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
                 //Marcamos la clase como sincronizada
                 mClaseSource.cambiarEstadoClase(id_clase, 2);
                 pd.cancel();
-                Utils.showToast(context, "Class successfully uploaded.");
+                Utils.showToast(context, context.getResources().getString(R.string.class_uploaded));
             } else {
                 Utils.showToast(context, msg);
                 pd.cancel();

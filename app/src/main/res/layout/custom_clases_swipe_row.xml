@@ -15,7 +15,7 @@
             android:id="@+id/btnSincronizarClase"
             style="@style/BotonSincronizar"
             android:layout_centerVertical="true"
-            android:text="Sincronizar"/>
+            android:text="@string/string_synchronized"/>
 
         <Button
             android:layout_width="wrap_content"
@@ -23,7 +23,7 @@
             android:id="@+id/btnEliminar"
             android:background="@drawable/radio_button_ausente"
             style="@style/BotonAusente"
-            android:text="Eliminar"
+            android:text="@string/delete"
             android:layout_alignTop="@+id/btnSincronizarClase"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true" />

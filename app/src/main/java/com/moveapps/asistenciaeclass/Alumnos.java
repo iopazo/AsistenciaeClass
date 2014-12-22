@@ -2,15 +2,19 @@ package com.moveapps.asistenciaeclass;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.fortysevendeg.swipelistview.BaseSwipeListViewListener;
@@ -18,14 +22,13 @@ import com.fortysevendeg.swipelistview.SwipeListView;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 import db.DBAlumnoSource;
 import models.Alumno;
 import models.AlumnoAdapter;
 
 
-public class Alumnos extends Activity {
+public class Alumnos extends Activity implements SearchView.OnQueryTextListener {
 
     static String PASSWORD;
     static int ID_CLASE;
@@ -35,7 +38,10 @@ public class Alumnos extends Activity {
     static ArrayList<Alumno> alumnos = null;
     SwipeListView swipeListView;
     AlumnoAdapter adapter;
-    List<Alumno> alumnoData;
+    ArrayList<Alumno> alumnoData;
+    private SearchView searchView;
+    private MenuItem searchMenuItem;
+    private String orderByType = "ASC";
 
 
     @Override
@@ -71,7 +77,7 @@ public class Alumnos extends Activity {
         adapter = new AlumnoAdapter(this, R.layout.custom_alumno_swipe_row, alumnoData, PASSWORD, mAlumnosource);
 
         //Traemos los alumnos
-        alumnos = mAlumnosource.getAlumnoByClass(ID_CLASE);
+        alumnos = mAlumnosource.getAlumnoByClass(ID_CLASE, orderByType);
         onLoadSwipeListener();
     }
 
@@ -81,7 +87,7 @@ public class Alumnos extends Activity {
         try {
             mAlumnosource.open();
             //Traemos los alumnos
-            alumnos = mAlumnosource.getAlumnoByClass(ID_CLASE);
+            alumnos = mAlumnosource.getAlumnoByClass(ID_CLASE, orderByType);
             onLoadSwipeListener();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -97,7 +103,19 @@ public class Alumnos extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.alumnos, menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.alumnos, menu);
+
+        SearchManager searchManager = (SearchManager)
+                getSystemService(Context.SEARCH_SERVICE);
+        searchMenuItem = menu.findItem(R.id.search);
+        searchView = (SearchView) searchMenuItem.getActionView();
+
+        searchView.setSearchableInfo(searchManager.
+                getSearchableInfo(getComponentName()));
+        searchView.setSubmitButtonEnabled(true);
+        searchView.setOnQueryTextListener(this);
+
         return true;
     }
 
@@ -110,8 +128,8 @@ public class Alumnos extends Activity {
         if (id == R.id.save_class) {
 
             AlertDialog.Builder saveDialog = new AlertDialog.Builder(this);
-            saveDialog.setTitle("Close Class?");
-            saveDialog.setMessage("This action can't be undone");
+            saveDialog.setTitle(getResources().getString(R.string.close_class));
+            saveDialog.setMessage(getResources().getString(R.string.action_undone));
             AlertDialog.Builder builder = saveDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     mAlumnosource.cambiarEstadoClase(ID_CLASE, 1);
@@ -119,12 +137,23 @@ public class Alumnos extends Activity {
                 }
             });
 
-            saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+            saveDialog.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener(){
                 public void onClick(DialogInterface dialog, int which){
                     dialog.cancel();
                 }
             });
             saveDialog.show();
+        }
+
+        if(id == R.id.sort) {
+            if(orderByType == "ASC") {
+                orderByType = "DESC";
+            } else {
+                orderByType = "ASC";
+            }
+            alumnos = mAlumnosource.getAlumnoByClass(ID_CLASE, orderByType);
+            onLoadSwipeListener();
+            Utils.showToast(this, String.format("%s %s", getResources().getString(R.string.order_text), orderByType));
         }
         return super.onOptionsItemSelected(item);
     }
@@ -169,16 +198,22 @@ public class Alumnos extends Activity {
                 if(alumnos.get(position).getEstado() == 2) {
 
                     AlertDialog.Builder cambiarEstadoAlert = new AlertDialog.Builder(Alumnos.this);
-                    cambiarEstadoAlert.setTitle("Teacher confirms");
-                    cambiarEstadoAlert.setMessage("Sure you want remove the signature?");
+                    cambiarEstadoAlert.setTitle(getResources().getString(R.string.teacher_confirm));
+                    cambiarEstadoAlert.setMessage(getResources().getString(R.string.remove_signature));
                     final EditText passwordConfirm = new EditText(Alumnos.this);
                     passwordConfirm.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
                     cambiarEstadoAlert.setView(passwordConfirm);
 
-                    AlertDialog.Builder builder = cambiarEstadoAlert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    AlertDialog.Builder builder = cambiarEstadoAlert.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             String value = passwordConfirm.getText().toString();
                             if(value.equals(PASSWORD)) {
+                                //Escondemos la barra de busqueda y unseteamos el texto
+                                if (searchView.isShown()) {
+                                    searchMenuItem.collapseActionView();
+                                    searchView.setQuery("", false);
+                                }
+
                                 Intent intent = new Intent(Alumnos.this, FirmaAlumno.class);
                                 intent.putExtra("nombre", alumnos.get(position).getNombre());
                                 intent.putExtra("id", alumnos.get(position).getIdAlumnoCursoClaseSede());
@@ -186,12 +221,12 @@ public class Alumnos extends Activity {
                                 intent.putExtra("id_clase", ID_CLASE);
                                 startActivityForResult(intent, 1);
                             } else {
-                                Utils.showToast(Alumnos.this, "The password is incorrect, try again.");
+                                Utils.showToast(Alumnos.this, getResources().getString(R.string.password_incorrect));
                             }
                         }
                     });
 
-                    cambiarEstadoAlert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    cambiarEstadoAlert.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
                         }
@@ -199,6 +234,13 @@ public class Alumnos extends Activity {
                     cambiarEstadoAlert.show();
                 }
                 if(alumnos.get(position).getEstado() == 0) {
+
+                    //Escondemos la barra de busqueda y unseteamos el texto
+                    if (searchView.isShown()) {
+                        searchMenuItem.collapseActionView();
+                        searchView.setQuery("", false);
+                    }
+
                     Intent intent = new Intent(Alumnos.this, FirmaAlumno.class);
                     intent.putExtra("nombre", alumnos.get(position).getNombre());
                     intent.putExtra("id", alumnos.get(position).getIdAlumnoCursoClaseSede());
@@ -227,5 +269,16 @@ public class Alumnos extends Activity {
             alumnoData.add(new Alumno(alumnos.get(i).getIdAlumnoCursoClaseSede(), alumnos.get(i).getNombre(), alumnos.get(i).getEstado()));
         }
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        adapter.getFilter().filter(newText);
+        return true;
     }
 }

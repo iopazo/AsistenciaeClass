@@ -29,6 +29,7 @@
             android:parentActivityName=".Clases"
             android:theme="@style/CustomActionBarTheme" >
             <meta-data
+                android:resource="@xml/searchable"
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.moveapps.asistenciaeclass.Clases" />
         </activity>

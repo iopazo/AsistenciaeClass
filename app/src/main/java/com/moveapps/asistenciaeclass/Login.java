@@ -81,7 +81,7 @@ public class Login extends Activity {
         else if(userDB.getUsuarioDB().getId() > 0 && !userDB.getUsuarioDB().isLogin()) {
             documentoIdentificacion.setVisibility(View.INVISIBLE);
             username.setVisibility(View.INVISIBLE);
-            nombreProfesor.setText(String.format("%s, %s", "Bienvenido", userDB.getUsuarioDB().getNombreProfesor()));
+            nombreProfesor.setText(String.format("%s, %s", getResources().getString(R.string.welcome), userDB.getUsuarioDB().getNombreProfesor()));
             nombreProfesor.setVisibility(View.VISIBLE);
             otraCuenta.setVisibility(View.VISIBLE);
             username.setText(String.format("%d", userDB.getUsuarioDB().getUsername()));
@@ -176,6 +176,7 @@ public class Login extends Activity {
                 intent.putExtra("password", password.getText().toString());
                 intent.putExtra("username", usuario.getUsername());
                 startActivity(intent);
+                usuarioDataSource.close();
                 userDB = null;
                 pd.cancel();
                 finish();
@@ -224,13 +225,14 @@ public class Login extends Activity {
                 intent.putExtra("password", userDB.getUsuarioDB().getPassword());
                 intent.putExtra("username", userDB.getUsuarioDB().getUsername());
                 startActivity(intent);
+                usuarioDataSource.close();
                 userDB = null;
                 pd.cancel();
                 finish();
             }
         } else {
             pd.cancel();
-            Utils.showToast(Login.this, "Password incorrecta, intente nuevamente");
+            Utils.showToast(Login.this, getResources().getString(R.string.password_incorrect));
         }
 
     }
@@ -246,20 +248,20 @@ public class Login extends Activity {
     }
 
     public boolean ingresar(View view) {
-        pd = ProgressDialog.show(this, "", "Cargando datos, porfavor espere...", true);
+        pd = ProgressDialog.show(this, "", getResources().getString(R.string.loading_data), true);
         int seleccion = documentoIdentificacion.getSelectedItemPosition();
 
         switch (seleccion) {
             case 0:
                 if(!Utils.validarRut(username.getText().toString())) {
-                    username.setError("El rut ingresado no es válido");
+                    username.setError(getResources().getString(R.string.bad_document_format));
                     pd.cancel();
                     return false;
                 }
             break;
             default:
                 if(username.getText().toString().isEmpty()) {
-                    username.setError("You must enter your document number.");
+                    username.setError(getResources().getString(R.string.enter_document));
                     pd.cancel();
                     return false;
                 }
@@ -267,7 +269,7 @@ public class Login extends Activity {
         }
 
         if(password.getText().toString().isEmpty()) {
-            password.setError("Debe ingresar el password");
+            password.setError(getResources().getString(R.string.enter_password));
             pd.cancel();
             return false;
         }

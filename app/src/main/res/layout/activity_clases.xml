@@ -17,7 +17,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="32dp"
-            android:text="Clases"
+            android:text="@string/string_class"
             android:gravity="center_vertical"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
@@ -26,7 +26,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="32dp"
-            android:text="Sincronizada"
+            android:text="@string/string_synchronized"
             android:gravity="center_vertical"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
@@ -39,7 +39,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="32dp"
-            android:text="Cerrada"
+            android:text="@string/closed"
             android:gravity="center_vertical"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"

@@ -104,8 +104,8 @@ public class FirmaAlumno extends Activity implements OnClickListener {
         else if(view.getId()==R.id.buttonAceptar){
             //save drawing
             AlertDialog.Builder saveDialog = new AlertDialog.Builder(this);
-            saveDialog.setTitle("Guardar Firma");
-            saveDialog.setMessage("Esta seguro que desea guardar su firma?");
+            saveDialog.setTitle(getResources().getString(R.string.save_signature_title));
+            saveDialog.setMessage(getResources().getString(R.string.save_signature_desc));
             AlertDialog.Builder builder = saveDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     //save drawing
@@ -141,10 +141,10 @@ public class FirmaAlumno extends Activity implements OnClickListener {
                                     finish();
                                 }
                             } else {
-                                Utils.showToast(getApplicationContext(), "You must sign before save changes.");
+                                Utils.showToast(getApplicationContext(), getResources().getString(R.string.empty_signature));
                             }
                         }  else {
-                            Utils.showToast(getApplicationContext(), "La imagen no pudo ser guardada, intente nuevamente.");
+                            Utils.showToast(getApplicationContext(), getResources().getString(R.string.image_unsaved));
                         }
 
                     } catch (UnsupportedOperationException ex) {
@@ -154,7 +154,7 @@ public class FirmaAlumno extends Activity implements OnClickListener {
                 }
             });
 
-            saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+            saveDialog.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener(){
                 public void onClick(DialogInterface dialog, int which){
                     dialog.cancel();
                 }

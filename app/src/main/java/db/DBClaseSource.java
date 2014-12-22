@@ -6,10 +6,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.moveapps.asistenciaeclass.R;
+import com.moveapps.asistenciaeclass.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -106,10 +107,10 @@ public class DBClaseSource {
             if(sync == 1) {
                 Activity claseActivity = (Activity) mContext;
                 if(contadorSincronizados > 0) {
-                    Toast.makeText(mContext, "Se sincronizaron " + contadorSincronizados + " clases", Toast.LENGTH_LONG).show();
+                    Utils.showToast(mContext, String.format("%s %d %s", mContext.getResources().getString(R.string.has_sync), contadorSincronizados, mContext.getResources().getString(R.string.string_class)));
                     claseActivity.recreate();
                 } else {
-                    Toast.makeText(mContext, "No se han sincronizado nuevas clases", Toast.LENGTH_LONG).show();
+                    Utils.showToast(mContext, mContext.getResources().getString(R.string.dont_class_sync));
                 }
             }
         }
@@ -205,7 +206,7 @@ public class DBClaseSource {
         try {
             dbAlumnoSource = new DBAlumnoSource(mContext);
             dbAlumnoSource.open();
-            alumnos = dbAlumnoSource.getAlumnoByClass(idClase);
+            alumnos = dbAlumnoSource.getAlumnoByClass(idClase, "ASC");
             dbAlumnoSource.close();
             if(alumnos.size() > 0) {
                 for (int i = 0; i < alumnos.size(); i++) {
@@ -215,8 +216,6 @@ public class DBClaseSource {
                         alumnoJObject.put("estado", String.format("%d", alumnos.get(i).getEstado()));
                         alumnoJObject.put("firma", (alumnos.get(i).getFirma() != null ? alumnos.get(i).getFirma() : ""));
                         jsonArray.put(alumnoJObject);
-
-                        Log.d("DBCLASESOURCE", "ID: " + alumnos.get(i).getIdAlumnoCursoClaseSede());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

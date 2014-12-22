@@ -15,7 +15,7 @@
             android:id="@+id/botonAusente"
             android:background="@drawable/radio_button_ausente"
             style="@style/BotonAusente"
-            android:text="Ausente"/>
+            android:text="@string/absent"/>
 
         <Button
             android:layout_width="wrap_content"
@@ -23,7 +23,7 @@
             android:id="@+id/botonRestablecer"
             style="@style/BotonRestablecer"
             android:background="@drawable/radio_button_restablecer"
-            android:text="Restablecer"/>
+            android:text="@string/restore"/>
 
     </LinearLayout>
     <RelativeLayout

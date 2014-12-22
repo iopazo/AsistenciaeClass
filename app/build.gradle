@@ -22,8 +22,8 @@ android {
     }
     buildTypes {
         release {
-            runProguard false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            //runProguard false
+            //proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
     sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/main/assets/fonts'] } }

@@ -1,8 +1,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.moveapps.asistenciaeclass.Alumnos" >
+    <item android:id="@+id/search"
+        android:title="Search"
+        android:icon="@android:drawable/ic_menu_search"
+        android:showAsAction="collapseActionView|ifRoom"
+        android:actionViewClass="android.widget.SearchView" />
     <item android:id="@+id/save_class"
         android:icon="@drawable/ic_action_save"
+        android:title="@string/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        >
+    </item>
+    <item android:id="@+id/sort"
+        android:icon="@android:drawable/ic_menu_sort_alphabetically"
         android:title="@string/action_settings"
         android:orderInCategory="100"
         android:showAsAction="ifRoom"

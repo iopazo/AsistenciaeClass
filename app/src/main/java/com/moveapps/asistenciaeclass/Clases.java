@@ -189,7 +189,7 @@ public class Clases extends Activity {
                 JsonArray clases = data.getAsJsonArray("clases");
                 mClaseDatasource.insertClaseAlumnos(clases, 1, data.get("id").getAsInt());
             } else if(msg.equals("error")) {
-                Utils.showToast(Clases.this, "No se pudo sincronizar, intente nuevamente.");
+                Utils.showToast(Clases.this, getResources().getString(R.string.action_undone));
             }
         }
 
