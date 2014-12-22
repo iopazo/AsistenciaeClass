@@ -2,18 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.moveapps.asistenciaeclass.Clases" >
 
-    <item android:id="@+id/clases_cerradas"
-        android:icon="@drawable/ic_action_paste"
-        android:title="@string/action_settings"
-        android:orderInCategory="101"
-        android:showAsAction="ifRoom"
-        />
-    <item android:id="@+id/sincronizar"
-        android:icon="@drawable/ic_action_refresh"
-        android:title="@string/action_settings"
-        android:orderInCategory="102"
-        android:showAsAction="ifRoom"
-    />
     <item android:id="@+id/action_settings"
         android:icon="@drawable/engranaje"
         android:title="@string/action_settings"

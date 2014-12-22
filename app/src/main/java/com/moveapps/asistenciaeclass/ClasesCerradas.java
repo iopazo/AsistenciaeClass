@@ -3,59 +3,47 @@ package com.moveapps.asistenciaeclass;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 
 import com.fortysevendeg.swipelistview.BaseSwipeListViewListener;
 import com.fortysevendeg.swipelistview.SwipeListView;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import api.eClassAPI;
 import db.DBClaseSource;
 import db.DBUsuarioSource;
 import models.Clase;
-import models.ClaseAdapter;
+import models.ClaseCerradaAdapter;
 import models.Usuario;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 
-public class Clases extends Activity {
+public class ClasesCerradas extends Activity {
 
     static String PASSWORD;
     static int USERNAME;
-    static final String TAG = Clases.class.getSimpleName();
+    static final String TAG = ClasesCerradas.class.getSimpleName();
     protected DBUsuarioSource mUsuarioDatasource;
     protected DBClaseSource mClaseDatasource;
     protected Usuario dbUsuario;
     static ArrayList<Clase> clases = null;
     protected eClassAPI apiService;
-    final int classState = 3;
+    final int classState = 2;
 
     SwipeListView swipeListView;
-    ClaseAdapter adapter;
+    ClaseCerradaAdapter adapter;
     List<Clase> claseData;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_clases);
+        setContentView(R.layout.activity_clases_cerradas);
 
         Intent intent = getIntent();
 
@@ -66,8 +54,8 @@ public class Clases extends Activity {
             PASSWORD = intent.getStringExtra("password");
         }
 
-        mUsuarioDatasource = new DBUsuarioSource(Clases.this);
-        mClaseDatasource = new DBClaseSource(Clases.this);
+        mUsuarioDatasource = new DBUsuarioSource(ClasesCerradas.this);
+        mClaseDatasource = new DBClaseSource(ClasesCerradas.this);
 
         try {
             mUsuarioDatasource.open();
@@ -79,12 +67,12 @@ public class Clases extends Activity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        swipeListView = (SwipeListView) findViewById(R.id.clases_swipe_list);
+        swipeListView = (SwipeListView) findViewById(R.id.clases_cerradas_swipe_list);
         claseData = new ArrayList<Clase>();
-        adapter = new ClaseAdapter(this, R.layout.custom_clases_swipe_row, claseData, mClaseDatasource);
+        adapter = new ClaseCerradaAdapter(this, R.layout.custom_clases_swipe_row, claseData, mClaseDatasource);
 
         //Traemos los alumnos
-        clases = mClaseDatasource.list(classState, dbUsuario.getId(), true);
+        clases = mClaseDatasource.list(classState, dbUsuario.getId(), false);
         onLoadSwipeListener();
     }
 
@@ -97,7 +85,7 @@ public class Clases extends Activity {
         super.onRestart();
         try {
             mClaseDatasource.open();
-            clases = mClaseDatasource.list(classState, dbUsuario.getId(), true);
+            clases = mClaseDatasource.list(classState, dbUsuario.getId(), false);
             onLoadSwipeListener();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -123,7 +111,7 @@ public class Clases extends Activity {
         try {
             mClaseDatasource.open();
             mUsuarioDatasource.open();
-            clases = mClaseDatasource.list(classState, dbUsuario.getId(), true);
+            clases = mClaseDatasource.list(classState, dbUsuario.getId(), false);
             onLoadSwipeListener();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -142,7 +130,7 @@ public class Clases extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.clases, menu);
+        getMenuInflater().inflate(R.menu.clases_cerradas, menu);
         return true;
     }
 
@@ -155,59 +143,15 @@ public class Clases extends Activity {
         if (id == R.id.action_salir) {
 
             if (mUsuarioDatasource.updateUsuario(dbUsuario.getId(), false, true) > 0) {
-                Intent intent = new Intent(Clases.this, Login.class);
+                Intent intent = new Intent(ClasesCerradas.this, Login.class);
                 startActivity(intent);
                 finish();
                 return true;
             }
 
         }
-        //Accion boton sincronizar
-        if (id == R.id.sincronizar) {
-            JSONObject datosJson = new JSONObject();
-            try {
-                datosJson.put("numero_documento", USERNAME);
-                datosJson.put("password", Utils.MD5(PASSWORD));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            byte[] jsonToByte = datosJson.toString().getBytes();
-            String datos = Base64.encodeToString(jsonToByte, 0);
-
-            apiService = new eClassAPI(datos);
-            apiService.getUsuarioData(mUsuarioSerice);
-        }
-
-        if(id == R.id.clases_cerradas) {
-            Intent intent = new Intent(Clases.this, ClasesCerradas.class);
-            intent.putExtra("password", dbUsuario.getPassword());
-            intent.putExtra("username", dbUsuario.getUsername());
-            startActivityForResult(intent, 1);
-        }
         return super.onOptionsItemSelected(item);
     }
-
-    protected Callback<JsonElement> mUsuarioSerice = new Callback<JsonElement>() {
-        @Override
-        public void success(JsonElement element, Response response) {
-            JsonObject jsonObj = element.getAsJsonObject();
-            String msg = jsonObj.get("usuario").getAsJsonObject().get("status").getAsString();
-            //Si la respuesta es correcta.
-            if(msg.equals("success")) {
-                JsonObject data = jsonObj.get("usuario").getAsJsonObject().getAsJsonObject("data");
-                JsonArray clases = data.getAsJsonArray("clases");
-                mClaseDatasource.insertClaseAlumnos(clases, 1, data.get("id").getAsInt());
-            } else if(msg.equals("error")) {
-                Utils.showToast(Clases.this, getResources().getString(R.string.action_undone));
-            }
-        }
-
-        @Override
-        public void failure(RetrofitError error) {
-            Utils.showToast(Clases.this, error.getMessage());
-        }
-    };
-
 
     private void onLoadSwipeListener() {
 
@@ -259,7 +203,7 @@ public class Clases extends Activity {
                 2: Ausente
                  */
                 if (clases.get(position).getEstado() == 0) {
-                    Intent intent = new Intent(Clases.this, Alumnos.class);
+                    Intent intent = new Intent(ClasesCerradas.this, Alumnos.class);
                     intent.putExtra("title", clases.get(position).getNombre());
                     intent.putExtra("id", clases.get(position).getId());
                     intent.putExtra("password", PASSWORD);
@@ -282,11 +226,11 @@ public class Clases extends Activity {
 
         });
 
-        swipeListView.setSwipeMode(SwipeListView.SWIPE_MODE_BOTH); // there are five swiping modes
-        swipeListView.setSwipeActionLeft(SwipeListView.SWIPE_ACTION_REVEAL); //there are four swipe actions
-        swipeListView.setSwipeActionRight(SwipeListView.SWIPE_ACTION_REVEAL);
+        swipeListView.setSwipeMode(SwipeListView.SWIPE_MODE_NONE); // there are five swiping modes
+        //swipeListView.setSwipeActionLeft(SwipeListView.SWIPE_ACTION_REVEAL); //there are four swipe actions
+        //swipeListView.setSwipeActionRight(SwipeListView.SWIPE_ACTION_REVEAL);
 
-        swipeListView.setAnimationTime(200); // Animation time
+        //swipeListView.setAnimationTime(200); // Animation time
         swipeListView.setSwipeOpenOnLongPress(false);
 
         swipeListView.setAdapter(adapter);

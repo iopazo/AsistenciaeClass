@@ -61,7 +61,7 @@ public class DBClaseSource {
         int contadorSincronizados = 0;
         try {
             if(sync == 1) {
-                clasesDb = this.list(4, id_usuario);
+                clasesDb = this.list(4, id_usuario, true);
                 ids = new Integer[clasesDb.size()];
                 for (int j = 0; j < clasesDb.size(); j++) {
                     ids[j] = clasesDb.get(j).getId();
@@ -141,9 +141,24 @@ public class DBClaseSource {
     4: Todas
     Solo mostramos las clases que esten activas.
      */
-    public ArrayList<Clase> list(int notIncludeState, int idUsuario) throws NullPointerException {
+
+    /**
+     *
+     * @param notIncludeState
+     * @param idUsuario
+     * @param excludeState true: trae todos los estados diferente al notIncludeState
+     *                     false: trae solo las clases iguales al notIncludeState
+     * @return
+     * @throws NullPointerException
+     */
+    public ArrayList<Clase> list(int notIncludeState, int idUsuario, boolean excludeState) throws NullPointerException {
         ArrayList<Clase> clases = new ArrayList<Clase>();
-        String whereClause = dbHelper.COLUMN_ESTADO_CLASE + " != ? AND " + dbHelper.COLUMN_FK_USUARIO + " = ?";
+
+        String operatorSqlLite = "!=";
+        if(!excludeState) {
+            operatorSqlLite = "=";
+        }
+        String whereClause = String.format("%s %s ? AND %s = ?", dbHelper.COLUMN_ESTADO_CLASE, operatorSqlLite, dbHelper.COLUMN_FK_USUARIO);
         String orderBy = dbHelper.COLUMN_ESTADO_CLASE + " DESC, " + dbHelper.COLUMN_FECHA + " ASC, " + dbHelper.COLUMN_HORA + " ASC";
 
         Cursor cursor = mDatabase.query(

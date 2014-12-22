@@ -145,6 +145,7 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
             public void onClick(View v) {
 
                 if(claseData.getEstado() == 1) {
+                    id_clase = claseData.getId();
                     pd = ProgressDialog.show(context, "", context.getResources().getString(R.string.sync_class), true);
                     jsonObject = new JSONObject();
                     jsonObject = mClaseSource.getAlumnosByClass(claseData.getId());
@@ -154,12 +155,14 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
                     apiService = new eClassAPI(datos);
                     //Aca se llama a la Api y subimos la asistencia
                     apiService.subirAsistencia(mUsuarioService);
+                    swipeListView.closeAnimate(position);
+                    adapter.remove(claseData);
+                    adapter.notifyDataSetChanged();
 
-                    id_clase = claseData.getId();
-                    finalHolder.cerrado.setVisibility(View.INVISIBLE);
+                    /*finalHolder.cerrado.setVisibility(View.INVISIBLE);
                     finalHolder.sincronizado.setVisibility(View.VISIBLE);
                     finalRow.setDrawingCacheEnabled(true);
-                    finalRow.refreshDrawableState();
+                    finalRow.refreshDrawableState();*/
                 } else {
                     Utils.showToast(context, context.getResources().getString(R.string.only_class_sync));
                 }

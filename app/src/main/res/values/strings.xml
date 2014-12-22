@@ -5,6 +5,7 @@
     <string name="hint_username">Username</string>
     <string name="hint_password">Password</string>
     <string name="title_activity_clases">My lessons</string>
+    <string name="title_activity_clases_cerradas">My closed lessons</string>
     <string name="title_activity_alumnos">List of students</string>
     <string name="logoEclass">logoEclass</string>
     <string name="title_activity_firma_alumno">Student Sign</string>
