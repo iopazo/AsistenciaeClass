@@ -59,7 +59,7 @@
     <string name="absent">Absent</string>
     <string name="restore">Restore</string>
     <string name="delete">Delete</string>
-
+    <string name="setting_text">Settings</string>
     <!-- Menu -->
     <string name="search_hint_text">Search a student</string>
 </resources>

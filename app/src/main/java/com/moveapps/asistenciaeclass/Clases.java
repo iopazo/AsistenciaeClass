@@ -2,7 +2,9 @@ package com.moveapps.asistenciaeclass;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.view.Menu;
@@ -43,7 +45,8 @@ public class Clases extends Activity {
     static ArrayList<Clase> clases = null;
     protected eClassAPI apiService;
     final String[] classState = new String[]{"0, 1"};
-
+    static SharedPreferences prefs;
+    private String days;
     SwipeListView swipeListView;
     ClaseAdapter adapter;
     List<Clase> claseData;
@@ -53,6 +56,9 @@ public class Clases extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clases);
+
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        days = prefs.getString("sync_frequency", "-1");
 
         Intent intent = getIntent();
 
@@ -81,7 +87,7 @@ public class Clases extends Activity {
         adapter = new ClaseAdapter(this, R.layout.custom_clases_swipe_row, claseData, mClaseDatasource);
 
         //Traemos los alumnos
-        clases = mClaseDatasource.list(classState, dbUsuario.getId(), true);
+        clases = mClaseDatasource.list(classState, dbUsuario.getId(), days);
         onLoadSwipeListener();
     }
 
@@ -94,7 +100,7 @@ public class Clases extends Activity {
         super.onRestart();
         try {
             mClaseDatasource.open();
-            clases = mClaseDatasource.list(classState, dbUsuario.getId(), true);
+            clases = mClaseDatasource.list(classState, dbUsuario.getId(), days);
             onLoadSwipeListener();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -120,7 +126,7 @@ public class Clases extends Activity {
         try {
             mClaseDatasource.open();
             mUsuarioDatasource.open();
-            clases = mClaseDatasource.list(classState, dbUsuario.getId(), true);
+            clases = mClaseDatasource.list(classState, dbUsuario.getId(), days);
             onLoadSwipeListener();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -159,6 +165,14 @@ public class Clases extends Activity {
             }
 
         }
+
+        if (id == R.id.configuracion) {
+            Intent intent = new Intent(Clases.this, ConfiguracionActivity.class);
+            startActivity(intent);
+            finish();
+            return true;
+        }
+
         //Accion boton sincronizar
         if (id == R.id.sincronizar) {
             JSONObject datosJson = new JSONObject();

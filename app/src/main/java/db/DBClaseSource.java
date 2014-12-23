@@ -21,6 +21,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 
 import models.Alumno;
@@ -65,7 +66,7 @@ public class DBClaseSource {
         try {
             if(sync == 1) {
                 String[] state = new String[]{"0","1","2","3"};
-                clasesDb = this.list(state, id_usuario, true);
+                clasesDb = this.list(state, id_usuario, "-1");
                 ids = new Integer[clasesDb.size()];
                 for (int j = 0; j < clasesDb.size(); j++) {
                     ids[j] = clasesDb.get(j).getId();
@@ -150,27 +151,35 @@ public class DBClaseSource {
      *
      * @param notIncludeState
      * @param idUsuario
-     * @param excludeState true: trae todos los estados diferente al notIncludeState
+     * @param days Rango de dias que debe traer clases para el profesor.
      *                     false: trae solo las clases iguales al notIncludeState
      * @return
      * @throws NullPointerException
      */
-    public ArrayList<Clase> list(String[] notIncludeState, int idUsuario, boolean excludeState) throws NullPointerException {
+    public ArrayList<Clase> list(String[] notIncludeState, int idUsuario, String days) throws NullPointerException {
+
         ArrayList<Clase> clases = new ArrayList<Clase>();
-
-
-        String stateClass = "";
+        String conditions = "";
 
         if(notIncludeState.length > 0) {
-            stateClass = "IN(" + Utils.implode(",", notIncludeState) + ")";
+            conditions += " IN(" + Utils.implode(",", notIncludeState) + ")";
         }
 
-        String whereClause = String.format("%s %s AND %s = ?", dbHelper.COLUMN_ESTADO_CLASE, stateClass, dbHelper.COLUMN_FK_USUARIO);
+        if(!days.equals("-1")) {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Calendar cl = Calendar.getInstance();
+            cl.setTime(new Date());
+            cl.add(Calendar.DATE, Integer.parseInt(days));
+            String dayPlusDays = dateFormat.format(cl.getTime());
+            conditions += " AND " + dbHelper.COLUMN_FECHA + " <= '" + dayPlusDays + "'";
+        }
+
+        String whereClause = String.format("%s %s AND %s = ?", dbHelper.COLUMN_ESTADO_CLASE, conditions, dbHelper.COLUMN_FK_USUARIO);
         String orderBy = dbHelper.COLUMN_ESTADO_CLASE + " DESC, " + dbHelper.COLUMN_FECHA + " ASC, " + dbHelper.COLUMN_HORA + " ASC";
 
         Cursor cursor = mDatabase.query(
                 DBHelper.TABLE_CLASE,
-                new String[] {dbHelper.COLUMN_ID_CLASE_SEDE, dbHelper.COLUMN_NOMBRE_CLASE, dbHelper.COLUMN_ESTADO_CLASE, dbHelper.COLUMN_FECHA_SINCRONIZACION},
+                new String[] {dbHelper.COLUMN_ID_CLASE_SEDE, dbHelper.COLUMN_NOMBRE_CLASE, dbHelper.COLUMN_ESTADO_CLASE, dbHelper.COLUMN_FECHA_SINCRONIZACION, dbHelper.COLUMN_FECHA},
                 whereClause,
                 new String[] {String.format("%d", idUsuario)},
                 null,

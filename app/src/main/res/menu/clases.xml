@@ -27,6 +27,12 @@
                 android:icon="@drawable/ic_action_forward"
                 android:showAsAction="never">
             </item>
+            <item android:id="@+id/configuracion"
+                android:title="@string/setting_text"
+                android:orderInCategory="100"
+                android:icon="@drawable/engranaje"
+                android:showAsAction="never">
+            </item>
         </menu>
     </item>
 

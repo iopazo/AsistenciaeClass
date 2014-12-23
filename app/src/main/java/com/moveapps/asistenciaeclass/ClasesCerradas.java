@@ -31,6 +31,7 @@ public class ClasesCerradas extends Activity {
     protected Usuario dbUsuario;
     static ArrayList<Clase> clases = null;
     final String[] classState = new String[]{"2"};
+    private String days = "-1";
 
     SwipeListView swipeListView;
     ClaseCerradaAdapter adapter;
@@ -69,7 +70,7 @@ public class ClasesCerradas extends Activity {
         adapter = new ClaseCerradaAdapter(this, R.layout.custom_clases_swipe_row, claseData, mClaseDatasource);
 
         //Traemos los alumnos
-        clases = mClaseDatasource.list(classState, dbUsuario.getId(), false);
+        clases = mClaseDatasource.list(classState, dbUsuario.getId(), days);
         onLoadSwipeListener();
     }
 
@@ -82,7 +83,7 @@ public class ClasesCerradas extends Activity {
         super.onRestart();
         try {
             mClaseDatasource.open();
-            clases = mClaseDatasource.list(classState, dbUsuario.getId(), false);
+            clases = mClaseDatasource.list(classState, dbUsuario.getId(), days);
             onLoadSwipeListener();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -108,7 +109,7 @@ public class ClasesCerradas extends Activity {
         try {
             mClaseDatasource.open();
             mUsuarioDatasource.open();
-            clases = mClaseDatasource.list(classState, dbUsuario.getId(), false);
+            clases = mClaseDatasource.list(classState, dbUsuario.getId(), days);
             onLoadSwipeListener();
         } catch (SQLException e) {
             e.printStackTrace();

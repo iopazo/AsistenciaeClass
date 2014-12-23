@@ -260,7 +260,7 @@ public class Login extends Activity {
         return numero_documento;
     }
 
-    public boolean ingresar() {
+    public boolean ingresar(View view) {
         pd = ProgressDialog.show(this, "", getResources().getString(R.string.loading_data), true);
         int seleccion = documentoIdentificacion.getSelectedItemPosition();
 

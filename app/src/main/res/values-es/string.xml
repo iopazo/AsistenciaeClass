@@ -59,7 +59,7 @@
     <string name="absent">Ausente</string>
     <string name="restore">Reestablecer</string>
     <string name="delete">Eliminar</string>
-
+    <string name="setting_text">Configuración</string>
     <!-- Menu -->
     <string name="search_hint_text">Busca por el nombre del estudiante</string>
 </resources>

@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.moveapps.asistenciaeclass" >
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -40,8 +43,8 @@
             android:parentActivityName=".Clases"
             android:theme="@style/CustomActionBarTheme" >
             <meta-data
-                android:resource="@xml/searchable"
                 android:name="android.support.PARENT_ACTIVITY"
+                android:resource="@xml/searchable"
                 android:value="com.moveapps.asistenciaeclass.Clases" />
         </activity>
         <activity
@@ -53,10 +56,16 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.moveapps.asistenciaeclass.Alumnos" />
         </activity>
-        <!--<meta-data android:name="com.crashlytics.ApiKey" android:value="7f21ad1a386755e477341f0887fcfe68fd27f813"/>-->
+        <!-- <meta-data android:name="com.crashlytics.ApiKey" android:value="7f21ad1a386755e477341f0887fcfe68fd27f813"/> -->
+        <activity
+            android:name=".ConfiguracionActivity"
+            android:label="@string/title_activity_configuracion"
+            android:theme="@style/CustomActionBarTheme"
+            android:parentActivityName=".Clases" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.moveapps.asistenciaeclass.Clases" />
+        </activity>
     </application>
-
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
 </manifest>

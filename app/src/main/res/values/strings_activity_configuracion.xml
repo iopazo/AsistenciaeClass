@@ -1,0 +1,33 @@
+<resources>
+    <string name="title_activity_configuracion">Configuration</string>
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_data_sync">Lessons Configuration</string>
+
+    <string name="pref_title_sync_frequency">Select range of days for list of classes</string>
+    <string-array name="pref_sync_frequency_titles">
+        <item>Tomorrow</item>
+        <item>5 days</item>
+        <item>10 days</item>
+        <item>15 days</item>
+        <item>20 days</item>
+        <item>30 days</item>
+        <item>40 days</item>
+        <item>50 days</item>
+        <item>100 days</item>
+        <item>Show all</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>1</item>
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+        <item>50</item>
+        <item>100</item>
+        <item>-1</item>
+    </string-array>
+
+</resources>
