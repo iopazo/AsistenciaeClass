@@ -33,7 +33,7 @@ public class ClasesCerradas extends Activity {
     protected Usuario dbUsuario;
     static ArrayList<Clase> clases = null;
     protected eClassAPI apiService;
-    final int classState = 2;
+    final String[] classState = new String[]{"2"};
 
     SwipeListView swipeListView;
     ClaseCerradaAdapter adapter;
@@ -236,7 +236,7 @@ public class ClasesCerradas extends Activity {
         swipeListView.setAdapter(adapter);
 
         for (int i = 0; i < clases.size(); i++) {
-            claseData.add(new Clase(clases.get(i).getId(), clases.get(i).getNombre(), clases.get(i).getEstado()));
+            claseData.add(new Clase(clases.get(i).getId(), clases.get(i).getNombre(), clases.get(i).getEstado(), clases.get(i).getFechaSincronizacion()));
         }
         adapter.notifyDataSetChanged();
 

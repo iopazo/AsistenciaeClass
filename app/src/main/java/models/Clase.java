@@ -8,6 +8,7 @@ public class Clase {
     private int id;
     private String nombre;
     private int estado;
+    private String fechaSincronizacion;
 
     public Clase() {
 
@@ -21,6 +22,13 @@ public class Clase {
         setId(_id);
         setNombre(_nombre);
         setEstado(_estado);
+    }
+
+    public Clase(int _id, String _nombre, int _estado, String _fechaSincronizacion) {
+        setId(_id);
+        setNombre(_nombre);
+        setEstado(_estado);
+        setFechaSincronizacion(_fechaSincronizacion);
     }
 
     public String getNombre() {
@@ -45,5 +53,13 @@ public class Clase {
 
     public void setEstado(int estado) {
         this.estado = estado;
+    }
+
+    public String getFechaSincronizacion() {
+        return fechaSincronizacion;
+    }
+
+    public void setFechaSincronizacion(String fechaSincronizacion) {
+        this.fechaSincronizacion = fechaSincronizacion;
     }
 }

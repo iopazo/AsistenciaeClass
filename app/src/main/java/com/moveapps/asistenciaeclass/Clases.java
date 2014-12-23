@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -21,7 +20,6 @@ import org.json.JSONObject;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import api.eClassAPI;
@@ -45,7 +43,7 @@ public class Clases extends Activity {
     protected Usuario dbUsuario;
     static ArrayList<Clase> clases = null;
     protected eClassAPI apiService;
-    final int classState = 3;
+    final String[] classState = new String[]{"0, 1"};
 
     SwipeListView swipeListView;
     ClaseAdapter adapter;
@@ -292,7 +290,7 @@ public class Clases extends Activity {
         swipeListView.setAdapter(adapter);
 
         for (int i = 0; i < clases.size(); i++) {
-            claseData.add(new Clase(clases.get(i).getId(), clases.get(i).getNombre(), clases.get(i).getEstado()));
+            claseData.add(new Clase(clases.get(i).getId(), clases.get(i).getNombre(), clases.get(i).getEstado(), clases.get(i).getFechaSincronizacion()));
         }
         adapter.notifyDataSetChanged();
 

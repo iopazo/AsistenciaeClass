@@ -92,7 +92,7 @@ public class Usuario {
                     cursor.moveToNext();
                 }
             }
-            mDataSource.close();
+            //mDataSource.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }

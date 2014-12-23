@@ -17,8 +17,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 import models.Alumno;
 import models.Clase;
@@ -61,7 +64,8 @@ public class DBClaseSource {
         int contadorSincronizados = 0;
         try {
             if(sync == 1) {
-                clasesDb = this.list(4, id_usuario, true);
+                String[] state = new String[]{"0","1","2","3"};
+                clasesDb = this.list(state, id_usuario, true);
                 ids = new Integer[clasesDb.size()];
                 for (int j = 0; j < clasesDb.size(); j++) {
                     ids[j] = clasesDb.get(j).getId();
@@ -151,21 +155,24 @@ public class DBClaseSource {
      * @return
      * @throws NullPointerException
      */
-    public ArrayList<Clase> list(int notIncludeState, int idUsuario, boolean excludeState) throws NullPointerException {
+    public ArrayList<Clase> list(String[] notIncludeState, int idUsuario, boolean excludeState) throws NullPointerException {
         ArrayList<Clase> clases = new ArrayList<Clase>();
 
-        String operatorSqlLite = "!=";
-        if(!excludeState) {
-            operatorSqlLite = "=";
+
+        String stateClass = "";
+
+        if(notIncludeState.length > 0) {
+            stateClass = "IN(" + Utils.implode(",", notIncludeState) + ")";
         }
-        String whereClause = String.format("%s %s ? AND %s = ?", dbHelper.COLUMN_ESTADO_CLASE, operatorSqlLite, dbHelper.COLUMN_FK_USUARIO);
+
+        String whereClause = String.format("%s %s AND %s = ?", dbHelper.COLUMN_ESTADO_CLASE, stateClass, dbHelper.COLUMN_FK_USUARIO);
         String orderBy = dbHelper.COLUMN_ESTADO_CLASE + " DESC, " + dbHelper.COLUMN_FECHA + " ASC, " + dbHelper.COLUMN_HORA + " ASC";
 
         Cursor cursor = mDatabase.query(
                 DBHelper.TABLE_CLASE,
-                new String[] {dbHelper.COLUMN_ID_CLASE_SEDE, dbHelper.COLUMN_NOMBRE_CLASE, dbHelper.COLUMN_ESTADO_CLASE},
+                new String[] {dbHelper.COLUMN_ID_CLASE_SEDE, dbHelper.COLUMN_NOMBRE_CLASE, dbHelper.COLUMN_ESTADO_CLASE, dbHelper.COLUMN_FECHA_SINCRONIZACION},
                 whereClause,
-                new String[] {String.format("%d", notIncludeState), String.format("%d", idUsuario)},
+                new String[] {String.format("%d", idUsuario)},
                 null,
                 null,
                 orderBy
@@ -177,7 +184,8 @@ public class DBClaseSource {
                 int id = cursor.getInt(cursor.getColumnIndex(dbHelper.COLUMN_ID_CLASE_SEDE));
                 String nombre = cursor.getString(cursor.getColumnIndex(dbHelper.COLUMN_NOMBRE_CLASE));
                 int estado = cursor.getInt(cursor.getColumnIndex(dbHelper.COLUMN_ESTADO_CLASE));
-                Clase clase = new Clase(id, nombre, estado);
+                String fecha = cursor.getString(cursor.getColumnIndex(dbHelper.COLUMN_FECHA_SINCRONIZACION));
+                Clase clase = new Clase(id, nombre, estado, fecha);
                 clases.add(clase);
                 cursor.moveToNext();
             }
@@ -194,9 +202,14 @@ public class DBClaseSource {
             mDatabase.beginTransaction();
         }
         try {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date date = new Date();
+            String today = dateFormat.format(date).toString();
+
             String whereClause = dbHelper.COLUMN_ID_CLASE_SEDE + " = ?";
             ContentValues values = new ContentValues();
             values.put(dbHelper.COLUMN_ESTADO_CLASE, estado);
+            values.put(dbHelper.COLUMN_FECHA_SINCRONIZACION, today);
             mDatabase.update(
                     dbHelper.TABLE_CLASE,
                     values,

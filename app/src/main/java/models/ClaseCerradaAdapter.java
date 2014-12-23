@@ -69,6 +69,7 @@ public class ClaseCerradaAdapter extends ArrayAdapter<Clase> {
             holder.nombreCampus = (TextView)row.findViewById(R.id.nombreCampus);
             holder.nombrePrograma = (TextView)row.findViewById(R.id.nombrePrograma);
             holder.nombreCurso = (TextView)row.findViewById(R.id.nombreCurso);
+            holder.fechaSincronizacion = (TextView)row.findViewById(R.id.fecha_sincronizacion);
 
             //Validamos si el tablet tiene una densidad de 120
             if(dpiValidate == 120) {
@@ -76,7 +77,9 @@ public class ClaseCerradaAdapter extends ArrayAdapter<Clase> {
                 holder.nombrePrograma.setTextSize(18f);
                 holder.nombreCurso.setTextSize(18f);
                 holder.nombreClase.setTextSize(15f);
+                holder.fechaSincronizacion.setTextSize(15f);
             }
+
 
             holder.botonSincronizar = (Button)row.findViewById(R.id.btnSincronizarClase);
             holder.botonEliminar = (Button)row.findViewById(R.id.btnEliminar);
@@ -108,6 +111,7 @@ public class ClaseCerradaAdapter extends ArrayAdapter<Clase> {
                     break;
             }
         }
+        holder.fechaSincronizacion.setText(claseData.getFechaSincronizacion());
         /*
         Estado
         0: Nada
@@ -128,9 +132,6 @@ public class ClaseCerradaAdapter extends ArrayAdapter<Clase> {
                 break;
         }
 
-        final ClaseHolder finalHolder = holder;
-        final View finalRow = row;
-
         return row;
     }
 
@@ -139,6 +140,7 @@ public class ClaseCerradaAdapter extends ArrayAdapter<Clase> {
         TextView nombreCampus;
         TextView nombrePrograma;
         TextView nombreCurso;
+        TextView fechaSincronizacion;
         Button botonSincronizar;
         Button botonEliminar;
         ImageView sincronizado;

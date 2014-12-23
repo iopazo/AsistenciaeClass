@@ -156,6 +156,17 @@ public class Login extends Activity {
         claseDataSource.close();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        try {
+            usuarioDataSource.open();
+            claseDataSource.open();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     //Callback API donde leemos el JSON.
     protected Callback<JsonElement> mUsuarioSerice = new Callback<JsonElement>() {
         @Override
