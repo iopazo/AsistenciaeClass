@@ -231,19 +231,21 @@ public class Login extends Activity {
             apiService = new eClassAPI(datos);
             apiService.getUsuarioData(mUsuarioSerice);
 
-        } else if(password.getText().toString().equals(userDB.getUsuarioDB().getPassword().toString())){
-            if(usuarioDataSource.updateUsuario(userDB.getUsuarioDB().getId(), true, true) > 0) {
-                intent.putExtra("password", userDB.getUsuarioDB().getPassword());
-                intent.putExtra("username", userDB.getUsuarioDB().getUsername());
-                startActivity(intent);
-                usuarioDataSource.close();
-                userDB = null;
-                pd.cancel();
-                finish();
-            }
         } else {
-            pd.cancel();
-            Utils.showToast(Login.this, getResources().getString(R.string.password_incorrect));
+            if (password.getText().toString().equals(userDB.getUsuarioDB().getPassword())) {
+                if (usuarioDataSource.updateUsuario(userDB.getUsuarioDB().getId(), true, true) > 0) {
+                    intent.putExtra("password", userDB.getUsuarioDB().getPassword());
+                    intent.putExtra("username", userDB.getUsuarioDB().getUsername());
+                    startActivity(intent);
+                    usuarioDataSource.close();
+                    userDB = null;
+                    pd.cancel();
+                    finish();
+                }
+            } else {
+                pd.cancel();
+                Utils.showToast(Login.this, getResources().getString(R.string.password_incorrect));
+            }
         }
 
     }
@@ -258,7 +260,7 @@ public class Login extends Activity {
         return numero_documento;
     }
 
-    public boolean ingresar(View view) {
+    public boolean ingresar() {
         pd = ProgressDialog.show(this, "", getResources().getString(R.string.loading_data), true);
         int seleccion = documentoIdentificacion.getSelectedItemPosition();
 

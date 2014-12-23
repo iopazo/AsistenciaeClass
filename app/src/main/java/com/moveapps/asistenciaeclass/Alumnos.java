@@ -33,7 +33,6 @@ public class Alumnos extends Activity implements SearchView.OnQueryTextListener 
     static String PASSWORD;
     static int ID_CLASE;
     static String NOMBRE_CLASE;
-    static final String TAG = Alumnos.class.getSimpleName();
     protected DBAlumnoSource mAlumnosource;
     static ArrayList<Alumno> alumnos = null;
     SwipeListView swipeListView;
@@ -130,7 +129,7 @@ public class Alumnos extends Activity implements SearchView.OnQueryTextListener 
             AlertDialog.Builder saveDialog = new AlertDialog.Builder(this);
             saveDialog.setTitle(getResources().getString(R.string.close_class));
             saveDialog.setMessage(getResources().getString(R.string.action_undone));
-            AlertDialog.Builder builder = saveDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            saveDialog.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     mAlumnosource.cambiarEstadoClase(ID_CLASE, 1);
                     finish();
@@ -146,7 +145,7 @@ public class Alumnos extends Activity implements SearchView.OnQueryTextListener 
         }
 
         if(id == R.id.sort) {
-            if(orderByType == "ASC") {
+            if(orderByType.equals("ASC")) {
                 orderByType = "DESC";
             } else {
                 orderByType = "ASC";
@@ -204,7 +203,7 @@ public class Alumnos extends Activity implements SearchView.OnQueryTextListener 
                     passwordConfirm.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
                     cambiarEstadoAlert.setView(passwordConfirm);
 
-                    AlertDialog.Builder builder = cambiarEstadoAlert.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+                    cambiarEstadoAlert.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             String value = passwordConfirm.getText().toString();
                             if(value.equals(PASSWORD)) {

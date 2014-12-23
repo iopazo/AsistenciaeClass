@@ -22,7 +22,6 @@ import db.DBAlumnoSource;
 
 public class FirmaAlumno extends Activity implements OnClickListener {
 
-    static String TAG = FirmaAlumno.class.getSimpleName();
     static int ID_ALUMNO;
     static String NOMBRE_ALUMNO;
     static int ID_CLASE;
@@ -33,9 +32,6 @@ public class FirmaAlumno extends Activity implements OnClickListener {
      */
     //custom drawing view
     private DrawingView drawView;
-    //buttons
-    private Button newBtn, saveBtn;
-    private TextView cancelarLbl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,9 +69,9 @@ public class FirmaAlumno extends Activity implements OnClickListener {
         */
 
         //save button
-        saveBtn = (Button)findViewById(R.id.buttonAceptar);
+        Button saveBtn = (Button) findViewById(R.id.buttonAceptar);
         saveBtn.setOnClickListener(this);
-        cancelarLbl = (TextView)findViewById(R.id.cancelar);
+        TextView cancelarLbl = (TextView) findViewById(R.id.cancelar);
         cancelarLbl.setOnClickListener(this);
     }
 
@@ -97,7 +93,6 @@ public class FirmaAlumno extends Activity implements OnClickListener {
 
     @Override
     public void onClick(View view) {
-        Alumnos alumnos = new Alumnos();
         if(view.getId()==R.id.cancelar){
             finish();
         }
@@ -106,7 +101,7 @@ public class FirmaAlumno extends Activity implements OnClickListener {
             AlertDialog.Builder saveDialog = new AlertDialog.Builder(this);
             saveDialog.setTitle(getResources().getString(R.string.save_signature_title));
             saveDialog.setMessage(getResources().getString(R.string.save_signature_desc));
-            AlertDialog.Builder builder = saveDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            saveDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     //save drawing
                     drawView.setDrawingCacheEnabled(true);
@@ -136,10 +131,8 @@ public class FirmaAlumno extends Activity implements OnClickListener {
 
                             if(!md5.equals(emptyMD5)) {
                                 /*Si la firma viene bien encodeada la apsamos para guardarla*/
-                                if (firmaEncoded != null) {
-                                    mAlumnoSource.updateAlumno(ID_ALUMNO, firmaEncoded, 1);
-                                    finish();
-                                }
+                                mAlumnoSource.updateAlumno(ID_ALUMNO, firmaEncoded, 1);
+                                finish();
                             } else {
                                 Utils.showToast(getApplicationContext(), getResources().getString(R.string.empty_signature));
                             }

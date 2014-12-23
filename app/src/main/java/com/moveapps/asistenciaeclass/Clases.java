@@ -37,7 +37,6 @@ public class Clases extends Activity {
 
     static String PASSWORD;
     static int USERNAME;
-    static final String TAG = Clases.class.getSimpleName();
     protected DBUsuarioSource mUsuarioDatasource;
     protected DBClaseSource mClaseDatasource;
     protected Usuario dbUsuario;

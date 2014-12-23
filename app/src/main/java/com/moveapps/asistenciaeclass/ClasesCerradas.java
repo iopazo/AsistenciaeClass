@@ -15,7 +15,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import api.eClassAPI;
 import db.DBClaseSource;
 import db.DBUsuarioSource;
 import models.Clase;
@@ -27,12 +26,10 @@ public class ClasesCerradas extends Activity {
 
     static String PASSWORD;
     static int USERNAME;
-    static final String TAG = ClasesCerradas.class.getSimpleName();
     protected DBUsuarioSource mUsuarioDatasource;
     protected DBClaseSource mClaseDatasource;
     protected Usuario dbUsuario;
     static ArrayList<Clase> clases = null;
-    protected eClassAPI apiService;
     final String[] classState = new String[]{"2"};
 
     SwipeListView swipeListView;
