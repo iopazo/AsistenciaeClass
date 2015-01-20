@@ -115,6 +115,8 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
                 case 3:
                     holder.nombreClase.setText(separado[3].toString());
                     break;
+                case 4:
+                    holder.nombreClase.setText(String.format("%s\n%s", separado[3].toString(), separado[4].toString()));
             }
         }
         /*
