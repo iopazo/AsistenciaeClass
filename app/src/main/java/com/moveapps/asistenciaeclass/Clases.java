@@ -84,7 +84,7 @@ public class Clases extends Activity {
         }
         swipeListView = (SwipeListView) findViewById(R.id.clases_swipe_list);
         claseData = new ArrayList<Clase>();
-        adapter = new ClaseAdapter(this, R.layout.custom_clases_swipe_row, claseData, mClaseDatasource);
+        adapter = new ClaseAdapter(this, R.layout.custom_clases_swipe_row, claseData, mClaseDatasource, dbUsuario);
 
         //Traemos los alumnos
         clases = mClaseDatasource.list(classState, dbUsuario.getId(), days);
@@ -198,6 +198,7 @@ public class Clases extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    //Metodo llamado para sincronizar clases.
     protected Callback<JsonElement> mUsuarioSerice = new Callback<JsonElement>() {
         @Override
         public void success(JsonElement element, Response response) {

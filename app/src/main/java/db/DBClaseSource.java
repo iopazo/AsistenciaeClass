@@ -60,7 +60,7 @@ public class DBClaseSource {
         if(!mDatabase.inTransaction()) {
             mDatabase.beginTransaction();
         }
-        ArrayList<Clase> clasesDb = null;
+        ArrayList<Clase> clasesDb;
         Integer[] ids = null;
         int contadorSincronizados = 0;
         try {
@@ -77,27 +77,27 @@ public class DBClaseSource {
                     JsonObject clase = clases.get(i).getAsJsonObject();
                     if(sync == 0) {
                         ContentValues values = new ContentValues();
-                        values.put(dbHelper.COLUMN_ID_CLASE_SEDE, clase.get("id_clase_sede").getAsInt());
-                        values.put(dbHelper.COLUMN_NOMBRE_CLASE, clase.get("nombre_completo").getAsString());
-                        values.put(dbHelper.COLUMN_FECHA, clase.get("fecha").getAsString());
-                        values.put(dbHelper.COLUMN_HORA, clase.get("hora").getAsString());
-                        values.put(dbHelper.COLUMN_FK_USUARIO, id_usuario);
+                        values.put(DBHelper.COLUMN_ID_CLASE_SEDE, clase.get("id_clase_sede").getAsInt());
+                        values.put(DBHelper.COLUMN_NOMBRE_CLASE, clase.get("nombre_completo").getAsString());
+                        values.put(DBHelper.COLUMN_FECHA, clase.get("fecha").getAsString());
+                        values.put(DBHelper.COLUMN_HORA, clase.get("hora").getAsString());
+                        values.put(DBHelper.COLUMN_FK_USUARIO, id_usuario);
 
-                        if (mDatabase.insert(dbHelper.TABLE_CLASE, null, values) > 0) {
+                        if (mDatabase.insert(DBHelper.TABLE_CLASE, null, values) > 0) {
                             this.insertAlumnoCurso(clase.getAsJsonArray("alumnos"), clase.get("id_clase_sede").getAsInt());
                         }
                     } else if(sync == 1) {
-                        if (!Arrays.asList(ids).contains(clase.get("id_clase_sede").getAsInt())) {
+                        if (ids != null && !Arrays.asList(ids).contains(clase.get("id_clase_sede").getAsInt())) {
                             contadorSincronizados++;
 
                             ContentValues values = new ContentValues();
-                            values.put(dbHelper.COLUMN_ID_CLASE_SEDE, clase.get("id_clase_sede").getAsInt());
-                            values.put(dbHelper.COLUMN_NOMBRE_CLASE, clase.get("nombre_completo").getAsString());
-                            values.put(dbHelper.COLUMN_FECHA, clase.get("fecha").getAsString());
-                            values.put(dbHelper.COLUMN_HORA, clase.get("hora").getAsString());
-                            values.put(dbHelper.COLUMN_FK_USUARIO, id_usuario);
+                            values.put(DBHelper.COLUMN_ID_CLASE_SEDE, clase.get("id_clase_sede").getAsInt());
+                            values.put(DBHelper.COLUMN_NOMBRE_CLASE, clase.get("nombre_completo").getAsString());
+                            values.put(DBHelper.COLUMN_FECHA, clase.get("fecha").getAsString());
+                            values.put(DBHelper.COLUMN_HORA, clase.get("hora").getAsString());
+                            values.put(DBHelper.COLUMN_FK_USUARIO, id_usuario);
 
-                            if (mDatabase.insert(dbHelper.TABLE_CLASE, null, values) > 0) {
+                            if (mDatabase.insert(DBHelper.TABLE_CLASE, null, values) > 0) {
                                 this.insertAlumnoCurso(clase.getAsJsonArray("alumnos"), clase.get("id_clase_sede").getAsInt());
                             }
                         }
@@ -128,10 +128,10 @@ public class DBClaseSource {
             try {
                 JsonObject alumno = alumnos.get(i).getAsJsonObject();
                 ContentValues values = new ContentValues();
-                values.put(dbHelper.COLUMN_NOMBRE_ALUMNO, alumno.get("nombre").getAsString());
-                values.put(dbHelper.COLUMN_ID_ALUMNO_CLASE_SEDE, alumno.get("id_alumno_clase_sede").getAsString());
-                values.put(dbHelper.COLUMN_ID_CLASE_SEDE_FK, idClase);
-                mDatabase.insert(dbHelper.TABLE_ALUMNO, null, values);
+                values.put(DBHelper.COLUMN_NOMBRE_ALUMNO, alumno.get("nombre").getAsString());
+                values.put(DBHelper.COLUMN_ID_ALUMNO_CLASE_SEDE, alumno.get("id_alumno_clase_sede").getAsString());
+                values.put(DBHelper.COLUMN_ID_CLASE_SEDE_FK, idClase);
+                mDatabase.insert(DBHelper.TABLE_ALUMNO, null, values);
             } catch (NullPointerException ex) {
                 Log.d("ClaseSource", ex.getLocalizedMessage());
             }
@@ -171,15 +171,15 @@ public class DBClaseSource {
             cl.setTime(new Date());
             cl.add(Calendar.DATE, Integer.parseInt(days));
             String dayPlusDays = dateFormat.format(cl.getTime());
-            conditions += " AND " + dbHelper.COLUMN_FECHA + " <= '" + dayPlusDays + "'";
+            conditions += " AND " + DBHelper.COLUMN_FECHA + " <= '" + dayPlusDays + "'";
         }
 
-        String whereClause = String.format("%s %s AND %s = ?", dbHelper.COLUMN_ESTADO_CLASE, conditions, dbHelper.COLUMN_FK_USUARIO);
-        String orderBy = dbHelper.COLUMN_ESTADO_CLASE + " DESC, " + dbHelper.COLUMN_FECHA + " ASC, " + dbHelper.COLUMN_HORA + " ASC";
+        String whereClause = String.format("%s %s AND %s = ?", DBHelper.COLUMN_ESTADO_CLASE, conditions, DBHelper.COLUMN_FK_USUARIO);
+        String orderBy = DBHelper.COLUMN_ESTADO_CLASE + " DESC, " + DBHelper.COLUMN_FECHA + " ASC, " + DBHelper.COLUMN_HORA + " ASC";
 
         Cursor cursor = mDatabase.query(
                 DBHelper.TABLE_CLASE,
-                new String[] {dbHelper.COLUMN_ID_CLASE_SEDE, dbHelper.COLUMN_NOMBRE_CLASE, dbHelper.COLUMN_ESTADO_CLASE, dbHelper.COLUMN_FECHA_SINCRONIZACION, dbHelper.COLUMN_FECHA},
+                new String[] {DBHelper.COLUMN_ID_CLASE_SEDE, DBHelper.COLUMN_NOMBRE_CLASE, DBHelper.COLUMN_ESTADO_CLASE, DBHelper.COLUMN_FECHA_SINCRONIZACION, DBHelper.COLUMN_FECHA},
                 whereClause,
                 new String[] {String.format("%d", idUsuario)},
                 null,
@@ -190,10 +190,10 @@ public class DBClaseSource {
         if(cursor.moveToFirst()) {
             while (!cursor.isAfterLast()){
                 //Aca sacamos el valor
-                int id = cursor.getInt(cursor.getColumnIndex(dbHelper.COLUMN_ID_CLASE_SEDE));
-                String nombre = cursor.getString(cursor.getColumnIndex(dbHelper.COLUMN_NOMBRE_CLASE));
-                int estado = cursor.getInt(cursor.getColumnIndex(dbHelper.COLUMN_ESTADO_CLASE));
-                String fecha = cursor.getString(cursor.getColumnIndex(dbHelper.COLUMN_FECHA_SINCRONIZACION));
+                int id = cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_ID_CLASE_SEDE));
+                String nombre = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_NOMBRE_CLASE));
+                int estado = cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_ESTADO_CLASE));
+                String fecha = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_FECHA_SINCRONIZACION));
                 Clase clase = new Clase(id, nombre, estado, fecha);
                 clases.add(clase);
                 cursor.moveToNext();
@@ -213,14 +213,14 @@ public class DBClaseSource {
         try {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date date = new Date();
-            String today = dateFormat.format(date).toString();
+            String today = dateFormat.format(date);
 
-            String whereClause = dbHelper.COLUMN_ID_CLASE_SEDE + " = ?";
+            String whereClause = DBHelper.COLUMN_ID_CLASE_SEDE + " = ?";
             ContentValues values = new ContentValues();
-            values.put(dbHelper.COLUMN_ESTADO_CLASE, estado);
-            values.put(dbHelper.COLUMN_FECHA_SINCRONIZACION, today);
+            values.put(DBHelper.COLUMN_ESTADO_CLASE, estado);
+            values.put(DBHelper.COLUMN_FECHA_SINCRONIZACION, today);
             mDatabase.update(
-                    dbHelper.TABLE_CLASE,
+                    DBHelper.TABLE_CLASE,
                     values,
                     whereClause,
                     new String[] {String.format("%d", idClaseSede)});
@@ -233,7 +233,7 @@ public class DBClaseSource {
     /*
     Armamos un json con los datos de los alumnos de una clase
      */
-    public JSONObject getAlumnosByClass(int idClase) {
+    public JSONObject getAlumnosByClass(int idClase, int idUsuarioEclass) {
 
         JSONObject jsonObject = new JSONObject();
 
@@ -252,11 +252,11 @@ public class DBClaseSource {
                         alumnoJObject.put("id", alumnos.get(i).getIdAlumnoCursoClaseSede());
                         alumnoJObject.put("estado", String.format("%d", alumnos.get(i).getEstado()));
                         alumnoJObject.put("firma", (alumnos.get(i).getFirma() != null ? alumnos.get(i).getFirma() : ""));
+                        alumnoJObject.put("id_usuario", idUsuarioEclass);
                         jsonArray.put(alumnoJObject);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
                 }
             }
             try {
@@ -268,7 +268,6 @@ public class DBClaseSource {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return jsonObject;
     }
 }

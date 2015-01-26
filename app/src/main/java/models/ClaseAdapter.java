@@ -40,20 +40,22 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
     Context context;
     int layoutResId;
     protected DBClaseSource mClaseSource;
+    protected Usuario usuario;
     JSONObject jsonObject;
     protected eClassAPI apiService;
-    protected int id_clase;
+    protected Clase claseProtected;
     protected ProgressDialog pd;
     SwipeListView swipeListView;
     ClaseAdapter adapter;
 
-    public ClaseAdapter(Context context, int resource, List<Clase> objects, DBClaseSource mClaseSource) {
+    public ClaseAdapter(Context context, int resource, List<Clase> objects, DBClaseSource mClaseSource, Usuario _usuario) {
         super(context, resource, objects);
 
         this.data = objects;
         this.context = context;
         this.layoutResId = resource;
         this.mClaseSource = mClaseSource;
+        this.usuario = _usuario;
     }
 
     @Override
@@ -139,18 +141,16 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
                 break;
         }
 
-        final ClaseHolder finalHolder = holder;
-        final View finalRow = row;
         holder.botonSincronizar.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
 
                 if(claseData.getEstado() == 1) {
-                    id_clase = claseData.getId();
+                    claseProtected = claseData;
                     pd = ProgressDialog.show(context, "", context.getResources().getString(R.string.sync_class), true);
                     jsonObject = new JSONObject();
-                    jsonObject = mClaseSource.getAlumnosByClass(claseData.getId());
+                    jsonObject = mClaseSource.getAlumnosByClass(claseData.getId(), usuario.getId());
                     byte[] jsonToByte = jsonObject.toString().getBytes();
                     String datos = Base64.encodeToString(jsonToByte, 0);
 
@@ -158,8 +158,7 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
                     //Aca se llama a la Api y subimos la asistencia
                     apiService.subirAsistencia(mUsuarioService);
                     swipeListView.closeAnimate(position);
-                    adapter.remove(claseData);
-                    adapter.notifyDataSetChanged();
+
 
                     /*finalHolder.cerrado.setVisibility(View.INVISIBLE);
                     finalHolder.sincronizado.setVisibility(View.VISIBLE);
@@ -208,8 +207,10 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
             String msg = jsonObj.get("alumnos").getAsJsonObject().get("msg").getAsString();
             //Si la respuesta es correcta.
             if(status.equals("success")) {
-                //Marcamos la clase como sincronizada
-                mClaseSource.cambiarEstadoClase(id_clase, 2);
+                //Marcamos la clase como sincronizada y la quitamos de la lista
+                adapter.remove(claseProtected);
+                adapter.notifyDataSetChanged();
+                mClaseSource.cambiarEstadoClase(claseProtected.getId(), 2);
                 pd.cancel();
                 Utils.showToast(context, context.getResources().getString(R.string.class_uploaded));
             } else {
