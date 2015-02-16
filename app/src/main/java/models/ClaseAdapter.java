@@ -1,10 +1,8 @@
 package models;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -90,7 +88,7 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
             }
 
             holder.botonSincronizar = (Button)row.findViewById(R.id.btnSincronizarClase);
-            holder.botonEliminar = (Button)row.findViewById(R.id.btnEliminar);
+            //holder.botonEliminar = (Button)row.findViewById(R.id.btnEliminar);
             holder.cerrado = (ImageView)row.findViewById(R.id.cerrada);
             holder.sincronizado = (ImageView)row.findViewById(R.id.sincronizada);
             row.setTag(holder);
@@ -170,7 +168,7 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
             }
         });
 
-        holder.botonEliminar.setOnClickListener(new View.OnClickListener() {
+        /*holder.botonEliminar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -194,7 +192,7 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
                 });
                 saveDialog.show();
             }
-        });
+        });*/
 
         return row;
     }

@@ -202,7 +202,7 @@ public class Login extends Activity {
 
         @Override
         public void failure(RetrofitError error) {
-            Utils.showToast(Login.this, error.getMessage());
+            Utils.showToast(Login.this, getResources().getString(R.string.no_connection));
             pd.cancel();
         }
     };

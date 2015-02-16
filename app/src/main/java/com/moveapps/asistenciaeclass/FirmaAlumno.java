@@ -101,7 +101,7 @@ public class FirmaAlumno extends Activity implements OnClickListener {
             AlertDialog.Builder saveDialog = new AlertDialog.Builder(this);
             saveDialog.setTitle(getResources().getString(R.string.save_signature_title));
             saveDialog.setMessage(getResources().getString(R.string.save_signature_desc));
-            saveDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            saveDialog.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     //save drawing
                     drawView.setDrawingCacheEnabled(true);
@@ -112,7 +112,6 @@ public class FirmaAlumno extends Activity implements OnClickListener {
                         String imgSaved = MediaStore.Images.Media.insertImage(
                                 getContentResolver(), drawView.getDrawingCache(),
                                 nameImage, "drawing");
-
                         /*
                         Validamos que la imagen se haya guardado
                         Aca transformamos la imagen guardada en un String Base64 para guardarlo en la base de datos

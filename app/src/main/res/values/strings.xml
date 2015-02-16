@@ -47,7 +47,7 @@
     </string-array>
     <string name="type_document">Select a type of document</string>
     <string name="order_text">Order changed</string>
-
+    <string name="no_connection">You must be connected to the internet to send information</string>
     <!-- Vistas -->
     <string name="present">Present</string>
     <string name="student">Student</string>

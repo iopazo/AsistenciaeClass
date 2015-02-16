@@ -216,7 +216,7 @@ public class Clases extends Activity {
 
         @Override
         public void failure(RetrofitError error) {
-            Utils.showToast(Clases.this, error.getMessage());
+            Utils.showToast(Clases.this, getResources().getString(R.string.no_connection));
         }
     };
 
@@ -251,9 +251,9 @@ public class Clases extends Activity {
                     float rightOffset = metrics.widthPixels - btnSincronizar.getWidth();
                     swipeListView.setOffsetRight(rightOffset); // right side offset
                 } else {
-                    final Button btnEliminar = (Button)findViewById(R.id.btnEliminar);
-                    float leftOffset = metrics.widthPixels - btnEliminar.getWidth();
-                    swipeListView.setOffsetLeft(leftOffset); // left side offset
+                    //final Button btnEliminar = (Button)findViewById(R.id.btnEliminar);
+                    //float leftOffset = metrics.widthPixels - btnEliminar.getWidth();
+                    //swipeListView.setOffsetLeft(leftOffset); // left side offset
                 }
             }
 
@@ -294,8 +294,8 @@ public class Clases extends Activity {
 
         });
 
-        swipeListView.setSwipeMode(SwipeListView.SWIPE_MODE_BOTH); // there are five swiping modes
-        swipeListView.setSwipeActionLeft(SwipeListView.SWIPE_ACTION_REVEAL); //there are four swipe actions
+        swipeListView.setSwipeMode(SwipeListView.SWIPE_MODE_RIGHT); // there are five swiping modes
+        //swipeListView.setSwipeActionLeft(SwipeListView.SWIPE_ACTION_REVEAL); //there are four swipe actions
         swipeListView.setSwipeActionRight(SwipeListView.SWIPE_ACTION_REVEAL);
 
         swipeListView.setAnimationTime(200); // Animation time

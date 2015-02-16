@@ -26,7 +26,7 @@
     <string name="dismiss">Eliminar Clase</string>
     <string name="action_undone">Esta acción no se puede deshacer, esta seguro que desea continuar?</string>
     <string name="class_removed">Clase removida exitosamente</string>
-    <string name="class_uploaded">Clase subida exitosamente.</string>
+    <string name="class_uploaded">Clase sincronizada exitosamente.</string>
     <string name="save_signature_title">Guardar Firma</string>
     <string name="save_signature_desc">Esta seguro que desea guardar la firma?</string>
     <string name="empty_signature">Debes firmar antes de poder guardar tu firma.</string>
@@ -47,11 +47,12 @@
     </string-array>
     <string name="type_document">Selecciona un tipo de documento</string>
     <string name="order_text">Orden cambiado</string>
+    <string name="no_connection">Debe conectarse a internet para enviar la información</string>
 
     <!-- Vistas -->
     <string name="present">Presente</string>
     <string name="student">Alumno</string>
-    <string name="string_synchronized">Sincronizado</string>
+    <string name="string_synchronized">Sincronizar</string>
     <string name="closed">Cerrada</string>
     <string name="accept">Aceptar</string>
     <string name="login_other_account">Ingresar con otra cuenta</string>

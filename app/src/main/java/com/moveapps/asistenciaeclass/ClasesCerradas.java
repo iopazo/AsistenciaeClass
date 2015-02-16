@@ -181,9 +181,9 @@ public class ClasesCerradas extends Activity {
                     float rightOffset = metrics.widthPixels - btnSincronizar.getWidth();
                     swipeListView.setOffsetRight(rightOffset); // right side offset
                 } else {
-                    final Button btnEliminar = (Button)findViewById(R.id.btnEliminar);
-                    float leftOffset = metrics.widthPixels - btnEliminar.getWidth();
-                    swipeListView.setOffsetLeft(leftOffset); // left side offset
+                    //final Button btnEliminar = (Button)findViewById(R.id.btnEliminar);
+                    //float leftOffset = metrics.widthPixels - btnEliminar.getWidth();
+                    //swipeListView.setOffsetLeft(leftOffset); // left side offset
                 }
             }
 

@@ -82,7 +82,7 @@ public class ClaseCerradaAdapter extends ArrayAdapter<Clase> {
 
 
             holder.botonSincronizar = (Button)row.findViewById(R.id.btnSincronizarClase);
-            holder.botonEliminar = (Button)row.findViewById(R.id.btnEliminar);
+            //holder.botonEliminar = (Button)row.findViewById(R.id.btnEliminar);
             holder.cerrado = (ImageView)row.findViewById(R.id.cerrada);
             holder.sincronizado = (ImageView)row.findViewById(R.id.sincronizada);
             row.setTag(holder);
