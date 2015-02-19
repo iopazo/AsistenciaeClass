@@ -3,8 +3,10 @@ package db;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
@@ -37,6 +39,7 @@ public class DBClaseSource {
     private Context mContext;
     private DBAlumnoSource dbAlumnoSource;
 
+
     public DBClaseSource(Context context) {
         mContext = context;
         dbHelper = new DBHelper(mContext);
@@ -55,26 +58,50 @@ public class DBClaseSource {
     sync: 1 solo guarda las clases nuevas y
      */
 
-    public void insertClaseAlumnos(JsonArray clases, int sync, int id_usuario) {
+    public void insertClaseAlumnos(JsonArray clases, JsonArray clasesCanceladas, int sync, int id_usuario) {
 
-        if(!mDatabase.inTransaction()) {
-            mDatabase.beginTransaction();
-        }
         ArrayList<Clase> clasesDb;
         Integer[] ids = null;
+        Integer[] idsCanceladas = null;
         int contadorSincronizados = 0;
+        int contadorCanceladas = 0;
+        boolean syncronized = false;
         try {
             if(sync == 1) {
                 String[] state = new String[]{"0","1","2","3"};
                 clasesDb = this.list(state, id_usuario, "-1");
                 ids = new Integer[clasesDb.size()];
+                idsCanceladas = new Integer[clasesDb.size()];
                 for (int j = 0; j < clasesDb.size(); j++) {
                     ids[j] = clasesDb.get(j).getId();
+                    if(clasesDb.get(j).getEstado() != 3) {
+                        idsCanceladas[j] = clasesDb.get(j).getId();
+                    }
+                }
+                //Recorremos las clases canceladas para agregarlas a la DB
+                for (int i = 0; i < clasesCanceladas.size(); i++) {
+                    try {
+                        JsonObject claseCancelada = clasesCanceladas.get(i).getAsJsonObject();
+                        //Si Sync esta en 0 se agregan todas.
+                        if (ids != null && Arrays.asList(idsCanceladas).contains(claseCancelada.get("id_clase_sede").getAsInt())) {
+                            contadorCanceladas++;
+                            //Cambiamos el estado a Eliminada para que no aparezca
+                            this.cambiarEstadoClase(claseCancelada.get("id_clase_sede").getAsInt(), 3);
+                        }
+                    } catch (NullPointerException ex) {
+                        Log.d("ClaseSource", ex.getLocalizedMessage());
+                    }
                 }
             }
+
+            if(!mDatabase.inTransaction()) {
+                mDatabase.beginTransaction();
+            }
+            //Recorremos las clases para agregarlas a la DB
             for (int i = 0; i < clases.size(); i++) {
                 try {
                     JsonObject clase = clases.get(i).getAsJsonObject();
+                    //Si Sync esta en 0 se agregan todas.
                     if(sync == 0) {
                         ContentValues values = new ContentValues();
                         values.put(DBHelper.COLUMN_ID_CLASE_SEDE, clase.get("id_clase_sede").getAsInt());
@@ -86,9 +113,10 @@ public class DBClaseSource {
                         if (mDatabase.insert(DBHelper.TABLE_CLASE, null, values) > 0) {
                             this.insertAlumnoCurso(clase.getAsJsonArray("alumnos"), clase.get("id_clase_sede").getAsInt());
                         }
+                        //Si Sync esta en 1 solo se agregan las que no existan.
                     } else if(sync == 1) {
-                        if (ids != null && !Arrays.asList(ids).contains(clase.get("id_clase_sede").getAsInt())) {
-                            contadorSincronizados++;
+                        if (ids != null && Arrays.asList(ids).contains(clase.get("id_clase_sede").getAsInt())) {
+                            contadorCanceladas++;
 
                             ContentValues values = new ContentValues();
                             values.put(DBHelper.COLUMN_ID_CLASE_SEDE, clase.get("id_clase_sede").getAsInt());
@@ -110,12 +138,36 @@ public class DBClaseSource {
         } finally {
             mDatabase.endTransaction();
             if(sync == 1) {
+
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String currentDateandTime = sdf.format(new Date());
+
                 Activity claseActivity = (Activity) mContext;
                 if(contadorSincronizados > 0) {
                     Utils.showToast(mContext, String.format("%s %d %s", mContext.getResources().getString(R.string.has_sync), contadorSincronizados, mContext.getResources().getString(R.string.string_class)));
-                    claseActivity.recreate();
-                } else {
+                    syncronized = true;
+                } else if(contadorCanceladas > 0){
+                    Utils.showToast(mContext, String.format("%s %d %s", mContext.getResources().getString(R.string.has_cancel), contadorCanceladas, mContext.getResources().getString(R.string.string_class)));
+                    syncronized = true;
+                }
+                else{
+                    SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext);
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putString("last_update", mContext.getResources().getString(R.string.dont_class_sync) + " - " + currentDateandTime);
+                    editor.apply();
                     Utils.showToast(mContext, mContext.getResources().getString(R.string.dont_class_sync));
+                }
+                if(syncronized == true) {
+                    SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext);
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putString("last_update",
+                        String.format("%s %d %s", mContext.getResources().getString(R.string.has_sync), contadorSincronizados, mContext.getResources().getString(R.string.string_class))
+                        + " " +
+                        String.format("%s %d %s", mContext.getResources().getString(R.string.has_cancel), contadorCanceladas, mContext.getResources().getString(R.string.string_class))
+                        + " - " + currentDateandTime
+                    );
+                    editor.apply();
+                    claseActivity.recreate();
                 }
             }
         }
@@ -268,6 +320,7 @@ public class DBClaseSource {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        Log.d("Clase", jsonObject.toString());
         return jsonObject;
     }
 }

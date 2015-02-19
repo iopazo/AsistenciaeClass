@@ -208,7 +208,8 @@ public class Clases extends Activity {
             if(msg.equals("success")) {
                 JsonObject data = jsonObj.get("usuario").getAsJsonObject().getAsJsonObject("data");
                 JsonArray clases = data.getAsJsonArray("clases");
-                mClaseDatasource.insertClaseAlumnos(clases, 1, data.get("id").getAsInt());
+                JsonArray clasesCanceladas = data.getAsJsonArray("clases_canceladas");
+                mClaseDatasource.insertClaseAlumnos(clases, clasesCanceladas, 1, data.get("id").getAsInt());
             } else if(msg.equals("error")) {
                 Utils.showToast(Clases.this, getResources().getString(R.string.action_undone));
             }

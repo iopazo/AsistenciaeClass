@@ -6,8 +6,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import java.io.ByteArrayOutputStream;
 import java.sql.SQLException;
-import java.util.UUID;
 
 import db.DBAlumnoSource;
 
@@ -105,40 +104,41 @@ public class FirmaAlumno extends Activity implements OnClickListener {
                 public void onClick(DialogInterface dialog, int which) {
                     //save drawing
                     drawView.setDrawingCacheEnabled(true);
-
                     //attempt to save
-                    String nameImage = UUID.randomUUID().toString() + ".png";
+                    //String nameImage = UUID.randomUUID().toString() + ".png";
                     try {
-                        String imgSaved = MediaStore.Images.Media.insertImage(
-                                getContentResolver(), drawView.getDrawingCache(),
-                                nameImage, "drawing");
+                        //Solo si es necesario gurdar la imagen fisicamente, descomentar imgSaved y nameImage.
+                        /*String imgSaved = MediaStore.Images.Media.insertImage(
+                               getContentResolver(), drawView.getDrawingCache(),
+                                nameImage, "drawing");*/
+                        //boolean imgSaved = drawView.getDrawingCache().compress(Bitmap.CompressFormat.JPEG, 50, new FileOutputStream(new File(filePath)));
                         /*
                         Validamos que la imagen se haya guardado
                         Aca transformamos la imagen guardada en un String Base64 para guardarlo en la base de datos
                         */
-                        if (imgSaved != null) {
+                        //if (imgSaved != null) {
 
-                            Bitmap bm = Bitmap.createBitmap(drawView.getDrawingCache());
-                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                            bm = Bitmap.createScaledBitmap(bm, 150, 150, false);
-                            bm.compress(Bitmap.CompressFormat.JPEG, 50, baos); //bm is the bitmap object
-                            byte[] byteArrayImage = baos.toByteArray();
-                            String firmaEncoded = Base64.encodeToString(byteArrayImage, 0);
+                        Bitmap bm = Bitmap.createBitmap(drawView.getDrawingCache());
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        bm = Bitmap.createScaledBitmap(bm, 150, 150, false);
+                        bm.compress(Bitmap.CompressFormat.JPEG, 50, baos); //bm is the bitmap object
+                        byte[] byteArrayImage = baos.toByteArray();
+                        String firmaEncoded = Base64.encodeToString(byteArrayImage, 0);
 
-                            String md5 = Utils.MD5(firmaEncoded);
-                            String emptyMD5 = "ff4776e9eef282261c55bb32c47593c3";
+                        String md5 = Utils.MD5(firmaEncoded);
+                        String emptyMD5 = "ff4776e9eef282261c55bb32c47593c3";
 
-                            if(!md5.equals(emptyMD5)) {
-                                /*Si la firma viene bien encodeada la apsamos para guardarla*/
-                                mAlumnoSource.updateAlumno(ID_ALUMNO, firmaEncoded, 1);
-                                finish();
-                            } else {
-                                Utils.showToast(getApplicationContext(), getResources().getString(R.string.empty_signature));
-                            }
-                        }  else {
-                            Utils.showToast(getApplicationContext(), getResources().getString(R.string.image_unsaved));
+                        if(!md5.equals(emptyMD5)) {
+                            /*Si la firma viene bien encodeada la pasamos para guardarla*/
+                            mAlumnoSource.updateAlumno(ID_ALUMNO, firmaEncoded, 1);
+                            Log.d("Firma", "firma creada");
+                            finish();
+                        } else {
+                            Utils.showToast(getApplicationContext(), getResources().getString(R.string.empty_signature));
                         }
-
+                        //}  else {
+                        //    Utils.showToast(getApplicationContext(), getResources().getString(R.string.image_unsaved));
+                        //}
                     } catch (UnsupportedOperationException ex) {
                         Utils.showToast(getApplicationContext(), "Internal error CODE: SIG-13.");
                     }

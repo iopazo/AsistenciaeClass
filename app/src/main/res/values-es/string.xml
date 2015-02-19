@@ -13,15 +13,15 @@
     <string name="teacher_confirm">Confirmación del profesor</string>
     <string name="remove_signature">Esta seguro que desea borrar esta firma?</string>
     <string name="change_sucess">Cambios realizados!</string>
-    <string name="password_incorrect">La contraseña es incorrecta, porfavor intente nuevamente</string>
+    <string name="password_incorrect">La contraseña es incorrecta, por favor intente nuevamente</string>
     <string name="cancel">Cancelar</string>
     <string name="already_absent">Este alumno ya ha sido marcado como ausente</string>
     <string name="reset_changes">Esta seguro que desea reestablecer los cambios de este alumno?</string>
     <string name="yes">Si</string>
     <string name="no">No</string>
     <string name="studen_unmark">Este alumno ya tiene reestablecidos sus cambios</string>
-    <string name="sync_class">Sincronizando, porfavor espere</string>
-    <string name="sync_class_error">La clase no pudo ser sincornizada, porfavor revise su conexion e intente nuevamente.</string>
+    <string name="sync_class">Sincronizando, por favor espere</string>
+    <string name="sync_class_error">La clase no pudo ser sincornizada, por favor revise su conexion e intente nuevamente.</string>
     <string name="only_class_sync">Solo las clases cerradas pueden ser sincronizadas</string>
     <string name="dismiss">Eliminar Clase</string>
     <string name="action_undone">Esta acción no se puede deshacer, esta seguro que desea continuar?</string>
@@ -30,14 +30,15 @@
     <string name="save_signature_title">Guardar Firma</string>
     <string name="save_signature_desc">Esta seguro que desea guardar la firma?</string>
     <string name="empty_signature">Debes firmar antes de poder guardar tu firma.</string>
-    <string name="image_unsaved">La firma no pudo ser guardada, porfavor intenta nuevamente.</string>
+    <string name="image_unsaved">La firma no pudo ser guardada, por favor intenta nuevamente.</string>
     <string name="welcome">Bienvenido</string>
-    <string name="loading_data">Cargando la información de tus clases, porfavor espera</string>
-    <string name="bad_document_format">El Rut ingresado no es válido, porfavor intenta nuevamente</string>
+    <string name="loading_data">Cargando la información de tus clases, por favor espera</string>
+    <string name="bad_document_format">El Rut ingresado no es válido, por favor intenta nuevamente</string>
     <string name="enter_document">Debes ingresar un número de documento válido</string>
     <string name="enter_password">Debes ingresar una contraseña</string>
     <string name="string_class">Clases</string>
     <string name="has_sync">Sincronizada</string>
+    <string name="has_cancel">Canceladas</string>
     <string name="dont_class_sync">No se encontraron clases</string>
     <string-array name="documentos_identificacion">
         <item>Rut</item>

@@ -114,6 +114,7 @@ public class ConfiguracionActivity extends PreferenceActivity {
         //bindPreferenceSummaryToValue(findPreference("example_list"));
         //bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"));
         bindPreferenceSummaryToValue(findPreference("sync_frequency"));
+        bindPreferenceSummaryToValue(findPreference("last_update"));
     }
 
     /**
@@ -224,6 +225,7 @@ public class ConfiguracionActivity extends PreferenceActivity {
             // updated to reflect the new value, per the Android Design
             // guidelines.
             bindPreferenceSummaryToValue(findPreference("sync_frequency"));
+            bindPreferenceSummaryToValue(findPreference("last_update"));
         }
     }
 }

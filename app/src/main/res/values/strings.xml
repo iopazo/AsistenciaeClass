@@ -15,7 +15,7 @@
     <string name="change_sucess">Change success!</string>
     <string name="password_incorrect">The password is incorrect, try again</string>
     <string name="cancel">Cancel</string>
-    <string name="already_absent">This student is already absent</string>
+    <string name="already_absent">This student is already not attend</string>
     <string name="reset_changes">Sure you want reset the state of this student?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
@@ -38,25 +38,26 @@
     <string name="enter_password">You must enter a password</string>
     <string name="string_class">Lessons</string>
     <string name="has_sync">Are synchronized</string>
+    <string name="has_cancel">Have been cancelled</string>
     <string name="dont_class_sync">No classes were found</string>
     <string-array name="documentos_identificacion">
         <item>Rut</item>
         <item>DNI</item>
         <item>CC</item>
-        <item>Pasaporte</item>
+        <item>Passport</item>
     </string-array>
     <string name="type_document">Select a type of document</string>
     <string name="order_text">Order changed</string>
     <string name="no_connection">You must be connected to the internet to send information</string>
     <!-- Vistas -->
-    <string name="present">Present</string>
+    <string name="present">Attend</string>
     <string name="student">Student</string>
     <string name="string_synchronized">Synchronized</string>
     <string name="closed">Closed</string>
     <string name="accept">Accept</string>
     <string name="login_other_account">Login with another account</string>
     <string name="login">Login</string>
-    <string name="absent">Absent</string>
+    <string name="absent">Not attend</string>
     <string name="restore">Restore</string>
     <string name="delete">Delete</string>
     <string name="setting_text">Settings</string>

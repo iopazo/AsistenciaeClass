@@ -178,8 +178,9 @@ public class Login extends Activity {
             if(msg.equals("success")) {
                 JsonObject data = jsonObj.get("usuario").getAsJsonObject().getAsJsonObject("data");
                 JsonArray clases = data.getAsJsonArray("clases");
+                JsonArray clasesCanceladas = data.getAsJsonArray("clases_canceladas");
 
-                claseDataSource.insertClaseAlumnos(clases, 0, data.get("id").getAsInt());
+                claseDataSource.insertClaseAlumnos(clases, clasesCanceladas, 0, data.get("id").getAsInt());
                 Intent intent = new Intent(Login.this, Clases.class);
                 Usuario usuario = new Usuario(data.get("id").getAsInt(), password.getText().toString(), true, data.get("username").getAsInt(), data.get("nombre").getAsString());
                 //Guardamos los datos del usuario.

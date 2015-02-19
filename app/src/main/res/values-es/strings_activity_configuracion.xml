@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="title_activity_configuracion">Configuración</string>
+    <string name="ultima_actualizacion">Ultima actualización</string>
 
     <!-- Example settings for Data & Sync -->
     <string name="pref_header_data_sync">Configuración para listado de clases</string>
