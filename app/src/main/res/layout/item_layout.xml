@@ -18,7 +18,7 @@
         android:textSize="12sp"
         android:textColorHint="#3178b6">
     </TextView>
-    
+
     <ImageView
         android:layout_width="32dp"
         android:layout_height="16dp"

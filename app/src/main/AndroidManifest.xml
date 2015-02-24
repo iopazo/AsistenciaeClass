@@ -38,6 +38,7 @@
         </activity>
         <activity
             android:name=".Alumnos"
+            android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_alumnos"
             android:launchMode="singleTop"
             android:parentActivityName=".Clases"

@@ -55,6 +55,7 @@
             android:layout_toLeftOf="@+id/btnComentario"
             android:layout_toStartOf="@+id/btnComentario" />
         <Button
+            style="@style/BotonLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/btnComentario"

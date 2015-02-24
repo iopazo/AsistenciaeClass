@@ -75,7 +75,7 @@ public class DBHelper extends SQLiteOpenHelper {
     //Columnas tabla comentarios_clases
     public static final String COLUMN_ID_COMENTARIO = "ID";
     public static final String COLUMN_ID_CLASE_COMENTARIO = "ID_CLASE";
-    public static final String COLUMN_ID_USUARIO_COMENTARIO = "ID_USUARIO";
+    public static final String COLUMN_NOMBRE_PROFESOR = "NOMBRE_PROFESOR";
     public static final String COLUMN_COMENTARIO = "COMENTARIO";
     public static final String COLUMN_FECHA_COMENTARIO = "FECHA_CREACION";
 
@@ -83,8 +83,8 @@ public class DBHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + TABLE_COMENTARIO + " (" + COLUMN_ID_COMENTARIO + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "" + COLUMN_ID_CLASE_COMENTARIO + " INTEGER NOT NULL, " +
                     "" + COLUMN_COMENTARIO + " TEXT, " +
-                    "" + COLUMN_ID_USUARIO_COMENTARIO + " INTEGER NOT NULL, " +
-                    "" + COLUMN_FECHA_COMENTARIO + " DATETIME)";
+                    "" + COLUMN_NOMBRE_PROFESOR + " VARCHAR(250) NOT NULL, " +
+                    "" + COLUMN_FECHA_COMENTARIO + " VARCHAR(20) NOT NULL)";
 
 
     public DBHelper(Context context) {

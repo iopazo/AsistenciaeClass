@@ -1,7 +1,5 @@
 package models;
 
-import java.util.Date;
-
 /**
  * Created by iopazog on 23-02-15.
  */
@@ -9,15 +7,15 @@ public class ComentarioClase {
 
     private String comentario;
     private int idClase;
-    private Date fechaComentario;
-    private int idUsuarioEclass;
+    private String fechaComentario;
+    private String nombreUsuario;
 
-    public ComentarioClase(int _idClase, String _comentario, Date _fechaComentario, int _idUsuarioEclass) {
+    public ComentarioClase(int _idClase, String _comentario, String _fechaComentario, String nombreUsuario) {
 
         this.idClase = _idClase;
         this.comentario = _comentario;
         this.fechaComentario = _fechaComentario;
-        this.idUsuarioEclass = _idUsuarioEclass;
+        this.nombreUsuario = nombreUsuario;
     }
 
 
@@ -37,19 +35,19 @@ public class ComentarioClase {
         this.idClase = idClase;
     }
 
-    public Date getFechaComentario() {
+    public String getFechaComentario() {
         return fechaComentario;
     }
 
-    public void setFechaComentario(Date fechaComentario) {
+    public void setFechaComentario(String fechaComentario) {
         this.fechaComentario = fechaComentario;
     }
 
-    public int getIdUsuarioEclass() {
-        return idUsuarioEclass;
+    public String getNombreUsuario() {
+        return nombreUsuario;
     }
 
-    public void setIdUsuarioEclass(int idUsuarioEclass) {
-        this.idUsuarioEclass = idUsuarioEclass;
+    public void setNombreUsuario(String nombreUsuario) {
+        this.nombreUsuario = nombreUsuario;
     }
 }

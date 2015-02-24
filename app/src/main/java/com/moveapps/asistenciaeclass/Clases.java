@@ -277,6 +277,7 @@ public class Clases extends Activity {
                     intent.putExtra("title", clases.get(position).getNombre());
                     intent.putExtra("id", clases.get(position).getId());
                     intent.putExtra("password", PASSWORD);
+                    intent.putExtra("username", dbUsuario.getNombreProfesor());
                     startActivityForResult(intent, 1);
                     swipeListView.closeOpenedItems();
                 }

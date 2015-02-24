@@ -29,12 +29,16 @@ import com.fortysevendeg.swipelistview.BaseSwipeListViewListener;
 import com.fortysevendeg.swipelistview.SwipeListView;
 
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
 import db.DBAlumnoSource;
+import db.DBComentarioClaseSource;
 import models.Alumno;
 import models.AlumnoAdapter;
+import models.ComentarioClase;
 
 
 public class Alumnos extends Activity implements SearchView.OnQueryTextListener {
@@ -42,6 +46,7 @@ public class Alumnos extends Activity implements SearchView.OnQueryTextListener 
     static String PASSWORD;
     static int ID_CLASE;
     static String NOMBRE_CLASE;
+    static String NOMBRE_USUARIO;
     protected DBAlumnoSource mAlumnosource;
     static ArrayList<Alumno> alumnos = null;
     SwipeListView swipeListView;
@@ -51,6 +56,9 @@ public class Alumnos extends Activity implements SearchView.OnQueryTextListener 
     private MenuItem searchMenuItem;
     private String orderByType = "ASC";
     private PopupWindow popWindow;
+    private ListView listViewComentarios;
+    private ArrayList<String> commentsList;
+    private ArrayAdapter<String> commentAdapter;
 
 
     @Override
@@ -66,6 +74,9 @@ public class Alumnos extends Activity implements SearchView.OnQueryTextListener 
         }
         if(intent.hasExtra("password")) {
             PASSWORD = intent.getStringExtra("password");
+        }
+        if(intent.hasExtra("username")) {
+            NOMBRE_USUARIO = intent.getStringExtra("username");
         }
         if(intent.hasExtra("title")) {
             NOMBRE_CLASE = String.format("Class %s", intent.getStringExtra("title"));
@@ -178,14 +189,39 @@ public class Alumnos extends Activity implements SearchView.OnQueryTextListener 
 
         final View inflatedView = layoutInflater.inflate(R.layout.popup_layout, null, false);
 
-        ListView listView = (ListView)inflatedView.findViewById(R.id.commentsListView);
+        listViewComentarios = (ListView)inflatedView.findViewById(R.id.commentsListView);
+
+        Button btnComentario = (Button)inflatedView.findViewById(R.id.btnComentario);
+        final EditText textComentario = (EditText)inflatedView.findViewById(R.id.writeComment);
+
+        btnComentario.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                String now = format.format(Calendar.getInstance().getTime());
+
+                ComentarioClase comentario = new ComentarioClase(ID_CLASE, textComentario.getText().toString(), now, NOMBRE_USUARIO);
+                DBComentarioClaseSource comentarioDb = new DBComentarioClaseSource(Alumnos.this);
+                try {
+                    comentarioDb.open();
+                    if(comentarioDb.insert(comentario)) {
+                        addItems(v, comentario);
+                        textComentario.setText("");
+                    } else {
+                        Utils.showToast(Alumnos.this, "Ocurrio un error al guardar el comentario, intente nuevamente");
+                    }
+                    comentarioDb.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         Display display = getWindowManager().getDefaultDisplay();
         final Point size = new Point();
         display.getSize(size);
-        int mDeviceHeight = size.y;
 
-        setSimpleList(listView);
+        setSimpleList(listViewComentarios);
 
         popWindow = new PopupWindow(inflatedView, size.x - 50, size.y - 400, true);
         popWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.popup_bg));
@@ -194,19 +230,31 @@ public class Alumnos extends Activity implements SearchView.OnQueryTextListener 
         popWindow.showAtLocation(v, Gravity.BOTTOM, 0, 100);
 
     }
+    //Cargamos los comentarios a la lista
+    public void setSimpleList(ListView listView){
 
-    void setSimpleList(ListView listView){
-
-        ArrayList<String> contactsList = new ArrayList<String>();
-
-        for (int index = 0; index < 10; index++) {
-            contactsList.add("I am @ index " + index + " today " + Calendar.getInstance().getTime().toString());
+        commentsList = new ArrayList<String>(); //Aca debemos traer los comentarios de la clase.
+        DBComentarioClaseSource comentarioDb = new DBComentarioClaseSource(Alumnos.this);
+        try {
+            comentarioDb.open();
+            commentsList = comentarioDb.list(ID_CLASE);
+            comentarioDb.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
-        listView.setAdapter(new ArrayAdapter<String>(Alumnos.this,
-                R.layout.comments_list_item, android.R.id.text1,contactsList));
+        commentAdapter = new ArrayAdapter<String>(Alumnos.this, R.layout.comments_list_item, android.R.id.text1,commentsList);
+        listView.setAdapter(commentAdapter);
+    }
+    //Agregamos un comentario a la lista
+    private void addItems(View v, ComentarioClase comentario) {
+        commentsList.add(String.format("%s %s %s %s %s", comentario.getComentario(), "el", comentario.getFechaComentario(), "por", comentario.getNombreUsuario()));
+        commentAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Funcion que carga el listado de alumnos
+     */
     private void onLoadSwipeListener() {
         alumnoData.removeAll(alumnoData);
 
@@ -320,11 +368,21 @@ public class Alumnos extends Activity implements SearchView.OnQueryTextListener 
         adapter.notifyDataSetChanged();
     }
 
+    /**
+     * Funcion que busca alumnos en el listado al apretar el boton
+     * @param query
+     * @return boolean
+     */
     @Override
     public boolean onQueryTextSubmit(String query) {
         return false;
     }
 
+    /**
+     * Funcion que busca alumnos en el listado al escribir
+     * @param newText
+     * @return boolean
+     */
     @Override
     public boolean onQueryTextChange(String newText) {
         adapter.getFilter().filter(newText);
