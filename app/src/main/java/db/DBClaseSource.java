@@ -62,7 +62,7 @@ public class DBClaseSource {
 
         ArrayList<Clase> clasesDb;
         Integer[] ids = null;
-        Integer[] idsCanceladas = null;
+        Integer[] idsParaCanceladar = null;
         int contadorSincronizados = 0;
         int contadorCanceladas = 0;
         boolean syncronized = false;
@@ -71,11 +71,11 @@ public class DBClaseSource {
                 String[] state = new String[]{"0","1","2","3"};
                 clasesDb = this.list(state, id_usuario, "-1");
                 ids = new Integer[clasesDb.size()];
-                idsCanceladas = new Integer[clasesDb.size()];
+                idsParaCanceladar = new Integer[clasesDb.size()];
                 for (int j = 0; j < clasesDb.size(); j++) {
                     ids[j] = clasesDb.get(j).getId();
                     if(clasesDb.get(j).getEstado() != 3) {
-                        idsCanceladas[j] = clasesDb.get(j).getId();
+                        idsParaCanceladar[j] = clasesDb.get(j).getId();
                     }
                 }
                 //Recorremos las clases canceladas para agregarlas a la DB
@@ -83,7 +83,7 @@ public class DBClaseSource {
                     try {
                         JsonObject claseCancelada = clasesCanceladas.get(i).getAsJsonObject();
                         //Si Sync esta en 0 se agregan todas.
-                        if (ids != null && Arrays.asList(idsCanceladas).contains(claseCancelada.get("id_clase_sede").getAsInt())) {
+                        if (idsParaCanceladar != null && Arrays.asList(idsParaCanceladar).contains(claseCancelada.get("id_clase_sede").getAsInt())) {
                             contadorCanceladas++;
                             //Cambiamos el estado a Eliminada para que no aparezca
                             this.cambiarEstadoClase(claseCancelada.get("id_clase_sede").getAsInt(), 3);
@@ -115,7 +115,7 @@ public class DBClaseSource {
                         }
                         //Si Sync esta en 1 solo se agregan las que no existan.
                     } else if(sync == 1) {
-                        if (ids != null && Arrays.asList(ids).contains(clase.get("id_clase_sede").getAsInt())) {
+                        if (ids != null && !Arrays.asList(ids).contains(clase.get("id_clase_sede").getAsInt())) {
                             contadorCanceladas++;
 
                             ContentValues values = new ContentValues();
@@ -221,9 +221,10 @@ public class DBClaseSource {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Calendar cl = Calendar.getInstance();
             cl.setTime(new Date());
+            String now = dateFormat.format(cl.getTime());
             cl.add(Calendar.DATE, Integer.parseInt(days));
             String dayPlusDays = dateFormat.format(cl.getTime());
-            conditions += " AND " + DBHelper.COLUMN_FECHA + " <= '" + dayPlusDays + "'";
+            conditions += " AND " + DBHelper.COLUMN_FECHA + " BETWEEN '" + now + "' AND '" + dayPlusDays + "'";
         }
 
         String whereClause = String.format("%s %s AND %s = ?", DBHelper.COLUMN_ESTADO_CLASE, conditions, DBHelper.COLUMN_FK_USUARIO);

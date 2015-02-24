@@ -20,4 +20,10 @@
         android:showAsAction="ifRoom"
         >
     </item>
+    <item android:id="@+id/comentarios"
+        android:title="@string/comentarios"
+        android:orderInCategory="100"
+        android:icon="@android:drawable/sym_action_chat"
+        android:showAsAction="never">
+    </item>
 </menu>

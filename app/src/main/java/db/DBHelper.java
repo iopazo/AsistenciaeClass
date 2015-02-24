@@ -12,6 +12,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String TABLE_USUARIO = "USUARIO";
     public static final String TABLE_CLASE = "CLASES";
     public static final String TABLE_ALUMNO = "ALUMNOS";
+    public static final String TABLE_COMENTARIO = "COMENTARIOS";
 
 
     private static final String DB_NAME = "eclass.db";
@@ -71,6 +72,21 @@ public class DBHelper extends SQLiteOpenHelper {
                     "" + COLUMN_FIRMA + " TEXT," +
                     "" + COLUMN_ESTADO + " INTEGER(3) DEFAULT 0)";
 
+    //Columnas tabla comentarios_clases
+    public static final String COLUMN_ID_COMENTARIO = "ID";
+    public static final String COLUMN_ID_CLASE_COMENTARIO = "ID_CLASE";
+    public static final String COLUMN_ID_USUARIO_COMENTARIO = "ID_USUARIO";
+    public static final String COLUMN_COMENTARIO = "COMENTARIO";
+    public static final String COLUMN_FECHA_COMENTARIO = "FECHA_CREACION";
+
+    private static final String DB_CREATE_COMENTARIO =
+            "CREATE TABLE " + TABLE_COMENTARIO + " (" + COLUMN_ID_COMENTARIO + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "" + COLUMN_ID_CLASE_COMENTARIO + " INTEGER NOT NULL, " +
+                    "" + COLUMN_COMENTARIO + " TEXT, " +
+                    "" + COLUMN_ID_USUARIO_COMENTARIO + " INTEGER NOT NULL, " +
+                    "" + COLUMN_FECHA_COMENTARIO + " DATETIME)";
+
+
     public DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
@@ -80,6 +96,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(DB_CREATE_USUARIO);
         db.execSQL(DB_CREATE_CLASE);
         db.execSQL(DB_CREATE_ALUMNO);
+        db.execSQL(DB_CREATE_COMENTARIO);
     }
 
     @Override

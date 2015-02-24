@@ -6,14 +6,22 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.DisplayMetrics;
+import android.view.Display;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -22,6 +30,7 @@ import com.fortysevendeg.swipelistview.SwipeListView;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import db.DBAlumnoSource;
 import models.Alumno;
@@ -41,6 +50,7 @@ public class Alumnos extends Activity implements SearchView.OnQueryTextListener 
     private SearchView searchView;
     private MenuItem searchMenuItem;
     private String orderByType = "ASC";
+    private PopupWindow popWindow;
 
 
     @Override
@@ -154,7 +164,47 @@ public class Alumnos extends Activity implements SearchView.OnQueryTextListener 
             onLoadSwipeListener();
             Utils.showToast(this, String.format("%s %s", getResources().getString(R.string.order_text), orderByType));
         }
+
+        if (id == R.id.comentarios) {
+            onShowPopup(getWindow().getDecorView().findViewById(android.R.id.content));
+        }
+
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onShowPopup(View v) {
+
+        LayoutInflater layoutInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        final View inflatedView = layoutInflater.inflate(R.layout.popup_layout, null, false);
+
+        ListView listView = (ListView)inflatedView.findViewById(R.id.commentsListView);
+
+        Display display = getWindowManager().getDefaultDisplay();
+        final Point size = new Point();
+        display.getSize(size);
+        int mDeviceHeight = size.y;
+
+        setSimpleList(listView);
+
+        popWindow = new PopupWindow(inflatedView, size.x - 50, size.y - 400, true);
+        popWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.popup_bg));
+        popWindow.setFocusable(true);
+        popWindow.setOutsideTouchable(true);
+        popWindow.showAtLocation(v, Gravity.BOTTOM, 0, 100);
+
+    }
+
+    void setSimpleList(ListView listView){
+
+        ArrayList<String> contactsList = new ArrayList<String>();
+
+        for (int index = 0; index < 10; index++) {
+            contactsList.add("I am @ index " + index + " today " + Calendar.getInstance().getTime().toString());
+        }
+
+        listView.setAdapter(new ArrayAdapter<String>(Alumnos.this,
+                R.layout.comments_list_item, android.R.id.text1,contactsList));
     }
 
     private void onLoadSwipeListener() {

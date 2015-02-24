@@ -61,6 +61,11 @@
     <string name="restore">Restore</string>
     <string name="delete">Delete</string>
     <string name="setting_text">Settings</string>
+    <string name="comentarios">Comentarios</string>
     <!-- Menu -->
     <string name="search_hint_text">Search a student</string>
+    <!-- Comentarios  -->
+    <string name="comments">Write a Comment</string>
+    <string name="save_comment">Save</string>
+    <string name="list_comments">List of comments</string>
 </resources>

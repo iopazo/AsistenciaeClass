@@ -64,4 +64,8 @@
     <string name="setting_text">Configuración</string>
     <!-- Menu -->
     <string name="search_hint_text">Busca por el nombre del estudiante</string>
+    <!-- Comentarios -->
+    <string name="comments">Escribe un comentario para la clase</string>
+    <string name="save_comment">Guardar</string>
+    <string name="list_comments">Mis comentarios</string>
 </resources>

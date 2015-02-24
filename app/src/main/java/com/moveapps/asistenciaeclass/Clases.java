@@ -51,7 +51,6 @@ public class Clases extends Activity {
     ClaseAdapter adapter;
     List<Clase> claseData;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,10 +101,10 @@ public class Clases extends Activity {
             mClaseDatasource.open();
             clases = mClaseDatasource.list(classState, dbUsuario.getId(), days);
             onLoadSwipeListener();
+            //Log.d("CLASES", "In the onRestart() event");
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        //Log.d(TAG, "In the onRestart() event");
     }
 
     public void onStop() {
@@ -128,6 +127,8 @@ public class Clases extends Activity {
             mUsuarioDatasource.open();
             clases = mClaseDatasource.list(classState, dbUsuario.getId(), days);
             onLoadSwipeListener();
+            //Log.d("CLASES", "In the onResume() event");
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -195,6 +196,7 @@ public class Clases extends Activity {
             intent.putExtra("username", dbUsuario.getUsername());
             startActivityForResult(intent, 1);
         }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -220,7 +222,6 @@ public class Clases extends Activity {
             Utils.showToast(Clases.this, getResources().getString(R.string.no_connection));
         }
     };
-
 
     private void onLoadSwipeListener() {
 
