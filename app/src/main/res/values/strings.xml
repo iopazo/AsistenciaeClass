@@ -52,7 +52,7 @@
     <!-- Vistas -->
     <string name="present">Attend</string>
     <string name="student">Student</string>
-    <string name="string_synchronized">Synchronized</string>
+    <string name="string_synchronized">Synchronize</string>
     <string name="closed">Closed</string>
     <string name="accept">Accept</string>
     <string name="login_other_account">Login with another account</string>
@@ -68,4 +68,6 @@
     <string name="comments">Write a Comment</string>
     <string name="save_comment">Save</string>
     <string name="list_comments">List of comments</string>
+    <string name="error_save_comment">An error occurred while saving the comment, please try again</string>
+    <string name="empty_comment">You must enter a message to save the comment</string>
 </resources>

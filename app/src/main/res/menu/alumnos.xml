@@ -6,24 +6,25 @@
         android:icon="@android:drawable/ic_menu_search"
         android:showAsAction="collapseActionView|ifRoom"
         android:actionViewClass="android.widget.SearchView" />
+
     <item android:id="@+id/save_class"
         android:icon="@drawable/ic_action_save"
         android:title="@string/action_settings"
-        android:orderInCategory="100"
+        android:orderInCategory="101"
         android:showAsAction="ifRoom"
         >
     </item>
     <item android:id="@+id/sort"
         android:icon="@android:drawable/ic_menu_sort_alphabetically"
         android:title="@string/action_settings"
-        android:orderInCategory="100"
+        android:orderInCategory="102"
         android:showAsAction="ifRoom"
         >
     </item>
     <item android:id="@+id/comentarios"
         android:title="@string/comentarios"
-        android:orderInCategory="100"
+        android:orderInCategory="103"
         android:icon="@android:drawable/sym_action_chat"
-        android:showAsAction="never">
+        android:showAsAction="ifRoom">
     </item>
 </menu>

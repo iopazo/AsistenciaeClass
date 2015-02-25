@@ -200,20 +200,25 @@ public class Alumnos extends Activity implements SearchView.OnQueryTextListener 
                 DateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
                 String now = format.format(Calendar.getInstance().getTime());
 
-                ComentarioClase comentario = new ComentarioClase(ID_CLASE, textComentario.getText().toString(), now, NOMBRE_USUARIO);
-                DBComentarioClaseSource comentarioDb = new DBComentarioClaseSource(Alumnos.this);
-                try {
-                    comentarioDb.open();
-                    if(comentarioDb.insert(comentario)) {
-                        addItems(v, comentario);
-                        textComentario.setText("");
-                    } else {
-                        Utils.showToast(Alumnos.this, "Ocurrio un error al guardar el comentario, intente nuevamente");
+                if(!textComentario.getText().toString().equals("")) {
+                    ComentarioClase comentario = new ComentarioClase(ID_CLASE, textComentario.getText().toString(), now, NOMBRE_USUARIO);
+                    DBComentarioClaseSource comentarioDb = new DBComentarioClaseSource(Alumnos.this);
+                    try {
+                        comentarioDb.open();
+                        if(comentarioDb.insert(comentario)) {
+                            addItems(v, comentario);
+                            textComentario.setText("");
+                        } else {
+                            Utils.showToast(Alumnos.this, getResources().getString(R.string.error_save_comment));
+                        }
+                        comentarioDb.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
                     }
-                    comentarioDb.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                } else {
+                    Utils.showToast(Alumnos.this, getResources().getString(R.string.empty_comment));
                 }
+
             }
         });
 

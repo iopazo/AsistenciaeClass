@@ -68,4 +68,6 @@
     <string name="comments">Escribe un comentario para la clase</string>
     <string name="save_comment">Guardar</string>
     <string name="list_comments">Mis comentarios</string>
+    <string name="error_save_comment">Ocurrio un error al guardar el comentario, intente nuevamente</string>
+    <string name="empty_comment">Debe escribir un mensaje para guardar el comentario</string>
 </resources>
