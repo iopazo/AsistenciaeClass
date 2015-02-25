@@ -232,6 +232,7 @@ public class Alumnos extends Activity implements SearchView.OnQueryTextListener 
         popWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.popup_bg));
         popWindow.setFocusable(true);
         popWindow.setOutsideTouchable(true);
+        popWindow.setAnimationStyle(R.style.AnimationPopup);
         popWindow.showAtLocation(v, Gravity.BOTTOM, 0, 100);
 
     }
@@ -253,7 +254,7 @@ public class Alumnos extends Activity implements SearchView.OnQueryTextListener 
     }
     //Agregamos un comentario a la lista
     private void addItems(View v, ComentarioClase comentario) {
-        commentsList.add(String.format("%s %s %s %s %s", comentario.getComentario(), "el", comentario.getFechaComentario(), "por", comentario.getNombreUsuario()));
+        commentsList.add(String.format("'%s' %s %s %s %s", comentario.getComentario(), "el", comentario.getFechaComentario(), "por", comentario.getNombreUsuario()));
         commentAdapter.notifyDataSetChanged();
     }
 
