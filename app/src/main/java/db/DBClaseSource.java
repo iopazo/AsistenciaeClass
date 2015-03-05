@@ -321,7 +321,6 @@ public class DBClaseSource {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        Log.d("Clase", jsonObject.toString());
         return jsonObject;
     }
 }

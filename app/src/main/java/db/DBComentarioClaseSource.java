@@ -6,6 +6,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -50,7 +54,7 @@ public class DBComentarioClaseSource {
             return false;
         }
     }
-
+    //Retorna un Listado de String simple para armar un listview.
     public ArrayList<String> list(int idClase) {
         ArrayList<String> listaComentarios = new ArrayList<String>();
         String whereClause = String.format("%s = ?", dbHelper.COLUMN_ID_CLASE_COMENTARIO);
@@ -74,5 +78,35 @@ public class DBComentarioClaseSource {
             }
         }
         return listaComentarios;
+    }
+
+    //Retorna un objeto Json en base a una lsita de String.
+    public JSONObject jsonList(int idClase, int idUsuario) {
+
+        ArrayList<String> listado = this.list(idClase);
+        JSONObject jsonObject = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+
+        if(listado.size() > 0) {
+            for (int i = 0; i < listado.size(); i++) {
+                String textoComentario = listado.get(i);
+                JSONObject jsonComentarioClase = new JSONObject();
+                try {
+                    jsonComentarioClase.put("comentario", textoComentario);
+                    jsonComentarioClase.put("id_clase_sede", idClase);
+                    jsonComentarioClase.put("id_usuario", idUsuario);
+                    jsonArray.put(jsonComentarioClase);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                jsonObject.put("comentarios", jsonArray);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return jsonObject;
     }
 }

@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Base64;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +20,15 @@ import com.google.gson.JsonObject;
 import com.moveapps.asistenciaeclass.R;
 import com.moveapps.asistenciaeclass.Utils;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import api.eClassAPI;
 import db.DBClaseSource;
+import db.DBComentarioClaseSource;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -39,7 +43,6 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
     int layoutResId;
     protected DBClaseSource mClaseSource;
     protected Usuario usuario;
-    JSONObject jsonObject;
     protected eClassAPI apiService;
     protected Clase claseProtected;
     protected ProgressDialog pd;
@@ -147,9 +150,25 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
                 if(claseData.getEstado() == 1) {
                     claseProtected = claseData;
                     pd = ProgressDialog.show(context, "", context.getResources().getString(R.string.sync_class), true);
-                    jsonObject = new JSONObject();
-                    jsonObject = mClaseSource.getAlumnosByClass(claseData.getId(), usuario.getId());
-                    byte[] jsonToByte = jsonObject.toString().getBytes();
+
+                    JSONObject jsonAlumnos = new JSONObject();
+                    JSONObject jsonComentarios = new JSONObject();
+                    jsonAlumnos = mClaseSource.getAlumnosByClass(claseData.getId(), usuario.getId());
+                    DBComentarioClaseSource dbComentarioClaseSource = new DBComentarioClaseSource(context);
+
+                    try {
+                        dbComentarioClaseSource.open();
+                        jsonComentarios = dbComentarioClaseSource.jsonList(claseData.getId(), usuario.getId());
+                        dbComentarioClaseSource.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        jsonAlumnos.put("comentarios", jsonComentarios);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    byte[] jsonToByte = jsonAlumnos.toString().getBytes();
                     String datos = Base64.encodeToString(jsonToByte, 0);
 
                     apiService = new eClassAPI(datos);
