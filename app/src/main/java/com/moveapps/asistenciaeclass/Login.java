@@ -54,6 +54,12 @@ public class Login extends Activity {
         //Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_login);
 
+        long percentAvailableMemorySize = Storage.getTotalMemorySize();
+        //Si el porcentaje de espacio en el disco es menor o igual al 10% enviamos un aviso
+        if(percentAvailableMemorySize <= Storage.MinimunPercent) {
+            Utils.showToast(this, getResources().getString(R.string.memory_size));
+        }
+
         //Abrimos la conexion a Usuarios y Clases
         usuarioDataSource = new DBUsuarioSource(Login.this);
         claseDataSource = new DBClaseSource(Login.this);

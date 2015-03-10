@@ -70,4 +70,5 @@
     <string name="list_comments">List of comments</string>
     <string name="error_save_comment">An error occurred while saving the comment, please try again</string>
     <string name="empty_comment">You must enter a message to save the comment</string>
+    <string name="memory_size">You have 10% or less space on your disk.</string>
 </resources>

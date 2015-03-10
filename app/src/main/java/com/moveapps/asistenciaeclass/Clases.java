@@ -56,6 +56,12 @@ public class Clases extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clases);
 
+        long percentAvailableMemorySize = Storage.getTotalMemorySize();
+        //Si el porcentaje de espacio en el disco es menor o igual al 10% enviamos un aviso
+        if(percentAvailableMemorySize <= Storage.MinimunPercent) {
+            Utils.showToast(this, getResources().getString(R.string.memory_size));
+        }
+
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         days = prefs.getString("sync_frequency", "-1");
 
