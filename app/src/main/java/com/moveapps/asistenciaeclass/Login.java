@@ -62,6 +62,11 @@ public class Login extends Activity {
 
         //Abrimos la conexion a Usuarios y Clases
         usuarioDataSource = new DBUsuarioSource(Login.this);
+        try {
+            usuarioDataSource.open();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         claseDataSource = new DBClaseSource(Login.this);
 
         //Instanciamos Usuario como global

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">AssisClass</string>
+    <string name="app_name">eClassMates</string>
     <string name="action_settings">Salir</string>
     <string name="hint_username">Nombre de Usuario</string>
     <string name="hint_password">Contraseña</string>
@@ -62,6 +62,7 @@
     <string name="restore">Reestablecer</string>
     <string name="delete">Eliminar</string>
     <string name="setting_text">Configuración</string>
+    <string name="comentarios">Comentarios</string>
     <!-- Menu -->
     <string name="search_hint_text">Busca por el nombre del estudiante</string>
     <!-- Comentarios -->

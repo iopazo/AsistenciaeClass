@@ -35,6 +35,14 @@ public class DBUsuarioSource {
 
     //insert
     public void insertUsuario(Usuario usuario) {
+        if(!mDatabase.isOpen()) {
+            try {
+                this.open();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
         if(mDatabase.isOpen() &&  !mDatabase.inTransaction()) {
             mDatabase.beginTransaction();
         }
@@ -48,7 +56,9 @@ public class DBUsuarioSource {
             mDatabase.insert(dbHelper.TABLE_USUARIO, null, values);
             mDatabase.setTransactionSuccessful();
         } finally {
-            mDatabase.endTransaction();
+           if(mDatabase.isOpen()) {
+                mDatabase.endTransaction();
+           }
         }
     }
 

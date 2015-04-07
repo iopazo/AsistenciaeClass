@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">AssisClass</string>
+    <string name="app_name">eClassMates</string>
     <string name="action_settings">Logout</string>
     <string name="hint_username">Username</string>
     <string name="hint_password">Password</string>
@@ -15,7 +15,7 @@
     <string name="change_sucess">Change success!</string>
     <string name="password_incorrect">The password is incorrect, try again</string>
     <string name="cancel">Cancel</string>
-    <string name="already_absent">This student is already not attend</string>
+    <string name="already_absent">This student is already absent</string>
     <string name="reset_changes">Sure you want reset the state of this student?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
@@ -50,18 +50,18 @@
     <string name="order_text">Order changed</string>
     <string name="no_connection">You must be connected to the internet to send information</string>
     <!-- Vistas -->
-    <string name="present">Attend</string>
+    <string name="present">Present</string>
     <string name="student">Student</string>
     <string name="string_synchronized">Synchronize</string>
     <string name="closed">Closed</string>
     <string name="accept">Accept</string>
     <string name="login_other_account">Login with another account</string>
     <string name="login">Login</string>
-    <string name="absent">Not attend</string>
+    <string name="absent">Absent</string>
     <string name="restore">Restore</string>
     <string name="delete">Delete</string>
     <string name="setting_text">Settings</string>
-    <string name="comentarios">Comentarios</string>
+    <string name="comentarios">Comments</string>
     <!-- Menu -->
     <string name="search_hint_text">Search a student</string>
     <!-- Comentarios  -->
