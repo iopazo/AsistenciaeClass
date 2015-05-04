@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import models.Alumno;
 import models.Clase;
@@ -53,37 +55,44 @@ public class DBClaseSource {
         mDatabase.close();
     }
 
-    /*
-    variable sync: 0 guarda todas las clases
-    sync: 1 solo guarda las clases nuevas y
+    /**
+     *
+     * @param clases
+     * @param clasesCanceladas
+     * @param sync value: 0 for the first login. g
+     *             value: 1 When the user already exist or press the sync button
+     * @param id_usuario
      */
-
     public void insertClaseAlumnos(JsonArray clases, JsonArray clasesCanceladas, int sync, int id_usuario) {
 
         ArrayList<Clase> clasesDb;
+        Map<Integer, Clase> mapaClases = new HashMap<Integer, Clase>();
         Integer[] ids = null;
-        Integer[] idsParaCanceladar = null;
+        Integer[] idsParaCancelar;
         int contadorSincronizados = 0;
         int contadorCanceladas = 0;
-        boolean syncronized = false;
+        boolean syncronized = false; //Variable usada para saber si se sincronizaron correctamente las clases
         try {
+            //Buscamos todas las clases y revisamos cuales estan canceladas
             if(sync == 1) {
                 String[] state = new String[]{"0","1","2","3"};
                 clasesDb = this.list(state, id_usuario, "-1");
                 ids = new Integer[clasesDb.size()];
-                idsParaCanceladar = new Integer[clasesDb.size()];
+                idsParaCancelar = new Integer[clasesDb.size()];
                 for (int j = 0; j < clasesDb.size(); j++) {
                     ids[j] = clasesDb.get(j).getId();
+                    //Revisamos las clases que no esten eliminadas
                     if(clasesDb.get(j).getEstado() != 3) {
-                        idsParaCanceladar[j] = clasesDb.get(j).getId();
+                        idsParaCancelar[j] = clasesDb.get(j).getId();
                     }
+                    mapaClases.put(clasesDb.get(j).getId(), clasesDb.get(j));
                 }
                 //Recorremos las clases canceladas para agregarlas a la DB
-                for (int i = 0; i < clasesCanceladas.size(); i++) {
+                for (int i = 0; i < clasesCanceladas.size(); i++)
                     try {
                         JsonObject claseCancelada = clasesCanceladas.get(i).getAsJsonObject();
                         //Si Sync esta en 0 se agregan todas.
-                        if (idsParaCanceladar != null && Arrays.asList(idsParaCanceladar).contains(claseCancelada.get("id_clase_sede").getAsInt())) {
+                        if (Arrays.asList(idsParaCancelar).contains(claseCancelada.get("id_clase_sede").getAsInt())) {
                             contadorCanceladas++;
                             //Cambiamos el estado a Eliminada para que no aparezca
                             this.cambiarEstadoClase(claseCancelada.get("id_clase_sede").getAsInt(), 3);
@@ -91,7 +100,6 @@ public class DBClaseSource {
                     } catch (NullPointerException ex) {
                         Log.d("ClaseSource", ex.getLocalizedMessage());
                     }
-                }
             }
 
             if(!mDatabase.inTransaction()) {
@@ -102,29 +110,34 @@ public class DBClaseSource {
                 try {
                     JsonObject clase = clases.get(i).getAsJsonObject();
                     //Si Sync esta en 0 se agregan todas.
-                    if(sync == 0) {
-                        ContentValues values = new ContentValues();
-                        values.put(DBHelper.COLUMN_ID_CLASE_SEDE, clase.get("id_clase_sede").getAsInt());
-                        values.put(DBHelper.COLUMN_NOMBRE_CLASE, clase.get("nombre_completo").getAsString());
-                        values.put(DBHelper.COLUMN_FECHA, clase.get("fecha").getAsString());
-                        values.put(DBHelper.COLUMN_HORA, clase.get("hora").getAsString());
-                        values.put(DBHelper.COLUMN_FK_USUARIO, id_usuario);
+                    ContentValues values = new ContentValues();
+                    values.put(DBHelper.COLUMN_ID_CLASE_SEDE, clase.get("id_clase_sede").getAsInt());
+                    values.put(DBHelper.COLUMN_NOMBRE_CLASE, clase.get("nombre_completo").getAsString());
+                    values.put(DBHelper.COLUMN_FECHA, clase.get("fecha").getAsString());
+                    values.put(DBHelper.COLUMN_HORA, clase.get("hora").getAsString());
+                    values.put(DBHelper.COLUMN_FK_USUARIO, id_usuario);
 
+                    if(sync == 0) {
                         if (mDatabase.insert(DBHelper.TABLE_CLASE, null, values) > 0) {
                             this.insertAlumnoCurso(clase.getAsJsonArray("alumnos"), clase.get("id_clase_sede").getAsInt());
                         }
-                        //Si Sync esta en 1 solo se agregan las que no existan.
-                    } else if(sync == 1) {
-                        if (ids != null && !Arrays.asList(ids).contains(clase.get("id_clase_sede").getAsInt())) {
-                            contadorCanceladas++;
+                    } else {
+                        /**
+                         * Actualizamos el estado de las clasesSedes y tambien la fecha y hora en caso de ser diferente
+                         * Si la API trae estado 0 o 1 pero la clase en la tablet esta cancelada, se recupera con estado 0.
+                         */
+                        int estadoClase = clase.get("estado").getAsInt();
+                        int estadoClaseTablet = mapaClases.get(clase.get("id_clase_sede").getAsInt()).getEstado();
+                        if((estadoClase == 0 || estadoClase == 1) && estadoClaseTablet == 3) {
+                            contadorSincronizados++;
+                            this.cambiarEstadoClase(clase.get("id_clase_sede").getAsInt(), 0);
+                        }
+                        //Se actualizan los datos de las clases sedes en caso de cambien por reagendamiento.
+                        mDatabase.update(DBHelper.TABLE_CLASE,values, DBHelper.COLUMN_ID_CLASE_SEDE + " = ?", new String[]{String.format("%d", clase.get("id_clase_sede").getAsInt())});
 
-                            ContentValues values = new ContentValues();
-                            values.put(DBHelper.COLUMN_ID_CLASE_SEDE, clase.get("id_clase_sede").getAsInt());
-                            values.put(DBHelper.COLUMN_NOMBRE_CLASE, clase.get("nombre_completo").getAsString());
-                            values.put(DBHelper.COLUMN_FECHA, clase.get("fecha").getAsString());
-                            values.put(DBHelper.COLUMN_HORA, clase.get("hora").getAsString());
-                            values.put(DBHelper.COLUMN_FK_USUARIO, id_usuario);
-
+                        //Si no existe el id clase sede dentro de los ids que traemos, agregamos la clase nueva.
+                        if (!Arrays.asList(ids).contains(clase.get("id_clase_sede").getAsInt())) {
+                            contadorSincronizados++;
                             if (mDatabase.insert(DBHelper.TABLE_CLASE, null, values) > 0) {
                                 this.insertAlumnoCurso(clase.getAsJsonArray("alumnos"), clase.get("id_clase_sede").getAsInt());
                             }
@@ -134,9 +147,13 @@ public class DBClaseSource {
                     Log.d("ClaseSource", ex.getLocalizedMessage());
                 }
             }
-            mDatabase.setTransactionSuccessful();
+            if(mDatabase.inTransaction()) {
+                mDatabase.setTransactionSuccessful();
+            }
         } finally {
-            mDatabase.endTransaction();
+            if(mDatabase.inTransaction()) {
+                mDatabase.endTransaction();
+            }
             if(sync == 1) {
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -157,6 +174,7 @@ public class DBClaseSource {
                     editor.apply();
                     Utils.showToast(mContext, mContext.getResources().getString(R.string.dont_class_sync));
                 }
+                //Se guarda en el log si fue sincronizada
                 if(syncronized == true) {
                     SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext);
                     SharedPreferences.Editor editor = pref.edit();
@@ -189,35 +207,33 @@ public class DBClaseSource {
             }
         }
     }
+
     /*
-    Estados de clase:
-    0: Activa
-    1: Cerrada
-    2: Sincronizada
-    3: Eliminada
-    4: Todas
-    Solo mostramos las clases que esten activas.
-     */
+        Estados de clase 0: Activa 1: Cerrada 2: Sincronizada 3: Eliminada 4: Todas
+        Solo mostramos las clases que esten activas.
+    */
 
     /**
      *
-     * @param notIncludeState
+     * @param includeStates
      * @param idUsuario
      * @param days Rango de dias que debe traer clases para el profesor.
-     *                     false: trae solo las clases iguales al notIncludeState
+     *                     false: trae solo las clases iguales al includeStates
      * @return
      * @throws NullPointerException
      */
-    public ArrayList<Clase> list(String[] notIncludeState, int idUsuario, String days) throws NullPointerException {
+    public ArrayList<Clase> list(String[] includeStates, int idUsuario, String days) throws NullPointerException {
 
         ArrayList<Clase> clases = new ArrayList<Clase>();
         String conditions = "";
 
-        if(notIncludeState.length > 0) {
-            conditions += " IN(" + Utils.implode(",", notIncludeState) + ")";
+        if (includeStates.length > 0) {
+            conditions += " IN(" + Utils.implode(",", includeStates) + ")";
         }
 
-        if(!days.equals("-1")) {
+        //Aplica filtro para rango de dias.
+        // -1 = Traelos todos
+        if (!days.equals("-1")) {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Calendar cl = Calendar.getInstance();
             cl.setTime(new Date());
@@ -232,16 +248,16 @@ public class DBClaseSource {
 
         Cursor cursor = mDatabase.query(
                 DBHelper.TABLE_CLASE,
-                new String[] {DBHelper.COLUMN_ID_CLASE_SEDE, DBHelper.COLUMN_NOMBRE_CLASE, DBHelper.COLUMN_ESTADO_CLASE, DBHelper.COLUMN_FECHA_SINCRONIZACION, DBHelper.COLUMN_FECHA},
+                new String[]{DBHelper.COLUMN_ID_CLASE_SEDE, DBHelper.COLUMN_NOMBRE_CLASE, DBHelper.COLUMN_ESTADO_CLASE, DBHelper.COLUMN_FECHA_SINCRONIZACION, DBHelper.COLUMN_FECHA},
                 whereClause,
-                new String[] {String.format("%d", idUsuario)},
+                new String[]{String.format("%d", idUsuario)},
                 null,
                 null,
                 orderBy
         );
 
-        if(cursor.moveToFirst()) {
-            while (!cursor.isAfterLast()){
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
                 //Aca sacamos el valor
                 int id = cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_ID_CLASE_SEDE));
                 String nombre = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_NOMBRE_CLASE));
@@ -255,14 +271,13 @@ public class DBClaseSource {
         return clases;
     }
 
-    /*
-    Se actualiza la clase a cerrada
+    /**
+     * Actualiza la clase a un estado
+     * @param idClaseSede
+     * @param estado
      */
     public void cambiarEstadoClase(int idClaseSede, int estado) {
 
-        if(!mDatabase.inTransaction()) {
-            mDatabase.beginTransaction();
-        }
         try {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date date = new Date();
@@ -277,14 +292,16 @@ public class DBClaseSource {
                     values,
                     whereClause,
                     new String[] {String.format("%d", idClaseSede)});
-            mDatabase.setTransactionSuccessful();
-        } finally {
-            mDatabase.endTransaction();
+        } catch (NullPointerException ex) {
+            Log.d("ClaseSource", ex.getLocalizedMessage());
         }
     }
 
-    /*
-    Armamos un json con los datos de los alumnos de una clase
+    /**
+     * Armamos un json con los datos de los alumnos de una clase
+     * @param idClase
+     * @param idUsuarioEclass
+     * @return
      */
     public JSONObject getAlumnosByClass(int idClase, int idUsuarioEclass) {
 

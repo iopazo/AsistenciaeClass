@@ -72,6 +72,7 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
 
         holder = null;
         if(row == null) {
+            Log.d("ClaseAdapter", "Entro entro");
             LayoutInflater inflater = ((Activity)context).getLayoutInflater();
             row = inflater.inflate(layoutResId, parent, false);
 
@@ -95,7 +96,6 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
             holder.cerrado = (ImageView)row.findViewById(R.id.cerrada);
             holder.sincronizado = (ImageView)row.findViewById(R.id.sincronizada);
             row.setTag(holder);
-
         } else {
             holder = (ClaseHolder)row.getTag();
         }
@@ -147,11 +147,11 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
             @Override
             public void onClick(View v) {
 
-                if(claseData.getEstado() == 1) {
+                if (claseData.getEstado() == 1) {
                     claseProtected = claseData;
                     pd = ProgressDialog.show(context, "", context.getResources().getString(R.string.sync_class), true);
 
-                    JSONObject jsonAlumnos = new JSONObject();
+                    JSONObject jsonAlumnos;
                     JSONObject jsonComentarios = new JSONObject();
                     jsonAlumnos = mClaseSource.getAlumnosByClass(claseData.getId(), usuario.getId());
                     DBComentarioClaseSource dbComentarioClaseSource = new DBComentarioClaseSource(context);
@@ -175,12 +175,6 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
                     //Aca se llama a la Api y subimos la asistencia
                     apiService.subirAsistencia(mUsuarioService);
                     swipeListView.closeAnimate(position);
-
-
-                    /*finalHolder.cerrado.setVisibility(View.INVISIBLE);
-                    finalHolder.sincronizado.setVisibility(View.VISIBLE);
-                    finalRow.setDrawingCacheEnabled(true);
-                    finalRow.refreshDrawableState();*/
                 } else {
                     Utils.showToast(context, context.getResources().getString(R.string.only_class_sync));
                 }
@@ -212,7 +206,6 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
                 saveDialog.show();
             }
         });*/
-
         return row;
     }
 

@@ -218,6 +218,7 @@ public class Clases extends Activity {
                 JsonArray clases = data.getAsJsonArray("clases");
                 JsonArray clasesCanceladas = data.getAsJsonArray("clases_canceladas");
                 mClaseDatasource.insertClaseAlumnos(clases, clasesCanceladas, 1, data.get("id").getAsInt());
+                adapter.notifyDataSetChanged();
             } else if(msg.equals("error")) {
                 Utils.showToast(Clases.this, getResources().getString(R.string.action_undone));
             }

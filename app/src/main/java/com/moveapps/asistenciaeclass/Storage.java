@@ -61,8 +61,13 @@ public class Storage {
     public static long getTotalMemorySize() {
         long percent = 0;
         //Log.d("Internal Memory", getTotalInternalMemorySize());
-        long TotalExternalMemorySize = Long.parseLong(getTotalExternalMemorySize().replaceAll("\\D+", ""));
-        long AvailableExternalMemorySize = Long.parseLong(getAvailableExternalMemorySize().replaceAll("\\D+", ""));
+        long TotalExternalMemorySize = 0;
+        long AvailableExternalMemorySize = 0;
+        Boolean isExternalSDPresent = android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
+        if(isExternalSDPresent) {
+            TotalExternalMemorySize = Long.parseLong(getTotalExternalMemorySize().replaceAll("\\D+", ""));
+            AvailableExternalMemorySize = Long.parseLong(getAvailableExternalMemorySize().replaceAll("\\D+", ""));
+        }
         long TotalInternalMemorySize = Long.parseLong(getTotalInternalMemorySize().replaceAll("\\D+", ""));
         long AvailableInternalMemorySize = Long.parseLong(getAvailableInternalMemorySize().replaceAll("\\D+", ""));
 
@@ -72,7 +77,7 @@ public class Storage {
         return percent;
     }
 
-    public static String formatSize(long size) {
+    private static String formatSize(long size) {
         String suffix = null;
 
         if (size >= 1024) {
