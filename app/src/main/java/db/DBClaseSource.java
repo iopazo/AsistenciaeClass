@@ -185,7 +185,6 @@ public class DBClaseSource {
                         + " - " + currentDateandTime
                     );
                     editor.apply();
-                    claseActivity.recreate();
                 }
             }
         }

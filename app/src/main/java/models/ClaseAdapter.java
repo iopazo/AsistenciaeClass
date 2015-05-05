@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Base64;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,9 +47,13 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
     protected ProgressDialog pd;
     SwipeListView swipeListView;
     ClaseAdapter adapter;
+    int dpiValidate;
 
     public ClaseAdapter(Context context, int resource, List<Clase> objects, DBClaseSource mClaseSource, Usuario _usuario) {
         super(context, resource, objects);
+
+        DisplayMetrics metrics = getContext().getResources().getDisplayMetrics();
+        dpiValidate = metrics.densityDpi;
 
         this.data = objects;
         this.context = context;
@@ -62,9 +65,6 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
     @Override
     public View getView(final int position, final View convertView, ViewGroup parent) {
 
-        DisplayMetrics metrics = getContext().getResources().getDisplayMetrics();
-        int dpiValidate = metrics.densityDpi;
-
         ClaseHolder holder = null;
         View row = convertView;
         adapter = this;
@@ -72,7 +72,6 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
 
         holder = null;
         if(row == null) {
-            Log.d("ClaseAdapter", "Entro entro");
             LayoutInflater inflater = ((Activity)context).getLayoutInflater();
             row = inflater.inflate(layoutResId, parent, false);
 
@@ -84,7 +83,8 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
             holder.nombreCurso = (TextView)row.findViewById(R.id.nombreCurso);
 
             //Validamos si el tablet tiene una densidad de 120
-            if(dpiValidate == 120) {
+            //Log.d("DPI", "DPI: " + dpiValidate);
+            if(dpiValidate >= 120) {
                 holder.nombreCampus.setTextSize(25f);
                 holder.nombrePrograma.setTextSize(18f);
                 holder.nombreCurso.setTextSize(18f);

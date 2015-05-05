@@ -91,7 +91,7 @@ public class Clases extends Activity {
         claseData = new ArrayList<Clase>();
         adapter = new ClaseAdapter(this, R.layout.custom_clases_swipe_row, claseData, mClaseDatasource, dbUsuario);
 
-        //Traemos los alumnos
+        //Traemos las clases
         clases = mClaseDatasource.list(classState, dbUsuario.getId(), days);
         onLoadSwipeListener();
     }
@@ -215,10 +215,12 @@ public class Clases extends Activity {
             //Si la respuesta es correcta.
             if(msg.equals("success")) {
                 JsonObject data = jsonObj.get("usuario").getAsJsonObject().getAsJsonObject("data");
-                JsonArray clases = data.getAsJsonArray("clases");
+                JsonArray clasesJson = data.getAsJsonArray("clases");
                 JsonArray clasesCanceladas = data.getAsJsonArray("clases_canceladas");
-                mClaseDatasource.insertClaseAlumnos(clases, clasesCanceladas, 1, data.get("id").getAsInt());
-                adapter.notifyDataSetChanged();
+                mClaseDatasource.insertClaseAlumnos(clasesJson, clasesCanceladas, 1, data.get("id").getAsInt());
+                clases = mClaseDatasource.list(classState, dbUsuario.getId(), days);
+                onLoadSwipeListener();
+                //adapter.notifyDataSetChanged();
             } else if(msg.equals("error")) {
                 Utils.showToast(Clases.this, getResources().getString(R.string.action_undone));
             }
@@ -259,10 +261,6 @@ public class Clases extends Activity {
                     final Button btnSincronizar = (Button)findViewById(R.id.btnSincronizarClase);
                     float rightOffset = metrics.widthPixels - btnSincronizar.getWidth();
                     swipeListView.setOffsetRight(rightOffset); // right side offset
-                } else {
-                    //final Button btnEliminar = (Button)findViewById(R.id.btnEliminar);
-                    //float leftOffset = metrics.widthPixels - btnEliminar.getWidth();
-                    //swipeListView.setOffsetLeft(leftOffset); // left side offset
                 }
             }
 
