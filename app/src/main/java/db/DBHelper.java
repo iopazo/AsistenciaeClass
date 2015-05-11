@@ -13,6 +13,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String TABLE_CLASE = "CLASES";
     public static final String TABLE_ALUMNO = "ALUMNOS";
     public static final String TABLE_COMENTARIO = "COMENTARIOS";
+    public static final String TABLE_ALUMNO_SIN_CLASE = "ALUMNO_SIN_CLASE";
 
 
     private static final String DB_NAME = "eclass.db";
@@ -87,6 +88,31 @@ public class DBHelper extends SQLiteOpenHelper {
                     "" + COLUMN_FECHA_COMENTARIO + " VARCHAR(20) NOT NULL)";
 
 
+    //Columnas tabla clases_sedes
+    public static final String COLUMN_ID_ALUMNO_SC = "ID";
+    public static final String COLUMN_FK_ID_CLASE_SEDE = "FK_ID_CLASE_SEDE";
+    public static final String COLUMN_NOMBRE_SC = "NOMBRE";
+    public static final String COLUMN_PATERNO_SC = "PATERNO";
+    public static final String COLUMN_MATERNO_SC = "MATERNO";
+    public static final String COLUMN_EMAIL_SC = "EMAIL";
+    public static final String COLUMN_NUMERO_DCTO = "NUMERO_DCTO";
+    public static final String COLUMN_TIPO_DCTO = "TIPO_DCTO";
+    public static final String COLUMN_ESTADO_ASISTENCIA = "ESTADO_ASISTENCIA";
+    public static final String COLUMN_FK_USUARIO_SC = "FK_ID_USUARIO";
+
+    private static final String DB_CREATE_ALUMNO_SC  =
+            "CREATE TABLE " + TABLE_ALUMNO_SIN_CLASE + " (" + COLUMN_ID_ALUMNO_SC + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "" + COLUMN_FK_ID_CLASE_SEDE + " INTEGER NOT NULL, " +
+                    "" + COLUMN_NOMBRE_SC + " VARCHAR(250), " +
+                    "" + COLUMN_PATERNO_SC + " VARCHAR(250), " +
+                    "" + COLUMN_MATERNO_SC + " VARCHAR(250), " +
+                    "" + COLUMN_EMAIL_SC + " VARCHAR(250), " +
+                    "" + COLUMN_NUMERO_DCTO + " VARCHAR(250), " +
+                    "" + COLUMN_TIPO_DCTO + " VARCHAR(250), " +
+                    "" + COLUMN_ESTADO_ASISTENCIA + " INTEGER(3) DEFAULT 0," +
+                    "" + COLUMN_FK_USUARIO_SC + " INTEGER(9))";
+
+
     public DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
@@ -97,6 +123,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(DB_CREATE_CLASE);
         db.execSQL(DB_CREATE_ALUMNO);
         db.execSQL(DB_CREATE_COMENTARIO);
+        db.execSQL(DB_CREATE_ALUMNO_SC);
     }
 
     @Override
