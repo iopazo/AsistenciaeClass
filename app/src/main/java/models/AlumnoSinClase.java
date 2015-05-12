@@ -98,6 +98,6 @@ public class AlumnoSinClase {
     }
 
     public void setEstadoAsistencia(Enum estadoAsistencia) {
-        estadoAsistencia = estadoAsistencia;
+        this.estadoAsistencia = estadoAsistencia;
     }
 }

@@ -3,6 +3,7 @@ package db;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 /**
  * Created by iopazog on 22-09-14.
@@ -17,7 +18,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
     private static final String DB_NAME = "eclass.db";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 6;
 
     //Taba usuario
     public static final String COLUMN_ID = "ID";
@@ -88,7 +89,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     "" + COLUMN_FECHA_COMENTARIO + " VARCHAR(20) NOT NULL)";
 
 
-    //Columnas tabla clases_sedes
+    //Columnas tabla alumno sin clase
     public static final String COLUMN_ID_ALUMNO_SC = "ID";
     public static final String COLUMN_FK_ID_CLASE_SEDE = "FK_ID_CLASE_SEDE";
     public static final String COLUMN_NOMBRE_SC = "NOMBRE";
@@ -116,7 +117,6 @@ public class DBHelper extends SQLiteOpenHelper {
     public DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
-
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(DB_CREATE_USUARIO);
@@ -125,12 +125,15 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(DB_CREATE_COMENTARIO);
         db.execSQL(DB_CREATE_ALUMNO_SC);
     }
-
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         //Actualizacion para mostrar el nombre del Profesor.
         //db.execSQL("ALTER TABLE " + TABLE_USUARIO + " ADD COLUMN " + COLUMN_NOMBRE_USUARIO + " VARCHAR(100);");
         //Actualizacion para guardar en el momento que se sincronizo la clase.
         //db.execSQL("ALTER TABLE " + TABLE_CLASE + " ADD COLUMN " + COLUMN_FECHA_SINCRONIZACION + " DATETIME;");
+        Log.d("Actualizacion", "Entro");
+        //Actualización para saber si un alumno_curso fue creado en el tablet
+        db.execSQL(DB_CREATE_ALUMNO_SC);
+        db.execSQL("ALTER TABLE " + TABLE_ALUMNO_SIN_CLASE + " ADD COLUMN ES_NUEVO TINYINT(1) DEFAULT 0;");
     }
 }
