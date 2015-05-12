@@ -61,11 +61,15 @@
         <activity
             android:name=".ConfiguracionActivity"
             android:label="@string/title_activity_configuracion"
-            android:theme="@style/CustomActionBarTheme"
-            android:parentActivityName=".Clases" >
+            android:parentActivityName=".Clases"
+            android:theme="@style/CustomActionBarTheme" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.moveapps.asistenciaeclass.Clases" />
+        </activity>
+        <activity
+            android:name=".NuevoAlumno"
+            android:label="@string/title_activity_nuevo_alumno" >
         </activity>
     </application>
 

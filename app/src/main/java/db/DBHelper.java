@@ -3,6 +3,7 @@ package db;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 /**
  * Created by iopazog on 22-09-14.
@@ -13,10 +14,11 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String TABLE_CLASE = "CLASES";
     public static final String TABLE_ALUMNO = "ALUMNOS";
     public static final String TABLE_COMENTARIO = "COMENTARIOS";
+    public static final String TABLE_ALUMNO_SIN_CLASE = "ALUMNO_SIN_CLASE";
 
 
     private static final String DB_NAME = "eclass.db";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 6;
 
     //Taba usuario
     public static final String COLUMN_ID = "ID";
@@ -87,23 +89,51 @@ public class DBHelper extends SQLiteOpenHelper {
                     "" + COLUMN_FECHA_COMENTARIO + " VARCHAR(20) NOT NULL)";
 
 
+    //Columnas tabla alumno sin clase
+    public static final String COLUMN_ID_ALUMNO_SC = "ID";
+    public static final String COLUMN_FK_ID_CLASE_SEDE = "FK_ID_CLASE_SEDE";
+    public static final String COLUMN_NOMBRE_SC = "NOMBRE";
+    public static final String COLUMN_PATERNO_SC = "PATERNO";
+    public static final String COLUMN_MATERNO_SC = "MATERNO";
+    public static final String COLUMN_EMAIL_SC = "EMAIL";
+    public static final String COLUMN_NUMERO_DCTO = "NUMERO_DCTO";
+    public static final String COLUMN_TIPO_DCTO = "TIPO_DCTO";
+    public static final String COLUMN_ESTADO_ASISTENCIA = "ESTADO_ASISTENCIA";
+    public static final String COLUMN_FK_USUARIO_SC = "FK_ID_USUARIO";
+
+    private static final String DB_CREATE_ALUMNO_SC  =
+            "CREATE TABLE " + TABLE_ALUMNO_SIN_CLASE + " (" + COLUMN_ID_ALUMNO_SC + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "" + COLUMN_FK_ID_CLASE_SEDE + " INTEGER NOT NULL, " +
+                    "" + COLUMN_NOMBRE_SC + " VARCHAR(250), " +
+                    "" + COLUMN_PATERNO_SC + " VARCHAR(250), " +
+                    "" + COLUMN_MATERNO_SC + " VARCHAR(250), " +
+                    "" + COLUMN_EMAIL_SC + " VARCHAR(250), " +
+                    "" + COLUMN_NUMERO_DCTO + " VARCHAR(250), " +
+                    "" + COLUMN_TIPO_DCTO + " VARCHAR(250), " +
+                    "" + COLUMN_ESTADO_ASISTENCIA + " INTEGER(3) DEFAULT 0," +
+                    "" + COLUMN_FK_USUARIO_SC + " INTEGER(9))";
+
+
     public DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
-
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(DB_CREATE_USUARIO);
         db.execSQL(DB_CREATE_CLASE);
         db.execSQL(DB_CREATE_ALUMNO);
         db.execSQL(DB_CREATE_COMENTARIO);
+        db.execSQL(DB_CREATE_ALUMNO_SC);
     }
-
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         //Actualizacion para mostrar el nombre del Profesor.
         //db.execSQL("ALTER TABLE " + TABLE_USUARIO + " ADD COLUMN " + COLUMN_NOMBRE_USUARIO + " VARCHAR(100);");
         //Actualizacion para guardar en el momento que se sincronizo la clase.
         //db.execSQL("ALTER TABLE " + TABLE_CLASE + " ADD COLUMN " + COLUMN_FECHA_SINCRONIZACION + " DATETIME;");
+        Log.d("Actualizacion", "Entro");
+        //Actualización para saber si un alumno_curso fue creado en el tablet
+        db.execSQL(DB_CREATE_ALUMNO_SC);
+        db.execSQL("ALTER TABLE " + TABLE_ALUMNO_SIN_CLASE + " ADD COLUMN ES_NUEVO TINYINT(1) DEFAULT 0;");
     }
 }

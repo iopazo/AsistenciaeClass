@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="new_student">Cargar Alumno</string>
+    <string name="document_number">Numero documento</string>
+    <string name="student_email">Email</string>
+    <string name="fullname_student">Nombre Completo</string>
+</resources>
