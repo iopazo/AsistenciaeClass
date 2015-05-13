@@ -2,6 +2,7 @@ package com.moveapps.asistenciaeclass;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.widget.Toast;
@@ -109,5 +110,13 @@ public class Utils {
         }
         sb.append(data[data.length - 1].trim());
         return sb.toString();
+    }
+
+    public final static boolean isValidEmail(CharSequence target) {
+        if (TextUtils.isEmpty(target)) {
+            return false;
+        } else {
+            return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+        }
     }
 }

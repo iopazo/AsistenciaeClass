@@ -244,6 +244,11 @@ public class Login extends Activity {
             apiService.getUsuarioData(mUsuarioSerice);
 
         } else {
+            try {
+                usuarioDataSource.open();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             if (password.getText().toString().equals(userDB.getUsuarioDB().getPassword())) {
                 if (usuarioDataSource.updateUsuario(userDB.getUsuarioDB().getId(), true, true) > 0) {
                     intent.putExtra("password", userDB.getUsuarioDB().getPassword());

@@ -10,6 +10,7 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -41,7 +42,7 @@ import models.AlumnoAdapter;
 import models.ComentarioClase;
 
 
-public class Alumnos extends Activity implements SearchView.OnQueryTextListener {
+public class Alumnos extends Activity implements SearchView.OnQueryTextListener, View.OnClickListener {
 
     static String PASSWORD;
     static int ID_CLASE;
@@ -83,6 +84,9 @@ public class Alumnos extends Activity implements SearchView.OnQueryTextListener 
             TextView breadcrumb = (TextView)findViewById(R.id.bcrumbText);
             breadcrumb.setText(NOMBRE_CLASE);
         }
+
+        Button btnNewStudent = (Button) findViewById(R.id.newStudent);
+        btnNewStudent.setOnClickListener(this);
 
         //Iniciamos la instancia y abrimos la base de datos
         mAlumnosource = new DBAlumnoSource(Alumnos.this);
@@ -393,5 +397,15 @@ public class Alumnos extends Activity implements SearchView.OnQueryTextListener 
     public boolean onQueryTextChange(String newText) {
         adapter.getFilter().filter(newText);
         return true;
+    }
+
+    @Override
+    public void onClick(View view) {
+        Log.d("Entro", "Entro");
+        if(view.getId() == R.id.newStudent) {
+            Intent intent = new Intent(Alumnos.this, NuevoAlumno.class);
+            intent.putExtra("id_clase", ID_CLASE);
+            startActivityForResult(intent, 1);
+        }
     }
 }

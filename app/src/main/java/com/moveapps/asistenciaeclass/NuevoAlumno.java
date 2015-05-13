@@ -1,17 +1,42 @@
 package com.moveapps.asistenciaeclass;
 
-import android.support.v7.app.ActionBarActivity;
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Spinner;
 
 
-public class NuevoAlumno extends ActionBarActivity {
+public class NuevoAlumno extends Activity {
+
+    private EditText nombre = null;
+    private EditText email = null;
+    private EditText numeroDocumento = null;
+    private Spinner tipoDocumento = null;
+    private static int ID_CLASE;
+
+    //Dialogo cuando estemos guardando al alumno.
+    private ProgressDialog pd = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nuevo_alumno);
+
+        Intent intent = getIntent();
+        if(intent.hasExtra("id_clase")) {
+            ID_CLASE = intent.getIntExtra("id_clase", 0);
+        }
+
+        nombre = (EditText) findViewById(R.id.fullnameStudent);
+        email = (EditText) findViewById(R.id.emailStudent);
+        numeroDocumento = (EditText) findViewById(R.id.documentNumberStudent);
+        tipoDocumento = (Spinner) findViewById(R.id.documentTypeStudent);
+
     }
 
     @Override
@@ -34,5 +59,42 @@ public class NuevoAlumno extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public boolean crearAlumno(View view) {
+       // pd = ProgressDialog.show(this, "", "Aqui va el texto", true);
+        int seleccion = tipoDocumento.getSelectedItemPosition();
+
+        switch (seleccion) {
+            case 0:
+                if(!Utils.validarRut(numeroDocumento.getText().toString())) {
+                    numeroDocumento.setError(getResources().getString(R.string.bad_document_format));
+                    //pd.cancel();
+                    return false;
+                }
+                break;
+            default:
+                if(numeroDocumento.getText().toString().isEmpty()) {
+                    numeroDocumento.setError(getResources().getString(R.string.enter_document));
+                    //pd.cancel();
+                    return false;
+                }
+                break;
+        }
+
+        if(nombre.getText().toString().isEmpty()) {
+            nombre.setError("Debes ingresar el nombre del alumno");
+            return false;
+        }
+
+        if(email.getText().toString().isEmpty()) {
+            email.setError("Debes ingresar el email del alumno");
+            return false;
+        } else if(!Utils.isValidEmail(email.getText())) {
+            email.setError("Debes ingresar un email válido");
+            return false;
+        }
+
+        return true;
     }
 }

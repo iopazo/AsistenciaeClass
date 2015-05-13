@@ -104,15 +104,21 @@ ADDED from AndroidManifest.xml:51:9
 	android:name
 		ADDED from AndroidManifest.xml:52:13
 activity#com.moveapps.asistenciaeclass.ConfiguracionActivity
-ADDED from AndroidManifest.xml:61:9
+ADDED from AndroidManifest.xml:60:9
 	android:label
-		ADDED from AndroidManifest.xml:63:13
+		ADDED from AndroidManifest.xml:62:13
 	android:theme
 		ADDED from AndroidManifest.xml:64:13
 	android:parentActivityName
-		ADDED from AndroidManifest.xml:65:13
+		ADDED from AndroidManifest.xml:63:13
 	android:name
-		ADDED from AndroidManifest.xml:62:13
+		ADDED from AndroidManifest.xml:61:13
+activity#com.moveapps.asistenciaeclass.NuevoAlumno
+ADDED from AndroidManifest.xml:69:9
+	android:label
+		ADDED from AndroidManifest.xml:71:13
+	android:name
+		ADDED from AndroidManifest.xml:70:13
 uses-sdk
 INJECTED from AndroidManifest.xml:0:0 reason: use-sdk injection requested
 MERGED from com.fortysevendeg.swipelistview:swipelistview:1.0-SNAPSHOT:19:3

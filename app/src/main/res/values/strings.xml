@@ -71,11 +71,12 @@
     <string name="error_save_comment">An error occurred while saving the comment, please try again</string>
     <string name="empty_comment">You must enter a message to save the comment</string>
     <string name="memory_size">You have 10% or less space on your disk.</string>
-    <string name="title_activity_nuevo_alumno">NuevoAlumno</string>
+    <string name="title_activity_nuevo_alumno">New Student</string>
     <!-- Alumnos sin clase -->
     <string name="description_ac">All the inputs are required, please enter a valid information</string>
-    <string name="new_student">Cargar Alumno</string>
-    <string name="document_number">Numero documento</string>
+    <string name="new_student">Save changes</string>
+    <string name="document_number">Document number</string>
     <string name="student_email">Email</string>
-    <string name="fullname_student">Nombre Completo</string>
+    <string name="fullname_student">Full name</string>
+    <string name="addStudent">Add new student</string>
 </resources>

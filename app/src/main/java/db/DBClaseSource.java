@@ -144,7 +144,7 @@ public class DBClaseSource {
                         }
                     }
                 } catch (NullPointerException ex) {
-                    Log.d("ClaseSource", ex.getLocalizedMessage());
+                    Log.d("ClaseSource", ex.getMessage());
                 }
             }
             if(mDatabase.inTransaction()) {

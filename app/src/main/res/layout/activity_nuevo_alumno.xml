@@ -42,7 +42,7 @@
         android:hint="@string/student_email" />
 
     <Spinner
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/documentTypeStudent"
         android:layout_below="@+id/emailStudent"
@@ -52,7 +52,7 @@
         android:entries="@array/documentos_identificacion" />
 
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/documentNumberStudent"
         android:layout_below="@+id/documentTypeStudent"
@@ -71,6 +71,7 @@
         android:layout_marginTop="60dp"
         style="@style/BotonLogin"
         android:layout_below="@+id/documentNumberStudent"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:onClick="crearAlumno" />
 
 </RelativeLayout>

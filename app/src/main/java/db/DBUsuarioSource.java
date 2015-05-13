@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.sql.SQLException;
 
@@ -93,16 +94,17 @@ public class DBUsuarioSource {
     }
     //update
     public int updateUsuario(int idUsuario, boolean login, boolean ultimoUsuario) {
+
         String whereClause = dbHelper.COLUMN_USUARIO + " = ?";
         ContentValues values = new ContentValues();
         values.put(dbHelper.COLUMN_LOGIN, login);
         values.put(dbHelper.COLUMN_ULTIMO_USUARIO, ultimoUsuario);
 
-        int filaActuazalizada = mDatabase.update(dbHelper.TABLE_USUARIO,
+        int filaActualizada = mDatabase.update(dbHelper.TABLE_USUARIO,
                 values,
                 whereClause,
                 new String[]{String.format("%d", idUsuario)}
         );
-        return filaActuazalizada;
+        return filaActualizada;
     }
 }

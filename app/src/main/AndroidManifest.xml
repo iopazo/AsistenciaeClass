@@ -57,7 +57,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.moveapps.asistenciaeclass.Alumnos" />
         </activity>
-        <!-- <meta-data android:name="com.crashlytics.ApiKey" android:value="7f21ad1a386755e477341f0887fcfe68fd27f813"/> -->
         <activity
             android:name=".ConfiguracionActivity"
             android:label="@string/title_activity_configuracion"
@@ -69,7 +68,12 @@
         </activity>
         <activity
             android:name=".NuevoAlumno"
-            android:label="@string/title_activity_nuevo_alumno" >
+            android:label="@string/title_activity_nuevo_alumno"
+            android:theme="@style/CustomActionBarTheme"
+            android:parentActivityName=".Alumnos" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.moveapps.asistenciaeclass.Alumnos" />
         </activity>
     </application>
 

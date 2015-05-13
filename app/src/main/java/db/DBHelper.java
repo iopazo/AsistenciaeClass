@@ -18,7 +18,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
     private static final String DB_NAME = "eclass.db";
-    private static final int DB_VERSION = 6;
+    private static final int DB_VERSION = 1;
 
     //Taba usuario
     public static final String COLUMN_ID = "ID";
@@ -127,13 +127,8 @@ public class DBHelper extends SQLiteOpenHelper {
     }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        //Actualizacion para mostrar el nombre del Profesor.
-        //db.execSQL("ALTER TABLE " + TABLE_USUARIO + " ADD COLUMN " + COLUMN_NOMBRE_USUARIO + " VARCHAR(100);");
-        //Actualizacion para guardar en el momento que se sincronizo la clase.
-        //db.execSQL("ALTER TABLE " + TABLE_CLASE + " ADD COLUMN " + COLUMN_FECHA_SINCRONIZACION + " DATETIME;");
-        Log.d("Actualizacion", "Entro");
-        //Actualización para saber si un alumno_curso fue creado en el tablet
-        db.execSQL(DB_CREATE_ALUMNO_SC);
-        db.execSQL("ALTER TABLE " + TABLE_ALUMNO_SIN_CLASE + " ADD COLUMN ES_NUEVO TINYINT(1) DEFAULT 0;");
+        //Para version 2
+        //db.execSQL(DB_CREATE_ALUMNO_SC);
+        //db.execSQL("ALTER TABLE " + TABLE_ALUMNO_SIN_CLASE + " ADD COLUMN ES_NUEVO TINYINT(1) DEFAULT 0;");
     }
 }
