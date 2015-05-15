@@ -5,15 +5,12 @@ package models;
  */
 public class AlumnoSinClase {
 
-    private String id;
+    private int id;
     private int idClaseSede;
-    private String nombre;
-    private String apellidoPaterno;
-    private String apellidoMaterno;
+    private String nombreCompleto;
     private String email;
     private String numeroDocumento;
     private int tipoDocumento;
-    private Enum estadoAsistencia;
 
     /*
     Constructor por defecto
@@ -22,18 +19,21 @@ public class AlumnoSinClase {
 
     }
 
-    public AlumnoSinClase(String _id, int _idClaseSede, String _nombre, String _apellidoPaterno,
-                          String _apellidoMaterno, String _email, String _numeroDocumento,
-                          String _tipoDocumento, Enum _estadoAsistencia)
+    public AlumnoSinClase(int _idClaseSede, String _nombre, String _email, String _numeroDocumento,
+                          int _tipoDocumento)
     {
-
+        this.idClaseSede = _idClaseSede;
+        this.nombreCompleto = _nombre;
+        this.email = _email;
+        this.numeroDocumento = _numeroDocumento;
+        this.tipoDocumento = _tipoDocumento;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -45,28 +45,12 @@ public class AlumnoSinClase {
         this.idClaseSede = idClaseSede;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getNombreCompleto() {
+        return nombreCompleto;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getApellidoPaterno() {
-        return apellidoPaterno;
-    }
-
-    public void setApellidoPaterno(String apellidoPaterno) {
-        this.apellidoPaterno = apellidoPaterno;
-    }
-
-    public String getApellidoMaterno() {
-        return apellidoMaterno;
-    }
-
-    public void setApellidoMaterno(String apellidoMaterno) {
-        this.apellidoMaterno = apellidoMaterno;
+    public void setNombreCompleto(String nombreCompleto) {
+        this.nombreCompleto = nombreCompleto;
     }
 
     public String getEmail() {
@@ -93,11 +77,4 @@ public class AlumnoSinClase {
         this.tipoDocumento = tipoDocumento;
     }
 
-    public Enum getEstadoAsistencia() {
-        return estadoAsistencia;
-    }
-
-    public void setEstadoAsistencia(Enum estadoAsistencia) {
-        this.estadoAsistencia = estadoAsistencia;
-    }
 }

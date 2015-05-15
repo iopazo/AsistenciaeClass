@@ -3,7 +3,6 @@ package db;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 /**
  * Created by iopazog on 22-09-14.
@@ -18,7 +17,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
     private static final String DB_NAME = "eclass.db";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
 
     //Taba usuario
     public static final String COLUMN_ID = "ID";
@@ -30,7 +29,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_ULTIMO_USUARIO = "ULTIMO_USUARIO";
 
     private static final String DB_CREATE_USUARIO =
-            "CREATE TABLE " + TABLE_USUARIO + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "CREATE TABLE IF NOT EXISTS " + TABLE_USUARIO + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "" + COLUMN_LOGIN + " TINYINT DEFAULT 0, " +
                     "" + COLUMN_USERNAME + " INTEGER(10) DEFAULT 0, " +
                     "" + COLUMN_USUARIO + " INTEGER(9), " +
@@ -49,7 +48,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_FECHA_SINCRONIZACION = "FECHA_SINCRONIZACION";
 
     private static final String DB_CREATE_CLASE  =
-            "CREATE TABLE " + TABLE_CLASE + " (" + COLUMN_ID_CLASE + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "CREATE TABLE IF NOT EXISTS " + TABLE_CLASE + " (" + COLUMN_ID_CLASE + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "" + COLUMN_ID_CLASE_SEDE + " INTEGER NOT NULL, " +
                     "" + COLUMN_NOMBRE_CLASE + " VARCHAR(250), " +
                     "" + COLUMN_FECHA + " DATE, " +
@@ -65,13 +64,15 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_ID_CLASE_SEDE_FK = "ID_CLASE_SEDE_FK";
     public static final String COLUMN_ESTADO = "ESTADO";
     public static final String COLUMN_FIRMA = "FIRMA";
+    public static final String COLUMN_FK_ID_ALUMNO_SC = "FK_ID_ALUMNO_SC";
 
     private static final String DB_CREATE_ALUMNO  =
-            "CREATE TABLE " + TABLE_ALUMNO + " (" + COLUMN_ID_ALUMNO + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "CREATE TABLE IF NOT EXISTS " + TABLE_ALUMNO + " (" + COLUMN_ID_ALUMNO + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "" + COLUMN_ID_ALUMNO_CLASE_SEDE + " INTEGER NOT NULL, " +
                     "" + COLUMN_NOMBRE_ALUMNO + " VARCHAR(250), " +
                     "" + COLUMN_ID_CLASE_SEDE_FK + " INTEGER, " +
                     "" + COLUMN_FIRMA + " TEXT," +
+                    "" + COLUMN_FK_ID_ALUMNO_SC + " VARCHAR(100), " +
                     "" + COLUMN_ESTADO + " INTEGER(3) DEFAULT 0)";
 
     //Columnas tabla comentarios_clases
@@ -82,7 +83,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_FECHA_COMENTARIO = "FECHA_CREACION";
 
     private static final String DB_CREATE_COMENTARIO =
-            "CREATE TABLE " + TABLE_COMENTARIO + " (" + COLUMN_ID_COMENTARIO + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "CREATE TABLE IF NOT EXISTS " + TABLE_COMENTARIO + " (" + COLUMN_ID_COMENTARIO + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "" + COLUMN_ID_CLASE_COMENTARIO + " INTEGER NOT NULL, " +
                     "" + COLUMN_COMENTARIO + " TEXT, " +
                     "" + COLUMN_NOMBRE_PROFESOR + " VARCHAR(250) NOT NULL, " +
@@ -98,11 +99,10 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_EMAIL_SC = "EMAIL";
     public static final String COLUMN_NUMERO_DCTO = "NUMERO_DCTO";
     public static final String COLUMN_TIPO_DCTO = "TIPO_DCTO";
-    public static final String COLUMN_ESTADO_ASISTENCIA = "ESTADO_ASISTENCIA";
     public static final String COLUMN_FK_USUARIO_SC = "FK_ID_USUARIO";
 
     private static final String DB_CREATE_ALUMNO_SC  =
-            "CREATE TABLE " + TABLE_ALUMNO_SIN_CLASE + " (" + COLUMN_ID_ALUMNO_SC + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "CREATE TABLE IF NOT EXISTS " + TABLE_ALUMNO_SIN_CLASE + " (" + COLUMN_ID_ALUMNO_SC + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "" + COLUMN_FK_ID_CLASE_SEDE + " INTEGER NOT NULL, " +
                     "" + COLUMN_NOMBRE_SC + " VARCHAR(250), " +
                     "" + COLUMN_PATERNO_SC + " VARCHAR(250), " +
@@ -110,7 +110,6 @@ public class DBHelper extends SQLiteOpenHelper {
                     "" + COLUMN_EMAIL_SC + " VARCHAR(250), " +
                     "" + COLUMN_NUMERO_DCTO + " VARCHAR(250), " +
                     "" + COLUMN_TIPO_DCTO + " VARCHAR(250), " +
-                    "" + COLUMN_ESTADO_ASISTENCIA + " INTEGER(3) DEFAULT 0," +
                     "" + COLUMN_FK_USUARIO_SC + " INTEGER(9))";
 
 
@@ -128,7 +127,7 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         //Para version 2
-        //db.execSQL(DB_CREATE_ALUMNO_SC);
-        //db.execSQL("ALTER TABLE " + TABLE_ALUMNO_SIN_CLASE + " ADD COLUMN ES_NUEVO TINYINT(1) DEFAULT 0;");
+        db.execSQL(DB_CREATE_ALUMNO_SC);
+        //db.execSQL("ALTER TABLE " + TABLE_ALUMNO + " ADD COLUMN " + COLUMN_FK_ID_ALUMNO_SC + " VARCHAR(100);");
     }
 }

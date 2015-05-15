@@ -4,11 +4,14 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Spinner;
+
+import java.sql.SQLException;
+
+import db.DBAlumnoSCSource;
+import models.AlumnoSinClase;
 
 
 public class NuevoAlumno extends Activity {
@@ -18,6 +21,7 @@ public class NuevoAlumno extends Activity {
     private EditText numeroDocumento = null;
     private Spinner tipoDocumento = null;
     private static int ID_CLASE;
+    protected DBAlumnoSCSource dbAlumnoSCSource;
 
     //Dialogo cuando estemos guardando al alumno.
     private ProgressDialog pd = null;
@@ -37,8 +41,19 @@ public class NuevoAlumno extends Activity {
         numeroDocumento = (EditText) findViewById(R.id.documentNumberStudent);
         tipoDocumento = (Spinner) findViewById(R.id.documentTypeStudent);
 
-    }
+        //Le asignamos el evento on Focus a username
+        numeroDocumento.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus && tipoDocumento.getSelectedItemPosition() == 0)
+                    numeroDocumento.setText(Utils.formatear(numeroDocumento.getText().toString()));
+            }
+        });
 
+        dbAlumnoSCSource = new DBAlumnoSCSource(NuevoAlumno.this);
+
+    }
+    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -59,9 +74,9 @@ public class NuevoAlumno extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
-    public boolean crearAlumno(View view) {
+    public boolean crearAlumno(View view) throws SQLException {
        // pd = ProgressDialog.show(this, "", "Aqui va el texto", true);
         int seleccion = tipoDocumento.getSelectedItemPosition();
 
@@ -70,30 +85,28 @@ public class NuevoAlumno extends Activity {
                 if(!Utils.validarRut(numeroDocumento.getText().toString())) {
                     numeroDocumento.setError(getResources().getString(R.string.bad_document_format));
                     //pd.cancel();
-                    return false;
                 }
                 break;
             default:
                 if(numeroDocumento.getText().toString().isEmpty()) {
                     numeroDocumento.setError(getResources().getString(R.string.enter_document));
                     //pd.cancel();
-                    return false;
                 }
                 break;
         }
 
         if(nombre.getText().toString().isEmpty()) {
             nombre.setError("Debes ingresar el nombre del alumno");
-            return false;
         }
 
         if(email.getText().toString().isEmpty()) {
             email.setError("Debes ingresar el email del alumno");
-            return false;
         } else if(!Utils.isValidEmail(email.getText())) {
             email.setError("Debes ingresar un email válido");
-            return false;
         }
+
+        AlumnoSinClase alumnoSinClase = new AlumnoSinClase(ID_CLASE, nombre.getText().toString(), email.getText().toString(), numeroDocumento.getText().toString(), tipoDocumento.getSelectedItemPosition());
+        dbAlumnoSCSource.add(alumnoSinClase, ID_CLASE);
 
         return true;
     }
