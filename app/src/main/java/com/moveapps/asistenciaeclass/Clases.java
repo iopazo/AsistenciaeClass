@@ -175,9 +175,7 @@ public class Clases extends Activity {
 
         if (id == R.id.configuracion) {
             Intent intent = new Intent(Clases.this, ConfiguracionActivity.class);
-            startActivity(intent);
-            finish();
-            return true;
+            startActivityForResult(intent, 1);
         }
 
         //Accion boton sincronizar

@@ -155,7 +155,6 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
                     JSONObject jsonComentarios = new JSONObject();
                     jsonAlumnos = mClaseSource.getAlumnosByClass(claseData.getId(), usuario.getId());
                     DBComentarioClaseSource dbComentarioClaseSource = new DBComentarioClaseSource(context);
-
                     try {
                         dbComentarioClaseSource.open();
                         jsonComentarios = dbComentarioClaseSource.jsonList(claseData.getId(), usuario.getId());

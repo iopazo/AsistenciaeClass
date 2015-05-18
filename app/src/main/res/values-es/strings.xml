@@ -72,7 +72,7 @@
     <string name="error_save_comment">Ocurrio un error al guardar el comentario, intente nuevamente</string>
     <string name="empty_comment">Debe escribir un mensaje para guardar el comentario</string>
     <string name="memory_size">Te quedan 10% o menos espacio en tu disco.</string>
-
+    <!-- Alumno Sin Clase -->
     <string name="title_activity_nuevo_alumno">Nuevo ALumno</string>
     <string name="description_ac">Todos los campos son requeridos, porfavor introduzca información válida</string>
     <string name="new_student">Guardar Cambios</string>
@@ -80,4 +80,9 @@
     <string name="student_email">Email</string>
     <string name="fullname_student">Nombre Completo</string>
     <string name="addStudent">Crear nuevo estudiante</string>
+    <string name="enter_name">Debes ingresar el nombre del alumno</string>
+    <string name="enter_email">Debes ingresar el email del alumno</string>
+    <string name="valid_email">Debes ingresar una direccion de correo válida</string>
+    <string name="student_created">El alumno ha sido creado correctamente</string>
+    <string name="student_already_exist">Este alumno ya existe para esta clase</string>
 </resources>

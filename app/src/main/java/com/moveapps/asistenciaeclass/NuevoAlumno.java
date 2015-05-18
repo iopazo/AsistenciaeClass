@@ -1,7 +1,6 @@
 package com.moveapps.asistenciaeclass;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +12,11 @@ import java.sql.SQLException;
 import db.DBAlumnoSCSource;
 import models.AlumnoSinClase;
 
+import static com.moveapps.asistenciaeclass.Utils.formatear;
+import static com.moveapps.asistenciaeclass.Utils.isValidEmail;
+import static com.moveapps.asistenciaeclass.Utils.showToast;
+import static com.moveapps.asistenciaeclass.Utils.validarRut;
+
 
 public class NuevoAlumno extends Activity {
 
@@ -22,9 +26,6 @@ public class NuevoAlumno extends Activity {
     private Spinner tipoDocumento = null;
     private static int ID_CLASE;
     protected DBAlumnoSCSource dbAlumnoSCSource;
-
-    //Dialogo cuando estemos guardando al alumno.
-    private ProgressDialog pd = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,67 +47,68 @@ public class NuevoAlumno extends Activity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if(!hasFocus && tipoDocumento.getSelectedItemPosition() == 0)
-                    numeroDocumento.setText(Utils.formatear(numeroDocumento.getText().toString()));
+                    numeroDocumento.setText(formatear(numeroDocumento.getText().toString()));
             }
         });
 
-        dbAlumnoSCSource = new DBAlumnoSCSource(NuevoAlumno.this);
+        dbAlumnoSCSource = new DBAlumnoSCSource(this);
 
-    }
-    /*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_nuevo_alumno, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        try {
+            dbAlumnoSCSource.open();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
-        return super.onOptionsItemSelected(item);
-    }*/
+    }
 
     public boolean crearAlumno(View view) throws SQLException {
-       // pd = ProgressDialog.show(this, "", "Aqui va el texto", true);
         int seleccion = tipoDocumento.getSelectedItemPosition();
-
+        boolean error = false;
         switch (seleccion) {
             case 0:
-                if(!Utils.validarRut(numeroDocumento.getText().toString())) {
+                if(!validarRut(numeroDocumento.getText().toString())) {
                     numeroDocumento.setError(getResources().getString(R.string.bad_document_format));
-                    //pd.cancel();
+                    error = true;
                 }
                 break;
             default:
                 if(numeroDocumento.getText().toString().isEmpty()) {
                     numeroDocumento.setError(getResources().getString(R.string.enter_document));
-                    //pd.cancel();
+                    error = true;
                 }
                 break;
         }
 
         if(nombre.getText().toString().isEmpty()) {
-            nombre.setError("Debes ingresar el nombre del alumno");
+            nombre.setError(getResources().getString(R.string.enter_name));
+            error = true;
         }
 
         if(email.getText().toString().isEmpty()) {
-            email.setError("Debes ingresar el email del alumno");
-        } else if(!Utils.isValidEmail(email.getText())) {
-            email.setError("Debes ingresar un email válido");
+            email.setError(getResources().getString(R.string.enter_email));
+            error = true;
+        } else if(!isValidEmail(email.getText())) {
+            email.setError(getResources().getString(R.string.valid_email));
+            error = true;
         }
 
-        AlumnoSinClase alumnoSinClase = new AlumnoSinClase(ID_CLASE, nombre.getText().toString(), email.getText().toString(), numeroDocumento.getText().toString(), tipoDocumento.getSelectedItemPosition());
-        dbAlumnoSCSource.add(alumnoSinClase, ID_CLASE);
+        if(!error) {
+            dbAlumnoSCSource.open();
+            AlumnoSinClase alumnoSinClase = new AlumnoSinClase(ID_CLASE, nombre.getText().toString(),
+                    email.getText().toString(),
+                    numeroDocumento.getText().toString(),
+                    tipoDocumento.getSelectedItemPosition());
+            if(dbAlumnoSCSource.add(alumnoSinClase, ID_CLASE)) {
+                showToast(this, getResources().getString(R.string.student_created));
+            } else {
+                showToast(this, getResources().getString(R.string.student_already_exist));
+            }
+            dbAlumnoSCSource.close();
+            tipoDocumento.setSelection(0, true);
+            numeroDocumento.setText("");
+            nombre.setText("");
+            email.setText("");
+        }
 
         return true;
     }

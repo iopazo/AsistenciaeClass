@@ -2,6 +2,7 @@ package db;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -36,32 +37,39 @@ public class DBAlumnoSCSource {
      * @param idClaseSede
      * @throws SQLException
      */
-    public void add(AlumnoSinClase alumnoSinClase, int idClaseSede) throws SQLException{
+    public boolean add(AlumnoSinClase alumnoSinClase, int idClaseSede) throws SQLException{
+
+        //Si ya existe el alumno sin clase, devolvemos false
+        if(this.exist(alumnoSinClase, idClaseSede)) {
+            return false;
+        }
 
         ContentValues values = new ContentValues();
-        values.put(dbHelper.COLUMN_NUMERO_DCTO, alumnoSinClase.getNumeroDocumento());
-        values.put(dbHelper.COLUMN_NOMBRE_SC, alumnoSinClase.getNombreCompleto());
-        values.put(dbHelper.COLUMN_EMAIL_SC, alumnoSinClase.getEmail());
-        values.put(dbHelper.COLUMN_TIPO_DCTO, alumnoSinClase.getTipoDocumento());
-        values.put(dbHelper.COLUMN_FK_ID_CLASE_SEDE, idClaseSede);
+        values.put(DBHelper.COLUMN_NUMERO_DCTO, alumnoSinClase.getNumeroDocumento());
+        values.put(DBHelper.COLUMN_NOMBRE_SC, alumnoSinClase.getNombreCompleto());
+        values.put(DBHelper.COLUMN_EMAIL_SC, alumnoSinClase.getEmail());
+        values.put(DBHelper.COLUMN_TIPO_DCTO, alumnoSinClase.getTipoDocumento());
+        values.put(DBHelper.COLUMN_FK_ID_CLASE_SEDE, idClaseSede);
 
-        if(!mDatabase.isOpen()) {
-            this.open();
-        }
         //Guardamos el id del alumno SC que se transforma en el id del alumno curso clase sede.
         //Para obtener el registro del Alumno SC se debe buscar despues por el id del alumno sc mas el idClaseSede
-        int idAlumnoSC = (int) mDatabase.insert(dbHelper.TABLE_ALUMNO_SIN_CLASE, null, values);
+        int idAlumnoSC = (int) mDatabase.insert(DBHelper.TABLE_ALUMNO_SIN_CLASE, null, values);
 
         if(idAlumnoSC > 0) {
+            alumnoSinClase.setId(idAlumnoSC);
             Alumno alumno = new Alumno(idAlumnoSC, alumnoSinClase.getNombreCompleto(), 0, idClaseSede);
+            alumno.setAlumnoSinClase(alumnoSinClase);
             this.insertAlumnoCurso(alumno, idClaseSede);
         }
 
-        if(mDatabase.isOpen()) {
-            this.close();
-        }
+        return true;
     }
 
+    /**
+     * Guardams un alumno curso en base a un alumno sin clase.
+     * @param alumno
+     * @param idClase
+     */
     private void insertAlumnoCurso(Alumno alumno, int idClase) {
 
         try {
@@ -69,9 +77,35 @@ public class DBAlumnoSCSource {
             values.put(DBHelper.COLUMN_NOMBRE_ALUMNO, alumno.getNombre());
             values.put(DBHelper.COLUMN_ID_ALUMNO_CLASE_SEDE, alumno.getIdAlumnoCursoClaseSede());
             values.put(DBHelper.COLUMN_ID_CLASE_SEDE_FK, idClase);
+            values.put(DBHelper.COLUMN_FK_ID_ALUMNO_SC, alumno.getAlumnoSinClase().getId());
+            mDatabase.insert(DBHelper.TABLE_ALUMNO, null, values);
         } catch (NullPointerException ex) {
-            Log.d("ClaseSource", ex.getMessage());
+            Log.d("AlumnoCurso", ex.getMessage());
+        }
+    }
+
+    private boolean exist(AlumnoSinClase alumnoSC, int idClase) {
+        boolean exists = false;
+
+        String whereClause = DBHelper.COLUMN_NUMERO_DCTO + " = ? AND " + DBHelper.COLUMN_TIPO_DCTO +
+                " = ? AND " + DBHelper.COLUMN_FK_ID_CLASE_SEDE + " = ? OR " + DBHelper.COLUMN_EMAIL_SC + " = ?";
+        String[] whereParams = {alumnoSC.getNumeroDocumento(),String.format("%d", alumnoSC.getTipoDocumento()),
+                                String.format("%d", idClase), alumnoSC.getEmail()};
+
+        Cursor cursor = mDatabase.query(
+                DBHelper.TABLE_ALUMNO_SIN_CLASE,
+                new String[] {DBHelper.COLUMN_ID_ALUMNO_SC},
+                whereClause,
+                whereParams,
+                null,
+                null,
+                null
+        );
+
+        if(cursor.moveToFirst()) {
+            exists = true;
         }
 
+        return exists;
     }
 }

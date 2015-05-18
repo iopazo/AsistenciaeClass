@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import models.Alumno;
+import models.AlumnoSinClase;
 
 /**
  * Created by iopazog on 29-09-14.
@@ -39,7 +40,9 @@ public class DBAlumnoSource {
 
         Cursor cursor = mDatabase.query(
                 dbHelper.TABLE_ALUMNO,
-                new String[] {dbHelper.COLUMN_ID_ALUMNO_CLASE_SEDE, dbHelper.COLUMN_NOMBRE_ALUMNO, dbHelper.COLUMN_ESTADO, dbHelper.COLUMN_FIRMA
+                new String[] {dbHelper.COLUMN_ID_ALUMNO_CLASE_SEDE, dbHelper.COLUMN_NOMBRE_ALUMNO,
+                        dbHelper.COLUMN_ESTADO, dbHelper.COLUMN_FIRMA,
+                        dbHelper.COLUMN_FK_ID_ALUMNO_SC
                 },
                 whereClause,
                 new String[]{String.format("%d", idClase)},
@@ -50,12 +53,42 @@ public class DBAlumnoSource {
 
         if(cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
+
                 int id = cursor.getInt(cursor.getColumnIndex(dbHelper.COLUMN_ID_ALUMNO_CLASE_SEDE));
                 String nombre = cursor.getString(cursor.getColumnIndex(dbHelper.COLUMN_NOMBRE_ALUMNO));
                 int estado = cursor.getInt(cursor.getColumnIndex(dbHelper.COLUMN_ESTADO));
                 String firma = cursor.getString(cursor.getColumnIndex(dbHelper.COLUMN_FIRMA));
                 Alumno alumno = new Alumno(id, nombre, estado, idClase);
                 alumno.setFirma(firma);
+
+                /*
+                    Aca traemos el alumno sin curso si es que el alumno tiene el FK != 0
+                 */
+                String whereClauseASC = dbHelper.COLUMN_ID_ALUMNO_SC + " = ? AND "
+                                        + dbHelper.COLUMN_FK_ID_CLASE_SEDE + " = ?";
+                Cursor cursorASC = mDatabase.query(
+                        dbHelper.TABLE_ALUMNO_SIN_CLASE,
+                        new String[] {dbHelper.COLUMN_ID_ALUMNO_SC, dbHelper.COLUMN_NOMBRE_SC, dbHelper.COLUMN_EMAIL_SC,
+                                        dbHelper.COLUMN_NUMERO_DCTO, dbHelper.COLUMN_TIPO_DCTO},
+                        whereClauseASC,
+                        new String[] {String.format("%d", id), String.format("%d", idClase)},
+                        null,
+                        null,
+                        null
+                );
+
+                if (cursorASC.moveToFirst()) {
+                    while (!cursorASC.isAfterLast()) {
+                        AlumnoSinClase alumnoSinClase = new AlumnoSinClase(idClase,
+                                cursorASC.getString(cursorASC.getColumnIndex(dbHelper.COLUMN_NOMBRE_SC)),
+                                cursorASC.getString(cursorASC.getColumnIndex(dbHelper.COLUMN_EMAIL_SC)),
+                                cursorASC.getString(cursorASC.getColumnIndex(dbHelper.COLUMN_NUMERO_DCTO)),
+                                cursorASC.getInt(cursorASC.getColumnIndex(dbHelper.COLUMN_TIPO_DCTO)));
+                        alumnoSinClase.setId(cursorASC.getInt(cursorASC.getColumnIndex(dbHelper.COLUMN_ID_ALUMNO_SC)));
+                        alumno.setAlumnoSinClase(alumnoSinClase);
+                        cursorASC.moveToNext();
+                    }
+                }
                 alumnos.add(alumno);
                 cursor.moveToNext();
             }

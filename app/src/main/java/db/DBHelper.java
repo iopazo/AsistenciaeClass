@@ -2,7 +2,9 @@ package db;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 /**
  * Created by iopazog on 22-09-14.
@@ -72,7 +74,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     "" + COLUMN_NOMBRE_ALUMNO + " VARCHAR(250), " +
                     "" + COLUMN_ID_CLASE_SEDE_FK + " INTEGER, " +
                     "" + COLUMN_FIRMA + " TEXT," +
-                    "" + COLUMN_FK_ID_ALUMNO_SC + " VARCHAR(100), " +
+                    "" + COLUMN_FK_ID_ALUMNO_SC + " INTEGER(9), " +
                     "" + COLUMN_ESTADO + " INTEGER(3) DEFAULT 0)";
 
     //Columnas tabla comentarios_clases
@@ -94,23 +96,17 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_ID_ALUMNO_SC = "ID";
     public static final String COLUMN_FK_ID_CLASE_SEDE = "FK_ID_CLASE_SEDE";
     public static final String COLUMN_NOMBRE_SC = "NOMBRE";
-    public static final String COLUMN_PATERNO_SC = "PATERNO";
-    public static final String COLUMN_MATERNO_SC = "MATERNO";
     public static final String COLUMN_EMAIL_SC = "EMAIL";
     public static final String COLUMN_NUMERO_DCTO = "NUMERO_DCTO";
     public static final String COLUMN_TIPO_DCTO = "TIPO_DCTO";
-    public static final String COLUMN_FK_USUARIO_SC = "FK_ID_USUARIO";
 
     private static final String DB_CREATE_ALUMNO_SC  =
             "CREATE TABLE IF NOT EXISTS " + TABLE_ALUMNO_SIN_CLASE + " (" + COLUMN_ID_ALUMNO_SC + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "" + COLUMN_FK_ID_CLASE_SEDE + " INTEGER NOT NULL, " +
                     "" + COLUMN_NOMBRE_SC + " VARCHAR(250), " +
-                    "" + COLUMN_PATERNO_SC + " VARCHAR(250), " +
-                    "" + COLUMN_MATERNO_SC + " VARCHAR(250), " +
                     "" + COLUMN_EMAIL_SC + " VARCHAR(250), " +
                     "" + COLUMN_NUMERO_DCTO + " VARCHAR(250), " +
-                    "" + COLUMN_TIPO_DCTO + " VARCHAR(250), " +
-                    "" + COLUMN_FK_USUARIO_SC + " INTEGER(9))";
+                    "" + COLUMN_TIPO_DCTO + " VARCHAR(250))";
 
 
     public DBHelper(Context context) {
@@ -128,6 +124,10 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         //Para version 2
         db.execSQL(DB_CREATE_ALUMNO_SC);
-        //db.execSQL("ALTER TABLE " + TABLE_ALUMNO + " ADD COLUMN " + COLUMN_FK_ID_ALUMNO_SC + " VARCHAR(100);");
+        try {
+            db.execSQL("ALTER TABLE " + TABLE_ALUMNO + " ADD COLUMN " + COLUMN_FK_ID_ALUMNO_SC + " INTEGER(9);");
+        } catch (SQLiteException ex) {
+            Log.i("Column already exists", "La columna de ya existe");
+        }
     }
 }

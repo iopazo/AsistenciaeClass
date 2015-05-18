@@ -79,4 +79,9 @@
     <string name="student_email">Email</string>
     <string name="fullname_student">Full name</string>
     <string name="addStudent">Add new student</string>
+    <string name="enter_name">You must enter a name for the student</string>
+    <string name="enter_email">You must enter a email for the student</string>
+    <string name="valid_email">You must enter a valid email address</string>
+    <string name="student_created">Student created successfully</string>
+    <string name="student_already_exist">This student already exists for this class</string>
 </resources>

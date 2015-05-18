@@ -322,6 +322,20 @@ public class DBClaseSource {
                         alumnoJObject.put("estado", String.format("%d", alumnos.get(i).getEstado()));
                         alumnoJObject.put("firma", (alumnos.get(i).getFirma() != null ? alumnos.get(i).getFirma() : ""));
                         alumnoJObject.put("id_usuario", idUsuarioEclass);
+                        alumnoJObject.put("id_clase_sede", idClase);
+
+                        JSONObject alumnoSinClaseJSON = new JSONObject();
+
+                        //Aca se coloca el alumno sin clase en caso de que venga seteado
+                        if(alumnos.get(i).getAlumnoSinClase() != null) {
+                            alumnoSinClaseJSON.put("id", alumnos.get(i).getAlumnoSinClase().getId());
+                            alumnoSinClaseJSON.put("nombre_completo", alumnos.get(i).getAlumnoSinClase().getNombreCompleto());
+                            alumnoSinClaseJSON.put("email", alumnos.get(i).getAlumnoSinClase().getEmail());
+                            alumnoSinClaseJSON.put("numero_documento", alumnos.get(i).getAlumnoSinClase().getNumeroDocumento());
+                            alumnoSinClaseJSON.put("tipo_documento", alumnos.get(i).getAlumnoSinClase().getTipoDocumento());
+                            alumnoJObject.put("alumno_sin_clase", alumnoSinClaseJSON);
+                        }
+
                         jsonArray.put(alumnoJObject);
                     } catch (JSONException e) {
                         e.printStackTrace();

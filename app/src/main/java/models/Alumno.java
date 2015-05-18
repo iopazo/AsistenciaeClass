@@ -11,6 +11,7 @@ public class Alumno {
     private int idClaseSede;
     private int estado;
     private String firma;
+    private AlumnoSinClase alumnoSinClase;
 
     public Alumno(int _idAlumnoCursoClaseSede, String _nombre) {
         this.setIdAlumnoCursoClaseSede(_idAlumnoCursoClaseSede);
@@ -76,5 +77,13 @@ public class Alumno {
 
     public void setFirma(String firma) {
         this.firma = firma;
+    }
+
+    public AlumnoSinClase getAlumnoSinClase() {
+        return alumnoSinClase;
+    }
+
+    public void setAlumnoSinClase(AlumnoSinClase alumnoSinClase) {
+        this.alumnoSinClase = alumnoSinClase;
     }
 }
