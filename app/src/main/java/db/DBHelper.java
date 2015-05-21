@@ -19,7 +19,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
     private static final String DB_NAME = "eclass.db";
-    private static final int DB_VERSION = 2;
+    private static final int DB_VERSION = 2; //No bajar de las 2
 
     //Taba usuario
     public static final String COLUMN_ID = "ID";

@@ -117,6 +117,10 @@ activity#com.moveapps.asistenciaeclass.NuevoAlumno
 ADDED from AndroidManifest.xml:69:9
 	android:label
 		ADDED from AndroidManifest.xml:71:13
+	android:theme
+		ADDED from AndroidManifest.xml:72:13
+	android:parentActivityName
+		ADDED from AndroidManifest.xml:73:13
 	android:name
 		ADDED from AndroidManifest.xml:70:13
 uses-sdk
