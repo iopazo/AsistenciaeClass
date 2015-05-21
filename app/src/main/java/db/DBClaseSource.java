@@ -144,7 +144,7 @@ public class DBClaseSource {
                         }
                     }
                 } catch (NullPointerException ex) {
-                    Log.d("ClaseSource", ex.getMessage());
+                    //Log.d("ClaseSource", ex.getMessage());
                 }
             }
             if(mDatabase.inTransaction()) {
@@ -292,7 +292,7 @@ public class DBClaseSource {
                     whereClause,
                     new String[] {String.format("%d", idClaseSede)});
         } catch (NullPointerException ex) {
-            Log.d("ClaseSource", ex.getLocalizedMessage());
+            //Log.d("ClaseSource", ex.getLocalizedMessage());
         }
     }
 
