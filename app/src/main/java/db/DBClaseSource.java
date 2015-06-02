@@ -1,6 +1,5 @@
 package db;
 
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -105,6 +104,7 @@ public class DBClaseSource {
             if(!mDatabase.inTransaction()) {
                 mDatabase.beginTransaction();
             }
+            Log.d("ClasesSize", "Cantidad: " + clases.size());
             //Recorremos las clases para agregarlas a la DB
             for (int i = 0; i < clases.size(); i++) {
                 try {
@@ -126,14 +126,18 @@ public class DBClaseSource {
                          * Actualizamos el estado de las clasesSedes y tambien la fecha y hora en caso de ser diferente
                          * Si la API trae estado 0 o 1 pero la clase en la tablet esta cancelada, se recupera con estado 0.
                          */
+
                         int estadoClase = clase.get("estado").getAsInt();
-                        int estadoClaseTablet = mapaClases.get(clase.get("id_clase_sede").getAsInt()).getEstado();
-                        if((estadoClase == 0 || estadoClase == 1) && estadoClaseTablet == 3) {
-                            contadorSincronizados++;
-                            this.cambiarEstadoClase(clase.get("id_clase_sede").getAsInt(), 0);
+                        if(mapaClases.get(clase.get("id_clase_sede").getAsInt()) != null) {
+                            int estadoClaseTablet = mapaClases.get(clase.get("id_clase_sede").getAsInt()).getEstado();
+
+                            if((estadoClase == 0 || estadoClase == 1) && estadoClaseTablet == 3) {
+                                contadorSincronizados++;
+                                this.cambiarEstadoClase(clase.get("id_clase_sede").getAsInt(), 0);
+                            }
+                            //Se actualizan los datos de las clases sedes en caso de cambien por reagendamiento.
+                            mDatabase.update(DBHelper.TABLE_CLASE,values, DBHelper.COLUMN_ID_CLASE_SEDE + " = ?", new String[]{String.format("%d", clase.get("id_clase_sede").getAsInt())});
                         }
-                        //Se actualizan los datos de las clases sedes en caso de cambien por reagendamiento.
-                        mDatabase.update(DBHelper.TABLE_CLASE,values, DBHelper.COLUMN_ID_CLASE_SEDE + " = ?", new String[]{String.format("%d", clase.get("id_clase_sede").getAsInt())});
 
                         //Si no existe el id clase sede dentro de los ids que traemos, agregamos la clase nueva.
                         if (!Arrays.asList(ids).contains(clase.get("id_clase_sede").getAsInt())) {
@@ -144,7 +148,7 @@ public class DBClaseSource {
                         }
                     }
                 } catch (NullPointerException ex) {
-                    //Log.d("ClaseSource", ex.getMessage());
+                    Log.e("ClaseSource", "Clase mala!");
                 }
             }
             if(mDatabase.inTransaction()) {
@@ -159,7 +163,6 @@ public class DBClaseSource {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 String currentDateandTime = sdf.format(new Date());
 
-                Activity claseActivity = (Activity) mContext;
                 if(contadorSincronizados > 0) {
                     Utils.showToast(mContext, String.format("%s %d %s", mContext.getResources().getString(R.string.has_sync), contadorSincronizados, mContext.getResources().getString(R.string.string_class)));
                     syncronized = true;
