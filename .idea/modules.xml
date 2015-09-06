@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/AsistenciaeClass.iml" filepath="$PROJECT_DIR$/AsistenciaeClass.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Asistenciaeclass.iml" filepath="$PROJECT_DIR$/Asistenciaeclass.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/swipelistview/swipelistview.iml" filepath="$PROJECT_DIR$/swipelistview/swipelistview.iml" />
     </modules>
