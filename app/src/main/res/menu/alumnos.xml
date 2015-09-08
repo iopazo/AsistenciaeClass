@@ -27,4 +27,10 @@
         android:icon="@android:drawable/sym_action_chat"
         android:showAsAction="ifRoom">
     </item>
+    <item android:id="@+id/listStudents"
+        android:title="@string/listStudents"
+        android:orderInCategory="103"
+        android:icon="@android:drawable/sym_action_chat"
+        android:showAsAction="ifRoom">
+    </item>
 </menu>
