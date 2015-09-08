@@ -16,6 +16,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String TABLE_ALUMNO = "ALUMNOS";
     public static final String TABLE_COMENTARIO = "COMENTARIOS";
     public static final String TABLE_ALUMNO_SIN_CLASE = "ALUMNO_SIN_CLASE";
+    public static final String TABLE_ALUMNO_CURSO = "ALUMNO_CURSO";
+
 
 
     private static final String DB_NAME = "eclass.db";
@@ -108,6 +110,20 @@ public class DBHelper extends SQLiteOpenHelper {
                     "" + COLUMN_NUMERO_DCTO + " VARCHAR(250), " +
                     "" + COLUMN_TIPO_DCTO + " VARCHAR(250))";
 
+    //Columnas tabla alumno curso
+    public static final String COLUMN_PK_ALUMNO_CURSO = "ID";
+    public static final String COLUMN_ID_ALUMNO_CURSO = "ID_ALUMNO_CURSO";
+    public static final String COLUMN_FK_ID_CLASE_SEDE_AC = "FK_ID_CLASE_SEDE";
+    public static final String COLUMN_NOMBRE_AC = "NOMBRE";
+    public static final String COLUMN_AGREGADO = "NUMERO_DCTO";
+
+    private static final String DB_CREATE_ALUMNO_CURSO  =
+            "CREATE TABLE IF NOT EXISTS " + TABLE_ALUMNO_CURSO + " (" + COLUMN_PK_ALUMNO_CURSO + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "" + COLUMN_FK_ID_CLASE_SEDE_AC + " INTEGER NOT NULL, " +
+                    "" + COLUMN_ID_ALUMNO_CURSO + " INTEGER NOT NULL, " +
+                    "" + COLUMN_NOMBRE_AC + " VARCHAR(250), " +
+                    "" + COLUMN_AGREGADO + " INTEGER(1) DEFAULT 0)";
+
 
     public DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -119,11 +135,13 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(DB_CREATE_ALUMNO);
         db.execSQL(DB_CREATE_COMENTARIO);
         db.execSQL(DB_CREATE_ALUMNO_SC);
+        db.execSQL(DB_CREATE_ALUMNO_CURSO);
     }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        //Para version 2
+        //Para version >= 2
         db.execSQL(DB_CREATE_ALUMNO_SC);
+        db.execSQL(DB_CREATE_ALUMNO_CURSO);
         try {
             db.execSQL("ALTER TABLE " + TABLE_ALUMNO + " ADD COLUMN " + COLUMN_FK_ID_ALUMNO_SC + " INTEGER(9);");
         } catch (SQLiteException ex) {

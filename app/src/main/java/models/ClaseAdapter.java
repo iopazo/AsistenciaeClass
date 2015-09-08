@@ -85,10 +85,10 @@ public class ClaseAdapter extends ArrayAdapter<Clase> {
             //Validamos si el tablet tiene una densidad de 120
             //Log.d("DPI", "DPI: " + dpiValidate);
             if(dpiValidate >= 120) {
-                holder.nombreCampus.setTextSize(25f);
-                holder.nombrePrograma.setTextSize(18f);
-                holder.nombreCurso.setTextSize(18f);
-                holder.nombreClase.setTextSize(15f);
+                holder.nombreCampus.setTextSize(20f);
+                holder.nombrePrograma.setTextSize(16f);
+                holder.nombreCurso.setTextSize(16f);
+                holder.nombreClase.setTextSize(13f);
             }
 
             holder.botonSincronizar = (Button)row.findViewById(R.id.btnSincronizarClase);

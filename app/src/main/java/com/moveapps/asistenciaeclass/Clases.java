@@ -104,6 +104,7 @@ public class Clases extends Activity {
     public void onRestart() {
         super.onRestart();
         try {
+            days = prefs.getString("sync_frequency", "-1");
             mClaseDatasource.open();
             clases = mClaseDatasource.list(classState, dbUsuario.getId(), days);
             onLoadSwipeListener();
@@ -129,6 +130,7 @@ public class Clases extends Activity {
     protected void onResume() {
         super.onResume();
         try {
+            days = prefs.getString("sync_frequency", "-1");
             mClaseDatasource.open();
             mUsuarioDatasource.open();
             clases = mClaseDatasource.list(classState, dbUsuario.getId(), days);
