@@ -118,8 +118,12 @@ public class DBClaseSource {
                     values.put(DBHelper.COLUMN_FK_USUARIO, id_usuario);
 
                     if(sync == 0) {
+                        //Se guarda la clase para luego guardar los alumnos.
                         if (mDatabase.insert(DBHelper.TABLE_CLASE, null, values) > 0) {
-                            this.insertAlumnoCurso(clase.getAsJsonArray("alumnos"), clase.get("id_clase_sede").getAsInt());
+                            //ALumnos de la clase sede
+                            this.insertAlumnoCursoClaseSede(clase.getAsJsonArray("alumnos"), clase.get("id_clase_sede").getAsInt());
+                            //Alumnos del curso
+                            this.inserAlumnoCurso(clase.getAsJsonArray("alumnos_cursos"), clase.get("id_clase_sede").getAsInt());
                         }
                     } else {
                         /**
@@ -143,7 +147,9 @@ public class DBClaseSource {
                         if (!Arrays.asList(ids).contains(clase.get("id_clase_sede").getAsInt())) {
                             contadorSincronizados++;
                             if (mDatabase.insert(DBHelper.TABLE_CLASE, null, values) > 0) {
-                                this.insertAlumnoCurso(clase.getAsJsonArray("alumnos"), clase.get("id_clase_sede").getAsInt());
+                                this.insertAlumnoCursoClaseSede(clase.getAsJsonArray("alumnos"), clase.get("id_clase_sede").getAsInt());
+                                //Alumnos del curso
+                                this.inserAlumnoCurso(clase.getAsJsonArray("alumnos_cursos"), clase.get("id_clase_sede").getAsInt());
                             }
                         }
                     }
@@ -194,7 +200,12 @@ public class DBClaseSource {
 
     }
 
-    private void insertAlumnoCurso(JsonArray alumnos, int idClase) {
+    /**
+     * Metodo que guarda los alumnos cursos clases sedes
+     * @param alumnos
+     * @param idClase
+     */
+    private void insertAlumnoCursoClaseSede(JsonArray alumnos, int idClase) {
 
         for (int i = 0; i < alumnos.size(); i++) {
             try {
@@ -206,6 +217,27 @@ public class DBClaseSource {
                 mDatabase.insert(DBHelper.TABLE_ALUMNO, null, values);
             } catch (NullPointerException ex) {
                 Log.d("ClaseSource", ex.getLocalizedMessage());
+            }
+        }
+    }
+
+    /**
+     * Agrega alumnos cursos asociados a una clase sede...
+     * @param alumnos
+     * @param idClase
+     */
+    private void inserAlumnoCurso(JsonArray alumnos, int idClase) {
+        for (int i = 0; i < alumnos.size(); i++) {
+            try {
+                JsonObject alumno = alumnos.get(i).getAsJsonObject();
+                ContentValues values = new ContentValues();
+                values.put(DBHelper.COLUMN_NOMBRE_AC, alumno.get("nombre").getAsString());
+                values.put(DBHelper.COLUMN_ID_ALUMNO_CURSO, alumno.get("id").getAsString());
+                values.put(DBHelper.COLUMN_FK_ID_CLASE_SEDE_AC, idClase);
+                values.put(DBHelper.COLUMN_AGREGADO, 0);
+                mDatabase.insert(DBHelper.TABLE_ALUMNO_CURSO, null, values);
+            } catch (NullPointerException ex) {
+                Log.d("ClaseSource", "Error en Objeto JSON");
             }
         }
     }
@@ -242,7 +274,7 @@ public class DBClaseSource {
             String now = dateFormat.format(cl.getTime());
             cl.add(Calendar.DATE, Integer.parseInt(days));
             String dayPlusDays = dateFormat.format(cl.getTime());
-            conditions += " AND " + DBHelper.COLUMN_FECHA + " BETWEEN '" + now + "' AND '" + dayPlusDays + "'";
+            conditions += " AND " + DBHelper.COLUMN_FECHA + " <= '" + dayPlusDays + "'";
         }
 
         String whereClause = String.format("%s %s AND %s = ?", DBHelper.COLUMN_ESTADO_CLASE, conditions, DBHelper.COLUMN_FK_USUARIO);
@@ -300,7 +332,7 @@ public class DBClaseSource {
     }
 
     /**
-     * Armamos un json con los datos de los alumnos de una clase
+     * Armamos un json con los datos de los alumnos de una clase para enviarlo a la API.
      * @param idClase
      * @param idUsuarioEclass
      * @return

@@ -10,7 +10,6 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -400,8 +399,10 @@ public class Alumnos extends Activity implements SearchView.OnQueryTextListener,
     }
 
     @Override
+    /**
+     * Funcion para capturar cualquier evento click en la actividad.
+     */
     public void onClick(View view) {
-        Log.d("Entro", "Entro");
         if(view.getId() == R.id.newStudent) {
             Intent intent = new Intent(Alumnos.this, NuevoAlumno.class);
             intent.putExtra("id_clase", ID_CLASE);
