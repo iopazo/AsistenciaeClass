@@ -7,8 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Filterable;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.moveapps.asistenciaeclass.R;
 
@@ -72,7 +74,18 @@ public class AlumnoCursoAdapter extends ArrayAdapter<AlumnoCurso> implements Fil
 
         holder.nombreAlumno.setText(alumnoCurso.get_nombre());
         holder.checkBox.setChecked(alumnoCurso.get_agregado() != 0);
-        holder.checkBox.setActivated(alumnoCurso.get_agregado() != 0);
+        holder.checkBox.setEnabled(alumnoCurso.get_agregado() != 0);
+
+        holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton arg0, boolean isChecked) {
+                if (isChecked) {
+                    Toast.makeText(context, "male", Toast.LENGTH_SHORT).show();
+                    //holder.checkBox.setEnabled(alumnoCurso.get_agregado() != 0);
+                }
+            }
+        });
 
         return row;
     }
