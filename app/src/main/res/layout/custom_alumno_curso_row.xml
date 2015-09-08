@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_height="fill_parent"
+        android:id="@+id/front"
+        android:tag="front"
+        style="@style/MyListFrontContent"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp">
+
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:id="@+id/checkBoxAgregado"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="10dp"
+            android:layout_alignParentBottom="false"
+            android:layout_centerVertical="true" />
+
+        <TextView
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:gravity="center_vertical|left"
+            style="@style/MyListTitle"
+            android:text="Rodrigo Armijo Aviles Rodrigo Armijo Aviles Rodrigo Armijo Aviles"
+            android:id="@+id/nombreAlumnoCurso"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_toRightOf="@+id/checkBoxAgregado"
+            android:layout_toEndOf="@+id/checkBoxAgregado" />
+
+    </RelativeLayout>
+
+</FrameLayout>
