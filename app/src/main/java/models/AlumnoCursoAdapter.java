@@ -10,7 +10,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Filterable;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.moveapps.asistenciaeclass.R;
 
@@ -25,7 +24,7 @@ public class AlumnoCursoAdapter extends ArrayAdapter<AlumnoCurso> implements Fil
 
     //private AlumnoFilter alumnoFilter;
     private ArrayList<AlumnoCurso> data;
-    //private ArrayList<AlumnoCurso> dataFilter;
+    public ArrayList<AlumnoCurso> alumnosSeleccionados = null;
     Context context;
     int layoutResId;
     protected DBAlumnosCursosSource mAlumnoCursoSource;
@@ -40,7 +39,7 @@ public class AlumnoCursoAdapter extends ArrayAdapter<AlumnoCurso> implements Fil
         this.context = context;
         this.layoutResId = resource;
         this.mAlumnoCursoSource = mAlumnoSource;
-
+        this.alumnosSeleccionados = new ArrayList<AlumnoCurso>();
         getFilter();
     }
 
@@ -74,16 +73,17 @@ public class AlumnoCursoAdapter extends ArrayAdapter<AlumnoCurso> implements Fil
 
         holder.nombreAlumno.setText(alumnoCurso.get_nombre());
         holder.checkBox.setChecked(alumnoCurso.get_agregado() != 0);
-        holder.checkBox.setEnabled(alumnoCurso.get_agregado() != 0);
+        holder.checkBox.setEnabled(alumnoCurso.get_agregado() == 0);
 
         holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
             @Override
             public void onCheckedChanged(CompoundButton arg0, boolean isChecked) {
-                if (isChecked) {
-                    Toast.makeText(context, "male", Toast.LENGTH_SHORT).show();
-                    //holder.checkBox.setEnabled(alumnoCurso.get_agregado() != 0);
-                }
+            if (isChecked) {
+                alumnosSeleccionados.add(alumnoCurso);
+            } else {
+                alumnosSeleccionados.remove(alumnoCurso);
+            }
             }
         });
 

@@ -15,6 +15,8 @@ import db.DBAlumnosCursosSource;
 import models.AlumnoCurso;
 import models.AlumnoCursoAdapter;
 
+import static com.moveapps.asistenciaeclass.Utils.showToast;
+
 public class AlumnosCursos extends Activity implements View.OnClickListener {
 
     private ListView listViewAlumnos;
@@ -64,8 +66,18 @@ public class AlumnosCursos extends Activity implements View.OnClickListener {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.add_alumnos) {
+            for (int i = 0; i < adapter.alumnosSeleccionados.size(); i++) {
+                try {
+                    if(mAlumnoCursoSource.add(adapter.alumnosSeleccionados.get(i), ID_CLASE)) {
+                        showToast(this, getResources().getString(R.string.student_created));
+                    } else {
+                        showToast(this, getResources().getString(R.string.student_already_exist));
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         return super.onOptionsItemSelected(item);
