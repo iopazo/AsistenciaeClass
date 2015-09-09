@@ -84,4 +84,8 @@
     <string name="valid_email">You must enter a valid email address</string>
     <string name="student_created">Student created successfully</string>
     <string name="student_already_exist">This student already exists for this class</string>
+    <string name="listStudents">List of Students</string>
+    <string name="title_activity_alumnos_cursos">AlumnosCursos</string>
+
+    <string name="hello_world">Hello world!</string>
 </resources>

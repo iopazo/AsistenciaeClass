@@ -8,9 +8,9 @@ public class AlumnoCurso {
     private int _id;
     private String _nombre;
     private int _agregado;
-    private Clase _clase;
+    private int _clase;
 
-    public AlumnoCurso(int id, String nombre, int agregado, Clase clase) {
+    public AlumnoCurso(int id, String nombre, int agregado, int clase) {
         this.set_id(id);
         this.set_nombre(nombre);
         this.set_agregado(agregado);
@@ -41,11 +41,11 @@ public class AlumnoCurso {
         this._agregado = _agregado;
     }
 
-    public Clase getClase() {
+    public int getClase() {
         return _clase;
     }
 
-    public void setClase(Clase clase) {
+    public void setClase(int clase) {
         this._clase = clase;
     }
 }

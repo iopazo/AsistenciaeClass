@@ -183,6 +183,12 @@ public class Alumnos extends Activity implements SearchView.OnQueryTextListener,
             onShowPopup(getWindow().getDecorView().findViewById(android.R.id.content));
         }
 
+        if(id == R.id.listStudents){
+            Intent intent = new Intent(Alumnos.this, AlumnosCursos.class);
+            intent.putExtra("id_clase_sede", ID_CLASE);
+            startActivityForResult(intent, 1);
+        }
+
         return super.onOptionsItemSelected(item);
     }
 

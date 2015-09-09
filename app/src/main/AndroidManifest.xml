@@ -69,8 +69,17 @@
         <activity
             android:name=".NuevoAlumno"
             android:label="@string/title_activity_nuevo_alumno"
-            android:theme="@style/CustomActionBarTheme"
-            android:parentActivityName=".Alumnos" >
+            android:parentActivityName=".Alumnos"
+            android:theme="@style/CustomActionBarTheme" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.moveapps.asistenciaeclass.Alumnos" />
+        </activity>
+        <activity
+            android:name=".AlumnosCursos"
+            android:label="@string/title_activity_alumnos_cursos"
+            android:parentActivityName=".Alumnos"
+            android:theme="@style/CustomActionBarTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.moveapps.asistenciaeclass.Alumnos" />

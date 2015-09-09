@@ -85,4 +85,5 @@
     <string name="valid_email">Debes ingresar una direccion de correo válida</string>
     <string name="student_created">El alumno ha sido creado correctamente</string>
     <string name="student_already_exist">Este alumno ya existe para esta clase</string>
+    <string name="listStudents">Listado de Alumnos</string>
 </resources>
