@@ -67,7 +67,7 @@ public class ClasesCerradas extends Activity {
         }
         swipeListView = (SwipeListView) findViewById(R.id.clases_cerradas_swipe_list);
         claseData = new ArrayList<Clase>();
-        adapter = new ClaseCerradaAdapter(this, R.layout.custom_clases_swipe_row, claseData, mClaseDatasource);
+        adapter = new ClaseCerradaAdapter(this, R.layout.custom_clases_swipe_row, claseData, mClaseDatasource, dbUsuario);
 
         //Traemos los alumnos
         clases = mClaseDatasource.list(classState, dbUsuario.getId(), days);
@@ -176,8 +176,8 @@ public class ClasesCerradas extends Activity {
 
             @Override
             public void onStartOpen(int position, int action, boolean right) {
-                if(right) {
-                    final Button btnSincronizar = (Button)findViewById(R.id.btnSincronizarClase);
+                if (right) {
+                    final Button btnSincronizar = (Button) findViewById(R.id.btnSincronizarClase);
                     float rightOffset = metrics.widthPixels - btnSincronizar.getWidth();
                     swipeListView.setOffsetRight(rightOffset); // right side offset
                 } else {
@@ -224,11 +224,11 @@ public class ClasesCerradas extends Activity {
 
         });
 
-        swipeListView.setSwipeMode(SwipeListView.SWIPE_MODE_NONE); // there are five swiping modes
+        swipeListView.setSwipeMode(SwipeListView.SWIPE_MODE_RIGHT); // there are five swiping modes
         //swipeListView.setSwipeActionLeft(SwipeListView.SWIPE_ACTION_REVEAL); //there are four swipe actions
-        //swipeListView.setSwipeActionRight(SwipeListView.SWIPE_ACTION_REVEAL);
+        swipeListView.setSwipeActionRight(SwipeListView.SWIPE_ACTION_REVEAL);
 
-        //swipeListView.setAnimationTime(200); // Animation time
+        swipeListView.setAnimationTime(200); // Animation time
         swipeListView.setSwipeOpenOnLongPress(false);
 
         swipeListView.setAdapter(adapter);

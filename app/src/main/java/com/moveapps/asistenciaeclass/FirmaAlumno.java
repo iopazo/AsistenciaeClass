@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -131,7 +130,6 @@ public class FirmaAlumno extends Activity implements OnClickListener {
                         if(!md5.equals(emptyMD5)) {
                             /*Si la firma viene bien encodeada la pasamos para guardarla*/
                             mAlumnoSource.updateAlumno(ID_ALUMNO, firmaEncoded, 1);
-                            Log.d("Firma", "firma creada");
                             finish();
                         } else {
                             Utils.showToast(getApplicationContext(), getResources().getString(R.string.empty_signature));

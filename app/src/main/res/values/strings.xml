@@ -85,7 +85,5 @@
     <string name="student_created">Student created successfully</string>
     <string name="student_already_exist">This student already exists for this class</string>
     <string name="listStudents">List of Students</string>
-    <string name="title_activity_alumnos_cursos">AlumnosCursos</string>
-
-    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_alumnos_cursos">List of Studens</string>
 </resources>
