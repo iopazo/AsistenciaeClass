@@ -79,11 +79,11 @@ public class AlumnoCursoAdapter extends ArrayAdapter<AlumnoCurso> implements Fil
 
             @Override
             public void onCheckedChanged(CompoundButton arg0, boolean isChecked) {
-            if (isChecked) {
-                alumnosSeleccionados.add(alumnoCurso);
-            } else {
-                alumnosSeleccionados.remove(alumnoCurso);
-            }
+                if (isChecked) {
+                    alumnosSeleccionados.add(alumnoCurso);
+                } else {
+                    alumnosSeleccionados.remove(alumnoCurso);
+                }
             }
         });
 

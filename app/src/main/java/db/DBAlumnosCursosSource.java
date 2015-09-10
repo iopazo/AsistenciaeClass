@@ -94,7 +94,8 @@ public class DBAlumnosCursosSource {
             ContentValues valuesUpdate = new ContentValues();
             valuesUpdate.put(DBHelper.COLUMN_AGREGADO, 1);
             mDatabase.update(DBHelper.TABLE_ALUMNO_CURSO, valuesUpdate,
-                    DBHelper.COLUMN_ID_ALUMNO_CURSO + " = ?", new String[]{String.format("%d", alumnoCurso.get_id())});
+                    DBHelper.COLUMN_ID_ALUMNO_CURSO + " = ? AND " + DBHelper.COLUMN_FK_ID_CLASE_SEDE_AC + " = ?",
+                    new String[]{String.format("%d", alumnoCurso.get_id()), String.format("%d", idClaseSede)});
 
             Alumno alumno = new Alumno(idAlumnoSC, alumnoCurso.get_nombre(), 0, idClaseSede);
             alumno.setAlumnoSinClase(alumnoSinClase);

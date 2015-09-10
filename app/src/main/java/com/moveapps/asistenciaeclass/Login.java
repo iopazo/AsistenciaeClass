@@ -236,7 +236,6 @@ public class Login extends Activity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            Log.d(TAG, datosJson.toString());
             byte[] jsonToByte = datosJson.toString().getBytes();
             String datos = Base64.encodeToString(jsonToByte,0);
 
