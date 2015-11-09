@@ -155,8 +155,11 @@ public class Alumnos extends Activity implements SearchView.OnQueryTextListener,
             saveDialog.setMessage(getResources().getString(R.string.action_undone));
             saveDialog.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-                    mAlumnosource.cambiarEstadoClase(ID_CLASE, 1);
-                    finish();
+                    if(mAlumnosource.cambiarEstadoClase(ID_CLASE, 1)) {
+                        finish();
+                    } else {
+                        dialog.cancel();
+                    }
                 }
             });
 

@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.moveapps.asistenciaeclass.Utils;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -169,22 +171,43 @@ public class DBAlumnoSource {
     /*
     Se actualiza la clase a cerrada
      */
-    public void cambiarEstadoClase(int idClaseSede, int estado) {
-        if(!mDatabase.inTransaction()) {
-            mDatabase.beginTransaction();
+    public boolean cambiarEstadoClase(int idClaseSede, int estado) {
+
+        ArrayList<Alumno> alumnos = this.getAlumnoByClass(idClaseSede, "ASC");
+        //Traemos los alumnos de una clse, si esta viene con mas de 0 revisamos que todos esten presentes o ausentes.
+        boolean cerrarClase = true;
+
+        if(alumnos.size() > 0) {
+            for (int i = 0; i < alumnos.size(); i++) {
+                if(alumnos.get(i).getEstado() == 0) {
+                    cerrarClase = false;
+                    break;
+                }
+            }
         }
-        try {
-            String whereClause = dbHelper.COLUMN_ID_CLASE_SEDE + " = ?";
-            ContentValues values = new ContentValues();
-            values.put(dbHelper.COLUMN_ESTADO_CLASE, estado);
-            mDatabase.update(
-                    dbHelper.TABLE_CLASE,
-                    values,
-                    whereClause,
-                    new String[] {String.format("%d", idClaseSede)});
-            mDatabase.setTransactionSuccessful();
-        } finally {
-            mDatabase.endTransaction();
+
+        if(cerrarClase) {
+            if(!mDatabase.inTransaction()) {
+                mDatabase.beginTransaction();
+            }
+            try {
+                String whereClause = dbHelper.COLUMN_ID_CLASE_SEDE + " = ?";
+                ContentValues values = new ContentValues();
+                values.put(dbHelper.COLUMN_ESTADO_CLASE, estado);
+                mDatabase.update(
+                        dbHelper.TABLE_CLASE,
+                        values,
+                        whereClause,
+                        new String[] {String.format("%d", idClaseSede)});
+                mDatabase.setTransactionSuccessful();
+            } finally {
+                mDatabase.endTransaction();
+            }
+            return true;
+        } else {
+            Utils.showToast(mContext, "Aún quedan alumnos por marcar su asistencia.");
+            return false;
         }
+
     }
 }

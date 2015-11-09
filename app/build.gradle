@@ -17,8 +17,8 @@ android {
         applicationId "com.moveapps.asistenciaeclass"
         minSdkVersion 15
         targetSdkVersion 19
-        versionCode 8
-        versionName "1.2.5"
+        versionCode 10
+        versionName "1.2.8"
     }
     buildTypes {}
     sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/main/assets/fonts'] } }
